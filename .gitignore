@@ -15,3 +15,10 @@ node_modules
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+claude-prompt.md
+claude-status.md
+
+# JWT Certificates (contains private keys)
+certs/
+/uploads
+src/routes/uploads/\[filename\]/+server.ts.backup
