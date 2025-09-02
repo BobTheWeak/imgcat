@@ -1,5 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { fail } from '@sveltejs/kit';
+import 'dotenv/config';
 
 import { GetPost } from '$lib/server/posts.ts';
 import { CreateComment } from '$lib/server/create_comment.ts';
@@ -11,10 +12,11 @@ export const load:PageServerLoad = async({ params, locals }) => {
 	// Whatever the reason, this user cannot access this content
 	if(!post){return null}
 	
-	// TODO: Pull from an ENVVAR
+	// Get image base URL from environment variable
+	const imageBaseUrl = process.env.IMAGE_BASE_URL || 'http://localhost:9000/imgcat-dev';
 	// Internally, we're pulling from the 'link_v1' column
 	for(let i in post.img) {
-		post.img[i].link = 'https://i.imgcat.io/' + post.img[i].link
+		post.img[i].link = imageBaseUrl + '/' + post.img[i].link
 	}
 
 	if(post) {
