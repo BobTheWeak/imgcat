@@ -9,6 +9,12 @@ GRANT EXECUTE ON FUNCTION  Actions.ToggleFavPost           TO imgcat_posts;
 
 GRANT EXECUTE ON PROCEDURE Comments.GetPostComments        TO imgcat_posts;
 
+GRANT EXECUTE ON PROCEDURE Content.VoteForContent          TO imgcat_posts;
+GRANT EXECUTE ON PROCEDURE Content.VoteForMaturity         TO imgcat_posts;
+GRANT EXECUTE ON PROCEDURE Content.VoteForTag              TO imgcat_posts;
+GRANT EXECUTE ON PROCEDURE Content.FlagForReview           TO imgcat_posts;
+GRANT EXECUTE ON PROCEDURE Content.FlagForReviewAnon       TO imgcat_posts;
+
 -- Private function?
 GRANT EXECUTE ON PROCEDURE Posts.CalcVVCache               TO imgcat_posts;
 GRANT EXECUTE ON FUNCTION  Posts.CreateComment             TO imgcat_posts;
