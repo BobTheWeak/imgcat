@@ -10,13 +10,13 @@ const IC_DB_PASS:&str = env!("IC_DB_PASS");
 
 use std::net::{Ipv4Addr, Ipv6Addr};
 
-use actix_web::{get, post, web, http, App, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{get, /*post,*/ web, App, HttpRequest, HttpResponse, HttpServer};
 use serde::{de, Deserialize};
 
 
 use sqlx::{ConnectOptions};
-use sqlx::mysql::{MySqlConnection, MySqlConnectOptions};
-use sqlx::postgres::{PgConnection, PgConnectOptions};
+use sqlx::mysql::{MySqlConnectOptions};
+//use sqlx::postgres::{PgConnection, PgConnectOptions};
 
 
 /// Parses the "x-ic-user-id" header value from requests, returning None if it doesn't exist
@@ -162,7 +162,7 @@ async fn vote_mature(path: web::Path<(u64,)>, params: web::Query<VoteMatureParam
 		todo!();
 	}
 
-	return HttpResponse::Ok().finish(); // 200
+	//return HttpResponse::Ok().finish(); // 200
 }
 
 
@@ -211,7 +211,7 @@ async fn vote_category(path: web::Path<(u64,)>, params: web::Query<VoteCategoryP
 		todo!();
 	}
 
-	return HttpResponse::Ok().finish(); // 200
+	//return HttpResponse::Ok().finish(); // 200
 }
 
 
@@ -259,8 +259,12 @@ async fn vote_review(path: web::Path<(u64,)>, params: web::Query<VoteReviewParam
 		todo!();
 	}
 
-	return HttpResponse::Ok().finish(); // 200
+	//return HttpResponse::Ok().finish(); // 200
 }
+
+
+
+
 
 
 
@@ -304,7 +308,7 @@ async fn anon_review(path: web::Path<(u64,)>, params: web::Query<VoteReviewParam
 		todo!();
 	}
 
-	return HttpResponse::Ok().finish(); // 200
+	//return HttpResponse::Ok().finish(); // 200
 }
 
 
