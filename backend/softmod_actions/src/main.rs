@@ -278,6 +278,11 @@ async fn anon_review(path: web::Path<(u64,)>, params: web::Query<VoteReviewParam
 		return HttpResponse::Forbidden().into(); // 403
 	};
 
+	// TODO: It's UTF-8, so we should check byte-length, not character-length
+	if params.comment.len() > 256 {
+		return HttpResponse::BadRequest().into(); // 400
+	}
+	
 	// NOTE: MariaDB versions: INET6 (10.5), INET4 (10.10), Store INET4 inside INET6 (11.3)
 	// Min is 10.5 b/c the webservice translates any v4 into a v6 before calling the SP.
 
