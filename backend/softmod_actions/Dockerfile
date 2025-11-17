@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/app/target/ \
 
 # Build application
 COPY ./src ./src
-RUN --mount=type=secret,id=ic-db-host,env=IC_DB_IS_MARIA \
+RUN --mount=type=secret,id=ic-db-maria,env=IC_DB_IS_MARIA \
     --mount=type=secret,id=ic-db-host,env=IC_DB_HOST \
     --mount=type=secret,id=ic-db-user,env=IC_DB_USER \
     --mount=type=secret,id=ic-db-pass,env=IC_DB_PASS \

@@ -1,0 +1,10 @@
+We use the 97XX range of ports by default b/c it's not well-used
+Source: https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
+
+
+== Core Services (970x-971x) ==
+9702: Database (MariaDB or PostgreSQL)
+9704: Frontend (Node.js/Svelte)
+
+== Microservices (972x-979x) ==
+9722: SoftMod Actions Microservice
