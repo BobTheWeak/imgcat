@@ -6,8 +6,9 @@ BUILD NOTES:
 make dev: Local build (Rust)
 make [docker, deploy, clean]: Docker actions
 Docker Image: smact - listen :8080
+Rust Feature:
+* use_mariadb - Compiles in the MariaDB/MySQL libraries (else PostgreSQL)
 Required EnvVars:
-* IC_DB_IS_MARIA
 * IC_DB_HOST
 * IC_DB_USER
 * IC_DB_PASS
@@ -40,7 +41,6 @@ It stuffs the request into a queue table, and considers it one vote.
 Another webservice (TODO) will read updates, tally votes, & do magic.
 
 FUTURE ENHANCEMENTS
-1) This opens a new DB connection per request. Obviously this is bad/temporary.
-2) Unit tests. This is early & I don't have the luxury of time. Please, help me not suck.
-3) Support for PostgreSQL. Using this w/o IC_DB_IS_MARIA set will break.
-4) Consider throwing these votes into a message queue instead of a direct DB call.
+1) Unit tests. This is early & I don't have the luxury of time. Please, help me not suck.
+2) Support for PostgreSQL. It needs u64 encode/decode logic before this will work.
+3) Consider throwing these votes into a message queue instead of a direct DB call.
