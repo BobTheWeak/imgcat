@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-actix-multipart = "0.7.2"
 actix-web = "4.11.0"
 serde = {version = "1.0.228", default-features = false, features = ["derive"]}
 sqlx = {version = "0.8.6", features = ["runtime-tokio", "mysql", "postgres"]}
-tokio = {version = "1.47.1", features = ["macros", "rt-multi-thread", "fs"]}
+tokio = {version = "1.47.1", features = ["rt-multi-thread"]}
 
+[features]
+use_mariadb = []
