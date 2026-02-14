@@ -1,0 +1,24 @@
+FROM mariadb:12.1
+
+COPY ./mariadb.conf /etc/mysql/conf.d/mariadb.cnf
+COPY ./mariadb_scripts/init/* /docker-entrypoint-initdb.d/
+
+# TEMP - We need to change how these are stored in the DB
+RUN rm /docker-entrypoint-initdb.d/000_init_users.sh
+RUN rm /docker-entrypoint-initdb.d/ZZY_init_users.sql
+
+# Create an application user using the passed in creds
+RUN --mount=type=secret,required=true,id=IC_DB_USER,env=IC_DB_USER \
+	--mount=type=secret,required=true,id=IC_DB_PASS,env=IC_DB_PASS \
+	--mount=type=secret,required=true,id=IC_USERDB_USER,env=IC_USERDB_USER \
+	--mount=type=secret,required=true,id=IC_USERDB_PASS,env=IC_USERDB_PASS \
+	echo "CREATE USER ${IC_DB_USER} IDENTIFIED BY '${IC_DB_PASS}' WITH MAX_STATEMENT_TIME 1;\nCREATE USER ${IC_USERDB_USER} IDENTIFIED BY '${IC_USERDB_PASS}' WITH MAX_STATEMENT_TIME 1;" >> /docker-entrypoint-initdb.d/ZZY_init_users.sql
+
+# Update the perms file to swap the username
+RUN --mount=type=secret,required=true,id=IC_DB_USER,env=IC_DB_USER \
+	sed -i -e "s/imgcat_posts/${IC_DB_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
+	
+RUN --mount=type=secret,required=true,id=IC_USERDB_USER,env=IC_USERDB_USER \
+	sed -i -e "s/imgcat_jwt/${IC_USERDB_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
+
+EXPOSE 8080/tcp
