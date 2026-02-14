@@ -1,10 +1,56 @@
 We use the 97XX range of ports by default b/c it's not well-used
 Source: https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
 
+The prod environment will use dynamic ports, spun up/down as needed. So these only apply to the fixed, single-instance, localdev version, running on dev machines, etc.
 
-== Core Services (970x-971x) ==
-9702: Database (MariaDB or PostgreSQL)
-9704: Frontend (Node.js/Svelte)
+NOTE: All ports are separated by 2 numbers. This is to reserve the +1 port for testing a new release, config, etc.
 
-== Microservices (972x-979x) ==
-9722: SoftMod Actions Microservice
+
+== Cluster Services (970x) ==
+Service Mesh (Istio)
+- Ingress/Sidecar/IDK how this works
+- port: 9700
+
+== Backend Services (971x) ==
+Database (MariaDB)
+- path: /api/dbm/
+- image: localhost/localdev-mariadb
+- port: 9710
+Database (PostgreSQL)
+- path: /api/dbp/
+- image: localhost/localdev-pg
+- port: 9712
+
+# NOTE: Not built/needed yet
+# Storage (Localstack, cloud S3 proxy)
+# - path: /api/bhd/
+# - image: dockerhub/localstack
+# - port: 9714
+# Cache (Redis)
+# - path: /api/bch/
+# - image: dockerhub/redis
+# - port: 9716
+
+== Frontend & Mobile Services (972x) ==
+Frontend (Node.js/Svelte)
+- path: /*
+- image: localhost/icfe
+- port: 9720
+
+== Microservices (973x-979x) ==
+SoftMod Actions Microservice
+- path: /api/smact/
+- image: localhost/smact
+- port: 9730
+# HardMod Actions Microservice
+# - path: /api/hmact/
+# - image: (TBD) localhost/moderator_actions
+# - port: 9732
+# Upload Pipeline Microservice
+# - path: /api/upp/
+# - image: (TBD) localhost/upload_pipeline
+# - port: 9734
+# NSFW Image Scanner Microservice
+# - path: /api/imgchk
+# - image: (TBD) localhost/nsfw_image_scanner
+# - port: 9736

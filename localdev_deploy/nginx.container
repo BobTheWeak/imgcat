@@ -1,0 +1,5 @@
+FROM nginx:stable-alpine-slim
+COPY nginx.conf /etc/nginx/nginx.conf
+
+ENTRYPOINT ["nginx-debug", "-g", "daemon off;"]
+EXPOSE 8080/tcp
