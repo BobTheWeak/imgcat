@@ -1,22 +1,21 @@
 help:
-	@echo "make [dev, release, docker]"
+	@echo "make [dev, softmod, deploy, clean]"
 
 dev:
-	cargo build
+	cargo build --features use_mariadb
+
+softmod:
+	docker build \
+		-t smact \
+		--secret id=ic-db-user,env=IC_DB_USER \
+		--secret id=ic-db-pass,env=IC_DB_PASS \
+		--file softmod.container \
+		.
+
+deploy_softmod:
+	docker run --detach -p 9732:8080 smact
 
 clean:
 	docker rmi --force smact
 	docker image prune --force
 	docker builder prune --force
-
-docker:
-	docker build \
-		-t smact \
-		--secret id=ic-db-maria,env=IC_DB_IS_MARIA \
-		--secret id=ic-db-host,env=IC_DB_HOST \
-		--secret id=ic-db-user,env=IC_DB_USER \
-		--secret id=ic-db-pass,env=IC_DB_PASS \
-		.
-
-deploy:
-	docker run -p 9722:8080 smact

@@ -12,25 +12,27 @@ RUN apk add lld clang
 
 # Build dependencies only
 WORKDIR /app
-#RUN cargo new --bin ${PROJ_NAME}
 WORKDIR ${PROJ_NAME}
 COPY ./Cargo.toml ./Cargo.toml
 COPY ./Cargo.lock ./Cargo.lock
-RUN mkdir src
-RUN echo "fn main(){println!(\"BUG: Add a blank line to main.rs & recompile\");}" > ./src/main.rs
+COPY ./src ./src
+
 RUN --mount=type=cache,target=/app/target/deps/ \
     --mount=type=cache,target=/usr/local/cargo/registry/ \
-    cargo build --release --features use_mariadb
+	cargo fetch
 
+# We want to IGNORE any specified IC_DB_HOST and set it to the Docker pool
+ENV IC_DB_HOST=localhost
+ENV IC_DB_PORT=8081
 
 # Build application
-COPY ./src ./src
-RUN --mount=type=secret,id=ic-db-host,env=IC_DB_HOST \
-    --mount=type=secret,id=ic-db-user,env=IC_DB_USER \
+RUN --mount=type=secret,id=ic-db-user,env=IC_DB_USER \
     --mount=type=secret,id=ic-db-pass,env=IC_DB_PASS \
     --mount=type=cache,target=/app/target/deps/ \
     --mount=type=cache,target=/usr/local/cargo/registry/ \
     cargo build --release --features use_mariadb
+
+
 RUN strip target/release/${PROJ_NAME}
 
 
@@ -39,6 +41,8 @@ ARG PROJ_NAME
 RUN apk add --no-cache libgcc
 # app specific environment variables
 ENV APP_ENVIRONMENT=prod
+#ENV RUST_BACKTRACE=1
+#ENV RUST_LOG=actix_web=debug
 # copy the binary, and config folders
 WORKDIR /app
 COPY --from=build /app/${PROJ_NAME}/target/release/${PROJ_NAME} ./main

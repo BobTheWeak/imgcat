@@ -3,6 +3,7 @@ const IC_HEADER_USER_ID:&str = if let Some(result) = option_env!("IC_HEADER_USER
 const IC_HEADER_USER_IP:&str = if let Some(result) = option_env!("IC_HEADER_USER_IP") {result} else {"x-ic-user-ip"};
 
 const IC_DB_HOST:&str = env!("IC_DB_HOST");
+const IC_DB_PORT:&str = env!("IC_DB_PORT"); // NOTE: parsing isn't const w/o experimental funcs
 const IC_DB_USER:&str = env!("IC_DB_USER");
 const IC_DB_PASS:&str = env!("IC_DB_PASS");
 
@@ -33,13 +34,17 @@ mod vote_category;
 mod vote_review;
 mod anon_review;
 
-use actix_web::{App, HttpServer};
+use actix_web::{App, HttpServer, middleware::Logger};
+use env_logger::Env;
 
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+	env_logger::init_from_env(Env::default().default_filter_or("info"));
+
 	HttpServer::new(|| {
 		App::new()
+		.wrap(Logger::default())
 		.service(vote_tag::vote_tag)
 		.service(vote_mature::vote_mature)
 		.service(vote_category::vote_category)

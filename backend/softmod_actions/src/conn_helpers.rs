@@ -1,7 +1,8 @@
+use std::str::FromStr;
 use std::sync::OnceLock;
 use std::time::Duration;
 use sqlx::Error;
-use crate::{IC_DB_HOST, IC_DB_USER, IC_DB_PASS};
+use crate::{IC_DB_HOST, IC_DB_PORT, IC_DB_USER, IC_DB_PASS};
 
 // We're keeping max conns pretty low, depending on multiple instances to provide
 // most of the heavy lifting. With that said, every query should be instant.
@@ -29,8 +30,10 @@ pub async fn connect() -> Result<&'static MySqlPool, Error> {
 	if let Some(p) = POOL.get() {
 		return Ok(p);
 	} else {
+		println!("Creating new pool: {}:{}", IC_DB_HOST, IC_DB_PORT);
 		let conn = MySqlConnectOptions::new()
 			.host(IC_DB_HOST)
+			.port(u16::from_str(IC_DB_PORT).expect("IC_DB_PORT could not be parsed"))
 			.username(IC_DB_USER)
 			.password(IC_DB_PASS);
 		let pool = MySqlPoolOptions::new()
@@ -55,6 +58,7 @@ pub async fn connect() -> Result<&'static PgPool, Error> {
 	} else {
 		let conn = PgConnectOptions::new()
 			.host(IC_DB_HOST)
+			.port(u16::from_str(IC_DB_PORT).expect("IC_DB_PORT could not be parsed"))
 			.username(IC_DB_USER)
 			.password(IC_DB_PASS);
 		let pool = PgPoolOptions::new()

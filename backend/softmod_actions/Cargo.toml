@@ -5,6 +5,8 @@ edition = "2024"
 
 [dependencies]
 actix-web = "4.11.0"
+env_logger = "0.11.9"
+log = "0.4.29"
 serde = {version = "1.0.228", default-features = false, features = ["derive"]}
 sqlx = {version = "0.8.6", features = ["runtime-tokio", "mysql", "postgres"]}
 tokio = {version = "1.47.1", features = ["rt-multi-thread"]}
