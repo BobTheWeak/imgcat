@@ -6,10 +6,12 @@
 
 <Navbar logged_in="{data.logged_in}"/>
 
+<!--
 <div id="adpanel">
 	<h3>Future Ad Banner</h3>
 	<p>Help feed the server-hamsters</p>
 </div>
+-->
 <div id="content">
 {@render children()}
 </div>

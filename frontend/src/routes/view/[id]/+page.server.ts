@@ -12,9 +12,10 @@ export const load:PageServerLoad = async({ params, locals }) => {
 	if(!post){return null}
 	
 	// Internally, we're pulling from the 'link_v1' column
-	let BASE_URL = process.env.CFR2_PUBLIC_LINK
+	// TODO: Make this configurable (use a microservice/proxy)
+	//let BASE_URL = process.env.THIS_NEEDS_TO_BE_CONFIGURABLE
 	for(let i in post.img) {
-		post.img[i].link = BASE_URL + post.img[i].link
+		post.img[i].link = '/api/img/' + post.img[i].link
 	}
 
 	if(post) {

@@ -8,15 +8,15 @@ let _exp:number = 0;
 
 const JWT_HEADER = Buffer.from(JSON.stringify({typ:'JWT',alg:'EdDSA'})).toString('base64url') + '.';
 //const JWT_HEADER:string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.';
-export const JWT_ISS:string = process.env.JWT_ISS;
-export const JWT_AUD:string = process.env.JWT_AUD;
+export const JWT_ISS:string = process.env.IC_JWT_ISS;
+export const JWT_AUD:string = process.env.IC_JWT_AUD;
 
 function refreshCerts() {
-	let buff:Buffer = readFileSync(process.env.JWT_CERT_PUB, 'utf8');
+	let buff:Buffer = readFileSync(process.env.IC_JWT_PUB, 'utf8');
 	_file_pub = crypto.createPublicKey(buff);
-	if (process.env.JWT_CERT_PVT) {
+	if (process.env.IC_JWT_PVT) {
 		// A private key is optional
-		buff = readFileSync(process.env.JWT_CERT_PVT, 'utf8');
+		buff = readFileSync(process.env.IC_JWT_PVT, 'utf8');
 		_file_pvt = crypto.createPrivateKey(buff);
 	}
 	_exp = Date.now() + (5*60*1000); // Cache for 5 min

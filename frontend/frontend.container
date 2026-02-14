@@ -1,0 +1,72 @@
+FROM node AS build
+WORKDIR /app
+
+COPY package.json package-lock.json tsconfig.json svelte.config.js vite.config.ts .
+COPY static/ static/
+COPY src/ src/
+
+# Grab all node dependencies
+RUN --mount=type=cache,target=node_modules/ \
+	npm ci --omit dev
+
+# Build the app
+# NOTE: IDK why, but the build process tries to run static files & create the app pool
+# It will cause build warnings without correct info, but I just don't care.
+RUN --mount=type=cache,target=node_modules/ \
+	npm run build
+#--mount=type=secret,required=true,id=IC_DB_USER,env=IC_DB_USER \
+#--mount=type=secret,required=true,id=IC_DB_PASS,env=IC_DB_PASS \
+#--mount=type=secret,required=true,id=IC_USERDB_USER,env=IC_USERDB_USER \
+#--mount=type=secret,required=true,id=IC_USERDB_PASS,env=IC_USERDB_PASS \
+#--mount=type=secret,required=true,id=IC_DB_HOST,env=IC_DB_HOST \
+#--mount=type=secret,required=true,id=IC_DB_PORT,env=IC_DB_PORT \
+#--mount=type=secret,required=true,id=IC_USERDB_HOST,env=IC_USERDB_HOST \
+#--mount=type=secret,required=true,id=IC_USERDB_PORT,env=IC_USERDB_PORT \
+
+# Copy /app/node_modules/ persistently, so we can copy them into the prod build
+RUN --mount=type=cache,target=node_modules/ \
+	cp -r node_modules/ cached_modules/
+
+
+
+
+FROM node:alpine AS prod
+WORKDIR /app
+
+# Copy the app
+COPY --from=build /app/package.json .
+COPY --from=build /app/build/ .
+COPY --from=build /app/cached_modules/ ./node_modules/
+
+# NOTE: This is NOT the right way to do this... TODO: change me
+# Copy JWTs from the secret mount, to compile into the build
+RUN --mount=type=secret,required=true,id=IC_JWT_PUB \
+	cp /run/secrets/IC_JWT_PUB /app/id_jwtsign.pub
+RUN --mount=type=secret,required=true,id=IC_JWT_PVT \
+	cp /run/secrets/IC_JWT_PVT /app/id_jwtsign.pvt
+RUN chown node id_jwtsign.pub id_jwtsign.pvt
+RUN chmod +r id_jwtsign.pub id_jwtsign.pvt
+
+# We're just storing it in the root app dir
+ENV IC_JWT_PUB="/app/id_jwtsign.pub"
+ENV IC_JWT_PVT="/app/id_jwtsign.pvt"
+
+# Hardcode the JWT issuer & audience
+ENV IC_JWT_ISS="localhost"
+ENV IC_JWT_AUD="localhost"
+
+# For now, we have the app DB and the JWT UserDB on the same server
+ENV IC_DB_HOST=host.docker.internal
+ENV IC_DB_PORT=8081
+ENV IC_USERDB_HOST=host.docker.internal
+ENV IC_USERDB_PORT=8081
+
+# Svelte/Node.JS needs these to run properly
+ENV PORT=8080
+# NOTE: This port is the Nginx entry point, NOT the self port
+ENV ORIGIN=http://localhost:8080
+ENV API_ORIGIN=http://api.localhost:8080
+
+USER node
+ENTRYPOINT ["node", "/app"]
+EXPOSE 8080/tcp

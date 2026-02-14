@@ -1,88 +1,192 @@
 <script lang='ts'>
+	import type { PageLoad } from './$types';
 	import Button from '$lib/Button.svelte';
+	import Modal from '$lib/Modal.svelte';
+	import { voteMature, voteTag, pingMod } from '$lib/ModBox.remote.ts';
+	//import { query } from '$app/server';
 
 	const {
 		post,
 		user_id
 	} = $props();
 
-	const ratings = {
-		'kid': 5,
-		'std': 4,
-		'sxy': 0,
-		'xxx': 0,
-		'ill': 0
-	};
-
-	function rating(e) {
-		const v = e.currentTarget.value;
-		console.log(e);
-		console.log(v);
-	}
-	function category(e) {
-		const v = e.currentTarget.value;
-		console.log(e);
-		console.log(v);
-	}
-	
-
+	let hidePostModal = $state(false);
+	let blockUserModal = $state(false);
+	let tagModal = $state(false);
+	let matureModal = $state(false);
+	let pingModsModal = $state(false);
 </script>
 
 <div id='modbox'>
-	<div id='anon'>
-		<label style='color:#F00'>without an account...</label>
-		<Button lbl='Flag for moderators' />
-		<Button lbl='Report illegal content' />
-	</div>
-	<hr />
-	<div id='user'>
-		<label style='color:#F00'>as a user...</label>
-		<Button lbl='Hide this post' />
-		<Button lbl='Block this user' />
-		<Button lbl='Flag for moderators' />
-		<Button lbl='Report illegal content' />
-	</div>
-	<hr />
-	<label style='color:#F00'>as a mod...</label>
-	<div id='rating'>
-		<label>Content Rating</label>
-		<Button class='sel' value='kid' lbl='Kid-friendly ({ratings['kid']})' img='/content_g.svg' onclick={rating} />
-		<Button value='std' lbl='Normal ({ratings['std']})' img='/content_std.svg' onclick={rating} />
-		<Button value='sxy' lbl='Lewd or suggestive ({ratings['sxy']})' img='/content_r.svg' onclick={rating} />
-		<Button value='xxx' lbl='Not safe for work ({ratings['xxx']})' img='/content_x.svg' onclick={rating} />
-		<Button value='ill' lbl='Illegal ({ratings['ill']})' img='/content_illegal.svg' onclick={rating} />
-	</div>
-	<div id='category'>
-		<label>Category Filters</label>
-		<Button lbl='Politics' img='/politics.svg' onclick={(e)=>category(e,'politics')} />
-		<Button lbl='News' img='/news.svg' onclick={(e)=>category(e,'news')} />
-		<Button lbl='Creator content' img='/artist.svg' onclick={(e)=>category(e,'self')} />
-		<Button lbl='AI generated' img='/robot.svg' onclick={(e)=>category(e,'ai')} />
-		<Button lbl='Low quality' img='/trash.svg' onclick={(e)=>category(e,'ai')} />
-	</div>
-	<div id='tags'>
-		<label>Tags</label>
-		<Button lbl='science' />
-		<Button lbl='space' />
-		<Button lbl='black holes' />
-		<br />
-		<input />
-		<Button lbl='add' />
-	</div>
+	{#if user_id == post.user_id}
+		<!-- Your post -->
+	{:else if user_id}
+		<!-- Authenticated user actions -->
+		<Button lbl='Hide post' img='/visibility_off.svg' onclick={()=>{hidePostModal=true}} />
+		<Button lbl='Block user' img='/block_user.svg' onclick={()=>{blockUserModal=true}} />
+		<Button lbl='Add filter/tag' img='/politics.svg' onclick={()=>{tagModal=true}}/>
+		<Button lbl='Mark mature' img='/content_r.svg' onclick={()=>{matureModal=true}}/>
+		<Button lbl='Flag for moderators' img='/report.svg' onclick={()=>{pingModsModal=true}} />
+	{:else}
+		<!-- Anonymous user actions -->
+		<Button lbl='Flag for moderators' img='/report.svg' onclick={()=>{pingModsModal=true}} />
+	{/if}
 </div>
+
+<!-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -->
+<!--  TODO: Move these modals into their own files.  -->
+<!-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -->
+<Modal bind:showModal={hidePostModal} title='Hide this post'>
+	<form>
+		<p>Under Construction</p>
+		<input type='button' value='Close' onclick={(e)=>{hidePostModal=false}}/>
+	</form>
+</Modal>
+
+
+<Modal bind:showModal={blockUserModal} title='Block this user'>
+	<form>
+		<p>Under Construction</p>
+		<label>
+			<input type='radio' name='duration' value='1mo' checked />
+			Snooze this user for 1 month
+		</label>
+
+		<br />
+
+		<label>
+			<input type='radio' name='duration' value='perm' />
+			Block this user permenantly
+		</label>
+
+		<br /><br />
+		<input type='button' value='Close' onclick={(e)=>{blockUserModal=false}}/>
+		<input type='submit' value='Submit' />
+	</form>
+</Modal>
+
+
+<Modal bind:showModal={matureModal} title='Mark as mature'>
+	<form {...voteMature} onsubmit={(e)=>{matureModal=false}}>
+		<input type='hidden' name='post_id' value='{post.id}' />
+		
+		<!-- Replace these with themed controls -->
+		<div>
+			<label>
+				<input {...voteMature.fields.mature.as('radio', 'kid')} autofocus />
+				<img src='/content_g.svg'/>
+				Kid-safe
+			</label>
+			<label>
+				<input {...voteMature.fields.mature.as('radio', 'std')} />
+				<img src='/content_std.svg'/>
+				Normal
+			</label>
+			<label>
+				<input {...voteMature.fields.mature.as('radio', '18+')} />
+				<img src='/content_r.svg'/>
+				Spicy
+			</label>
+			<label>
+				<input {...voteMature.fields.mature.as('radio', 'xxx')} />
+				<img src='/content_x.svg'/>
+				Not safe for work
+			</label>
+			<label>
+				<input {...voteMature.fields.mature.as('radio', 'ill')} />
+				<img src='/content_illegal.svg'/>
+				Illegal
+			</label>
+		</div>
+
+		{#if ['18+', 'xxx', 'ill'].includes(voteMature.fields.mature.content.value())}
+			<!-- Replace these with themed controls -->
+			<div>
+				<label>
+					<input {...voteMature.fields.is_sexual.as('checkbox')} />
+					Sexual Content
+				</label>
+				<label>
+					<input {...voteMature.fields.is_gore.as('checkbox')} />
+					Gross/gore
+				</label>
+				<label>
+					<input {...voteMature.fields.is_trauma.as('checkbox')} />
+					Emotional/triggering
+				</label>
+			</div>
+		{/if}
+
+		<br />
+		<input type='button' value='Cancel' onclick={(e)=>{matureModal=false}}/>
+		<input type='submit' value='Submit' />
+	</form>
+</Modal>
+
+
+<Modal bind:showModal={tagModal} title='Add missing tags'>
+	<form {...voteTag} onsubmit={(e)=>{tagModal=false}}>
+		<input type='hidden' name='post_id' value='{post.id}' />
+		
+		<!-- Replace these with themed controls -->
+		<div>
+			<label>
+				<input {...voteTag.fields.is_politics.as('checkbox')} />
+				<img src='/politics.svg' />
+				News & Politics
+			</label>
+			<label>
+				<input {...voteTag.fields.is_ttrap.as('checkbox')} />
+				<img src='/lips.svg' />
+				Thirst Traps & Selfies
+			</label>
+			<label>
+				<input {...voteTag.fields.is_creator.as('checkbox')} />
+				<img src='/artist.svg' />
+				Creator Content
+			</label>
+
+		</div>
+
+		<br />
+
+		<p>Under Construction</p>
+		<div id='tags'>
+			<label>Tags</label>
+			<Button lbl='science' />
+			<Button lbl='space' />
+			<Button lbl='black holes' />
+			<br />
+			<input />
+			<Button lbl='add' />
+		</div>
+		<input type='text' name='science' value='science' />
+		<input type='text' name='space' value='space' />
+
+		<br />
+		<input type='button' value='Cancel' onclick={(e)=>{tagModal=false}}/>
+		<input type='submit' value='Submit' />
+	</form>
+</Modal>
+
+
+<Modal bind:showModal={pingModsModal} title='Flag for moderators'>
+	<form {...pingMod} onsubmit={(e)=>{pingModsModal=false}}>
+		<input type='hidden' name='post_id' value='{post.id}' />
+		<label>
+			Comments:
+			<textarea name='comment' minlength='10' maxlength='200' required autofocus style='width:100%;box-sizing:border-box;'></textarea>
+		</label>
+
+		<br /><br />
+		<input type='button' value='Cancel' onclick={(e)=>{pingModsModal=false}}/>
+		<input type='submit' value='Submit' />
+	</form>
+</Modal>
+
 
 <style>
 	div#modbox {
-		border: 1px solid black;
-		padding: 1em;
 		margin: 1em 0em;
 	}
-	div#anon,div#user,div#rating,div#category,div#tags {
-		label {
-			margin: 0.5em 0px;
-			display: block;
-			width: 200px;
-		}
-	}
-
 </style>

@@ -60,17 +60,17 @@ async function UploadFileToCloudFlareR2(data:any):any {
 	}
 
 	const client = new S3Client({
-		endpoint: `https://${process.env.CFR2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+		endpoint: process.env.IC_S3_URL,
 		credentials: {
-			accessKeyId: process.env.CFR2_ACCESS_KEY_ID,
-			secretAccessKey: process.env.CFR2_SECRET_ACCESS_KEY
+			accessKeyId: process.env.IC_S3_ACCESS_KEY,
+			secretAccessKey: process.env.IC_S3_SECRET_KEY
 		},
 		region: 'auto'
 	});
 	const cmd = new PutObjectCommand({
 		Body: data.buffer,
 		ContentLength: data.size,
-		Bucket: process.env.CFR2_BUCKET,
+		Bucket: process.env.IC_S3_BUCKET,
 		Key: data.filename,
 		ContentType: data.mime
 	});
