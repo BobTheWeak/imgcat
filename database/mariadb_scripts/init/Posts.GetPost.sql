@@ -44,10 +44,15 @@ BEGIN
 
 		SELECT
 			b.link_v1 AS link,
+			-- HARDCODED: 0:Unknown, 1:raster image, 2:vector image, 3:animation, 4:video
+			b.type,
+			c.mime_type,
 			a.description
 		FROM Posts.Attachment a
 		INNER JOIN Posts.Media b
 			ON a.media_id = b.id
+		INNER JOIN Posts.MediaMetadata c
+			ON a.media_id = c.media_id
 		WHERE a.post_id = v_post_id
 		ORDER BY order_id ASC;
 	END IF;

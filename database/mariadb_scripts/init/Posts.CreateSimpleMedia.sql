@@ -35,7 +35,10 @@ BEGIN
 			'image/gif',
 			'image/apng'
 		) THEN SET v_type_id = 3; END IF;
-		-- TODO: Support 'video/mp4','video/webm' AS 4
+		IF p_mime_type IN (
+			'video/mp4',
+			'video/webm'
+		) THEN SET v_type_id = 4; END IF;
 
 		INSERT INTO Posts.Media(type, link_v1)
 		VALUES(v_type_id, p_filename);
