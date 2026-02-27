@@ -15,6 +15,7 @@ frontend:
 
 deploy_frontend:
 	docker run \
+	--detach \
 	--env IC_DB_USER \
 	--env IC_DB_PASS \
 	--env IC_USERDB_USER \
