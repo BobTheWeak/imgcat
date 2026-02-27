@@ -6,7 +6,7 @@ import { CreateComment } from '$lib/server/create_comment.ts';
 
 export const load:PageServerLoad = async({ params, locals }) => {
 	let post = await GetPost(params['id'], locals.content_level, locals.user_id);
-	
+
 	// A bad link? Trying to scrape the site? Or hidden b/c of a content violation?
 	// Whatever the reason, this user cannot access this content
 	if(!post){return null}
@@ -15,7 +15,20 @@ export const load:PageServerLoad = async({ params, locals }) => {
 	// TODO: Make this configurable (use a microservice/proxy)
 	//let BASE_URL = process.env.THIS_NEEDS_TO_BE_CONFIGURABLE
 	for(let i in post.img) {
-		post.img[i].link = '/api/img/' + post.img[i].link
+		let BASE_URL = '';
+
+		// HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK
+		if(process.env.NODE_ENV == 'development') {
+			// When we run in localhost/dev mode, we have to change the hostname
+			// to fool Svelte into doing a full GET, routed through the nginx proxy
+			// PROD (with ORIGIN ENVVAR) is smart enough to do this automatically
+			BASE_URL = 'http://dev.localhost:8080'
+		}
+		// HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK HACK
+
+		post.img[i].link = BASE_URL + '/api/img/' + post.img[i].link
+		//HARDCODED: 0:Unknown, 1:raster image, 2:vector image, 3:animation, 4:video
+		post.img[i].type = ['unknown', 'image', 'image', 'image', 'video'][post.img[i].type]
 	}
 
 	if(post) {

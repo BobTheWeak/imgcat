@@ -13,10 +13,10 @@ const ALLOWED_MIME_TYPES = [
 	// Vector images
 	'image/svg',
 	// Animations
-	'image/gif', 'image/apng'
+	'image/gif', 'image/apng',
 	// Videos
 	// TODO: Not implemented in first release
-	//'video/mp4','video/webm'
+	'video/mp4','video/webm'
 ];
 /////////////////////
 
@@ -29,6 +29,7 @@ export const load: ServerPageLoad = async({ locals }) => {
 
 export const actions:Actions = {
 	upload: async({ locals, request, fetch, clientAddress }) => {
+		console.log("Upload Success");
 		let form_data = await request.formData();
 		let file = form_data.get('upload-file');
 		if(file && file.size > 0) {

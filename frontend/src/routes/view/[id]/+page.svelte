@@ -6,7 +6,7 @@
 	const { data } = $props();
 
 	let post = data?.post;
-	//console.log(post);
+	console.log(post);
 </script>
 
 {#if post}
@@ -19,7 +19,13 @@
 	<div id="content">
 		{#each post.img as item}
 		<div class="imgbox">
-			<img src="{item.link}" />
+			{#if item.type == 'image'}
+				<img src="{item.link}" />
+			{:else if item.type == 'video'}
+				<video controls>
+					<source src='{item.link}' type='{item.mime_type}' />
+				</video>
+			{/if}
 			{#if item.description}
 			<p>{item.description}</p>
 			{/if}
@@ -43,7 +49,7 @@
 		div.imgbox {
 			border: 1px solid black;
 
-			img {
+			img,video {
 				width: 100%;
 			}
 			p {

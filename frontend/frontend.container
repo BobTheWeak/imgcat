@@ -66,6 +66,8 @@ ENV PORT=8080
 # NOTE: This port is the Nginx entry point, NOT the self port
 ENV ORIGIN=http://localhost:8080
 ENV API_ORIGIN=http://api.localhost:8080
+# Set the max upload size to 100MB
+ENV BODY_SIZE_LIMIT=100M
 
 USER node
 ENTRYPOINT ["node", "/app"]
