@@ -1,6 +1,7 @@
 
 quick_help:
-	@echo "make [build_all, deploy_all, help, ...]"
+	@echo "make [build_*, deploy_*, kill_*, restart_*, ...]"
+	@echo " - services: all, nginx, mariadb, frontend, softmod"
 
 help:
 	@echo "BUILD"
@@ -17,15 +18,22 @@ help:
 ###   Build actions   ###
 #########################
 
+# To keep the same style as other build files (ie. make frontend & make deploy_frontend)
 nginx: build_nginx
 
 build_nginx:
 	docker build -t localdev-nginx --file nginx.container .
 
-build_all:
-	make -C . build_nginx
+build_mariadb:
 	make -C ../database/ mariadb
+
+build_frontend:
+	make -C ../frontend/ frontend
+
+build_softmod:
 	make -C ../backend/softmod_actions/ softmod
+
+build_all: build_nginx build_mariadb build_frontend build_softmod
 
 
 ##########################
@@ -46,12 +54,46 @@ deploy_mariadb:
 	make -C ../database/ deploy_mariadb
 
 deploy_frontend:
-	docker run -p 9720:8080 icfe
+	make -C ../frontend/ deploy_frontend
 
 deploy_softmod:
-	docker run --detach -p 9732:8080 smact
+	make -C ../backend/softmod_actions/ deploy_softmod
 
 deploy_all: deploy_mariadb deploy_frontend deploy_softmod deploy_nginx
+
+
+########################
+###   Kill actions   ###
+########################
+
+kill_nginx:
+	docker ps -q --filter "ancestor=localdev-nginx" | xargs -r docker stop
+
+kill_mariadb:
+	docker ps -q --filter "ancestor=localdev-mariadb" | xargs -r docker stop
+
+kill_frontend:
+	docker ps -q --filter "ancestor=icfe" | xargs -r docker stop
+
+kill_softmod:
+	docker ps -q --filter "ancestor=smact" | xargs -r docker stop
+
+kill_all: kill_nginx kill_mariadb kill_frontend kill_softmod
+
+
+###########################
+###   Restart actions   ###
+###########################
+
+restart_nginx: kill_nginx build_nginx deploy_nginx
+
+restart_mariadb: kill_mariadb build_mariadb deploy_mariadb
+
+restart_frontend: kill_frontend build_frontend deploy_frontend
+
+restart_softmod: kill_softmod build_softmod deploy_softmod
+
+restart_all: restart_nginx restart_mariadb restart_frontend restart_softmod
 
 
 ########################
