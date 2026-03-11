@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION Posts.CreateSimpleMedia(
 	p_user_id INT UNSIGNED,
 	p_filename CHAR(12),
 	p_mime_type TINYTEXT,
-	p_sha256 BINARY(64)
+	p_sha256 BINARY(32)
 )
 RETURNS INT UNSIGNED
 LANGUAGE SQL

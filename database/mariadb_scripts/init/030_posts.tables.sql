@@ -124,7 +124,7 @@ CREATE TABLE Posts.MediaMetadata (
 		INT UNSIGNED NOT NULL
 		REFERENCES UserDB.Account(id),
 	hash_sha256
-		BINARY(64) NOT NULL,
+		BINARY(32) NOT NULL,
 	mime_type
 		VARCHAR(40) NULL,
 
