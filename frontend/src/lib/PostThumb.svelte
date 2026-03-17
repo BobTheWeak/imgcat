@@ -6,7 +6,7 @@
 <div class='post_thumb'>
 	<a href='/view/{post["link"]}'>
 	<!-- svelte-ignore a11y_missing_attribute (b/c it's a user-generated img) -->
-	<div><img src='https://i.imgcat.io/{post["first_img"]}' /></div>
+	<div><img src='/api/img/{post["first_img"]}' /></div>
 	{#if post["title"]}
 	<p>{post["title"]}</p>
 	{/if}
