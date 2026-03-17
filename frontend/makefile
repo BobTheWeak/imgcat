@@ -1,5 +1,5 @@
 help:
-	@echo "make [frontend]"
+	@echo "make [frontend, deploy_frontend]"
 
 frontend:
 	docker build \
