@@ -7,6 +7,13 @@ import { error } from '@sveltejs/kit';
 // NOTE: If you're leaking pool connections, it's b/c "vite dev" will
 // watch for changes & reload files dynamically. But it will leak the pool.
 
+// NOTE: On service startup, we're going to try to do an extensive test:
+// Check the ENVVARS, check the connection, create the pool, check that conn.
+// This helps with development, debugging, & DevOps configuration errors.
+// At runtime, we will still try to create a pool if it hasn't been created.
+// But if it gets into this state, something went wrong. Recorvery isn't bad,
+// but we should be investigating why we couldn't create a pool on service start.
+
 let appdb = null;
 if(!appdb && !building) {
 	// Test if we have the required parameters
@@ -152,10 +159,43 @@ const userDB = mariadb.createPool({
 */
 
 export async function getDbConn() {
+	if(!appdb) {
+		console.log('WARNING: App pool not initialized on start, retrying');
+		appdb = mariadb.createPool({
+			idleTimeout: 60, //sec
+			connectionLimit: 10,
+			acquireTimeout: 1000,
+			connectTimeout: 250,
+			queryTimeout: 2000,
+			leakDetectionTimeout: 10000,
+			host: process.env.IC_DB_HOST,
+			port: Number(process.env.IC_DB_PORT) || 3306,
+			user: process.env.IC_DB_USER,
+			password: process.env.IC_DB_PASS
+		});
+		console.log('App pool started. But connection NOT validated.');
+	}
 	return appdb?.getConnection();
 }
 
 export async function getUserDbConn() {
+	// TODO: Phase this out in favor of an OAuth server
+	if(!userdb) {
+		console.log('WARNING: UserDB pool not initialized on start, retrying');
+		userdb = mariadb.createPool({
+			idleTimeout: 60, //sec
+			connectionLimit: 5,
+			acquireTimeout: 1000,
+			connectTimeout: 250,
+			queryTimeout: 1000,
+			leakDetectionTimeout: 10000,
+			host: process.env.IC_USERDB_HOST,
+			port: Number(process.env.IC_USERDB_PORT) || 3306,
+			user: process.env.IC_USERDB_USER,
+			password: process.env.IC_USERDB_PASS
+		});
+		console.log('UserDB pool started. But connection NOT validated.');
+	}
 	return userdb?.getConnection();
 }
 
