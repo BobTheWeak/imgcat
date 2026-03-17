@@ -4,7 +4,7 @@
 	let { children, data } = $props();
 </script>
 
-<Navbar logged_in="{data.logged_in}"/>
+<Navbar logged_in={data.logged_in}/>
 
 <!--
 <div id="adpanel">
