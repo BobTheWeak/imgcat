@@ -4,9 +4,10 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite --port 9720 dev",
+		"dev": "vite dev",
+		"localdev": "vite --host 0.0.0.0 --port 9720 dev",
 		"build": "vite build",
-		"preview": "vite --port 9720 preview",
+		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
