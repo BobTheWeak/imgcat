@@ -26,15 +26,17 @@ CREATE TABLE IF NOT EXISTS UserDB.Account (
 
 	PRIMARY KEY(id),
 	UNIQUE KEY(username),
-	UNIQUE KEY(email)
+	UNIQUE KEY(email),
+	INDEX(username(20)),
+	INDEX(email(20))
 );
 
 -- Just index the first 20 characters to preserve space
 -- TODO: Once we get some users, we can run some performance metrics
-create or replace index IX_Account_username
-	ON UserDB.Account(username(20));
-create or replace index IX_Account_email
-	ON UserDB.Account(email(20));
+-- create or replace index IX_Account_username
+-- 	ON UserDB.Account(username(20));
+-- create or replace index IX_Account_email
+-- 	ON UserDB.Account(email(20));
 
 
 CREATE TABLE IF NOT EXISTS UserDB.Claim (
@@ -70,11 +72,12 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountClaim (
 		INT UNSIGNED NOT NULL
 		REFERENCES UserDB.Claim(id),
 
-	UNIQUE KEY(account_id, claim_id)
+	UNIQUE KEY(account_id, claim_id),
+	INDEX(account_id)
 );
 
-CREATE OR REPLACE INDEX IX_AccountClaim
-	ON UserDB.AccountClaim(account_id);
+-- CREATE OR REPLACE INDEX IX_AccountClaim
+-- 	ON UserDB.AccountClaim(account_id);
 
 
 --
