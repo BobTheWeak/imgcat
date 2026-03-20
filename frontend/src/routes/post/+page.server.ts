@@ -15,7 +15,6 @@ const ALLOWED_MIME_TYPES = [
 	// Animations
 	'image/gif', 'image/apng',
 	// Videos
-	// TODO: Not implemented in first release
 	'video/mp4','video/webm'
 ];
 /////////////////////
@@ -29,19 +28,19 @@ export const load: ServerPageLoad = async({ locals }) => {
 
 export const actions:Actions = {
 	upload: async({ locals, request, fetch, clientAddress }) => {
-		console.log("Upload Success");
+		//console.log("Upload Success");
 		let form_data = await request.formData();
 		let file = form_data.get('upload-file');
 		if(file && file.size > 0) {
-			console.log(file);
+			//console.log(file);
 
-			if(file.size > 31457280){
-				return fail(400, {err_msg:'File is too large'});
+			if(file.size > MAX_FILE_SIZE){
+				return fail(400, {err_msg:'File is too large, over '+(MAX_FILE_SIZE/1024/1024).toFixed(0)+' MB.'});
 			}
 			let verified_type = await fileTypeFromBlob(file);
 			if(!ALLOWED_MIME_TYPES.includes(verified_type.mime)) {
-				console.log('FAILED type');
-				console.log(verified_type);
+				//console.log('FAILED type');
+				//console.log(verified_type);
 				return fail(400, {err_msg:'Unsupported file type'});
 			}
 
