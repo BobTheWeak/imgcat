@@ -5,6 +5,12 @@ export async function getTemplates():any {
 		"CALL MemeMaker.GetTemplates();",
 		[],
 		(r)=>{
+			// As long as the data is ordered by id (which it is, and is a
+			// hard requirement documented in the PROC), we can treat the
+			// arrays as queues & merge them efficiently w/o dicts/lookups.
+			// TODO: Shift() is not as efficient as pop(). Either build the
+			// loop backwards, then .reverse(). Or use traditional i/j loops.
+
 			const result = [];
 
 			let cur_template = r[0].shift();
@@ -14,9 +20,10 @@ export async function getTemplates():any {
 				if(!cur_template.thumb){ delete cur_template.thumb }
 				cur_template.text = [];
 
+				// This shouldn't ever happen... but would really mess things up
+				// TODO: Refactor the PROC to guarantee both halves use the same
+				// IDs within a temp table, etc. Then we can remove this check.
 				while(cur_template.id>cur_text?.id){
-					// This shouldn't happen, but theoretically, we can send ids
-					// that aren't used
 					cur_text = r[1].shift();
 				}
 
@@ -28,6 +35,8 @@ export async function getTemplates():any {
 						// If there's left/right, convert to x & width
 						cur_text.width = cur_text.right - cur_text.left;
 						cur_text.x = cur_text.width / 2.0 + cur_text.left;
+						// TODO: We should handle a {left:50} and treate right as
+						// (width-left), etc. And also {right:50}, etc.
 					}
 					if(cur_text.left){ delete cur_text.left }
 					if(cur_text.right){ delete cur_text.right }
