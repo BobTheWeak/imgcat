@@ -5,7 +5,6 @@ NOT DETERMINISTIC
 READS SQL DATA
 SQL SECURITY DEFINER
 BEGIN
-
 	-- First dataset:
 	-- The list of tags/names
 	SELECT
@@ -19,8 +18,7 @@ BEGIN
 	SELECT
 		tag_id AS id,
 		template_id AS template
-	FROM TemplateTag
-	ORDER BY tag_id;
+	FROM TemplateTag;
 END
 $$
 DELIMITER ;

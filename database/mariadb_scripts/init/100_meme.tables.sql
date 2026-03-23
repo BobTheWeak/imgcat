@@ -27,13 +27,7 @@ CREATE TABLE IF NOT EXISTS MemeMaker.TemplateTextArea (
 	area_num
 		TINYINT UNSIGNED NOT NULL,
 
-	-- Normally, all we need is a height & if it's top_text.
-	-- If top_text, then new lines will just overflow down.
-	-- If bottom_text, then the app needs to do fancy math, to
-	-- calculate a starting y so our height remains the anchor
-	-- point for the last line in a multi-line text block.
-	height
-		SMALLINT UNSIGNED NOT NULL,
+	-- If it's top/bottom text, all we need is this, and we can calculate the rest
 	is_top_text
 		BOOL NOT NULL
 		DEFAULT TRUE,
@@ -41,12 +35,16 @@ CREATE TABLE IF NOT EXISTS MemeMaker.TemplateTextArea (
 	-- If the textbox needs to be constrained, because the meme
 	-- is a sign (aka: prove me wrong) or can't be top/bottom and
 	-- automatically center-aligned, then we have display options
-	max_height
+	x -- as pixels to the center (NULL: 50%)
 		SMALLINT UNSIGNED NULL,
-	pos_left
+	y -- as pixels to the top of the first line (NULL: 0px from top)
 		SMALLINT UNSIGNED NULL,
-	pos_right
+	height -- as max-allowed height (NULL: no-limit)
 		SMALLINT UNSIGNED NULL,
+	width -- as max-allowed width (NULL: img-width)
+		SMALLINT UNSIGNED NULL,
+	angle -- in degrees, clockwise (NULL: 0deg)
+		SMALLINT NULL,
 
 	-- If there's some default text we should pre-populate
 	default_text
