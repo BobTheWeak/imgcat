@@ -28,6 +28,8 @@ export const load: ServerPageLoad = async({ locals }) => {
 
 export const actions:Actions = {
 	upload: async({ locals, request, fetch, clientAddress }) => {
+		if(!locals.logged_in){redirect(307, '/login')}
+		
 		//console.log("Upload Success");
 		let form_data = await request.formData();
 		let file = form_data.get('upload-file');
