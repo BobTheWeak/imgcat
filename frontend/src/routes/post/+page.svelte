@@ -11,6 +11,10 @@
 	<input type='file' name="upload-file"/>
 	<button type='submit' formaction="?/upload">Next</button>
 </div>
+<div class="box">
+	<h2>Meme Builder</h2>
+	<a href='/meme'>From template</a>
+</div>
 <!--<div class="box">
 	<h2>Repost from ImgCat</h2>
 	<input type='url' name="repost-url" placeholder="ImgCat URL"/>
