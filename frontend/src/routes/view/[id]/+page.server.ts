@@ -28,7 +28,7 @@ export const load:PageServerLoad = async({ params, locals }) => {
 
 		post.img[i].link = BASE_URL + '/api/img/' + post.img[i].link
 		//HARDCODED: 0:Unknown, 1:raster image, 2:vector image, 3:animation, 4:video
-		post.img[i].type = ['unknown', 'image', 'image', 'image', 'video'][post.img[i].type]
+		post.img[i].type = ['unknown', 'image', 'svg', 'image', 'video'][post.img[i].type]
 	}
 
 	if(post) {

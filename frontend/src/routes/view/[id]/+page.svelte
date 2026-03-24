@@ -17,9 +17,11 @@
 		<p>{post.username} - {post.time}</p>
 	</div>
 	<div id="content">
-		{#each post.img as item}
+		{#each post.img as item, i}
 		<div class="imgbox">
 			{#if item.type == 'image'}
+				<img src="{item.link}" />
+			{:else if item.type == 'svg'}
 				<img src="{item.link}" />
 			{:else if item.type == 'video'}
 				<video controls>
