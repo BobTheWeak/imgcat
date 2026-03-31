@@ -13,7 +13,10 @@
 </div>
 <div class="box">
 	<h2>Meme Builder</h2>
-	<a href='/meme'>From template</a>
+	<ul>
+		<li><a href='/meme'>From template</a></li>
+		<li><a href='/meme'>From favorites</a></li>
+	</ul>
 </div>
 <!--<div class="box">
 	<h2>Repost from ImgCat</h2>
@@ -23,13 +26,18 @@
 </form>
 
 <style>
-	.box {
+	div.box {
 		display: inline-block;
 		margin: 10px;
 		padding: 10px;
-		background-color: var(--cbk1);
+		border: 1px solid var(--cb1);
+		border-radius: 10px;
+		background-color: var(--cb3);
 	}
 	p.error {
 		color: red;
+	}
+	ul {
+		color: var(--cahot);
 	}
 </style>

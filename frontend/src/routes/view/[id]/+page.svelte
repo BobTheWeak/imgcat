@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { pretty_print_relative } from '$lib/time_fmt.ts';
 	import Comment from '$lib/Comment.svelte';
 	import VoteBox from '$lib/VoteBox.svelte';
 	import ActionBox from '$lib/ActionBox.svelte';
@@ -6,7 +7,6 @@
 	const { data } = $props();
 
 	let post = data?.post;
-	console.log(post);
 </script>
 
 {#if post}
@@ -14,7 +14,7 @@
 		{#if post.title}
 		<h1>{post.title}</h1>
 		{/if}
-		<p>{post.username} - {post.time}</p>
+		<p>{post.username} - {pretty_print_relative(post.time, navigator.language)}</p>
 	</div>
 	<div id="content">
 		{#each post.img as item, i}
@@ -44,6 +44,9 @@
 {/if}
 
 <style>
+	div#header {
+		p {color: var(--cticy)}
+	}
 	div#content {
 		display: inline-block;
 		max-width: 800px;

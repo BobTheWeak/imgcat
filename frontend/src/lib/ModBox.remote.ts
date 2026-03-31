@@ -23,6 +23,8 @@ export const voteMature = form(v.object({
 	}), async({post_id, mature, is_sexual, is_gore, is_trauma}) => {
 
 	const { locals, getClientAddress, fetch, url:base_url } = getRequestEvent();
+	console.log(base_url);
+	return;
 	const api_host = getApiBase(base_url);
 
 	if(locals?.user_id) {
@@ -59,6 +61,8 @@ export const voteCategory = form(v.object({
 	}), async({post_id, is_politics, is_thirst_trap, is_creator}) => {
 
 	const { locals, getClientAddress, fetch, url:base_url } = getRequestEvent();
+	console.log(base_url);
+	return;
 	const api_host = getApiBase(base_url);
 
 	if(locals?.user_id) {
@@ -106,6 +110,8 @@ export const voteTag = form(v.objectWithRest({
 	}, v.pipe(v.string(), v.maxLength(40))), async({post_id, is_politics, is_ttrap, is_creator, ...tags}) => {
 
 	const { locals, getClientAddress, fetch, url:base_url } = getRequestEvent();
+	console.log(base_url);
+	return;
 	const api_host = getApiBase(base_url);
 
 	if(locals?.user_id) {

@@ -3,7 +3,7 @@
 </script>
 
 <nav><div id="l">
-	<img src="/cat.svg" alt="Welcome to ImgCat" fetchpriority="high"/>	
+	<img src="/logo.png" alt="Welcome to ImgCat" fetchpriority="high"/>	
 </div><div id="m">
 	<a href="/home"><img src="/home.svg" alt="Home"/></a>
 	<a href="/viral"><img src="/viral.svg" alt="Viral posts"/></a>
@@ -31,13 +31,23 @@
 	nav {
 		position: sticky;
 		top: 0px;
-		background-color: var(--cbk1)/*#EEE*/;
+		background-color: var(--cb4);
 
 		display: grid;
 		grid-template-columns: repeat(5, 1fr);
 
+		a:hover {
+			/* #B8D2E3 or --cacold */
+			filter: brightness(0) saturate(100%) invert(68%) sepia(7%) saturate(7494%) hue-rotate(175deg) brightness(86%) contrast(91%);
+		}
+
 		div#m img,div#r img {
-			filter: brightness(0) saturate(100%) invert(12%) sepia(18%) saturate(5938%) hue-rotate(224deg) brightness(92%) contrast(95%);
+			/* #F5F5F5 or --cttxt */
+			/*filter: brightness(0) saturate(100%) invert(98%) sepia(3%) saturate(85%) hue-rotate(114deg) brightness(117%) contrast(92%);*/
+			/* #B8D2E3 or --cticy */
+			/*filter: brightness(0) saturate(100%) invert(89%) sepia(9%) saturate(751%) hue-rotate(171deg) brightness(93%) contrast(90%);*/
+			/* #87B3CF or --ctlnk */
+			filter: brightness(0) saturate(100%) invert(69%) sepia(63%) saturate(183%) hue-rotate(160deg) brightness(88%) contrast(91%);
 		}
 
 		div#l, div#m, div#r {

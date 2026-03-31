@@ -37,17 +37,21 @@
 		<span>{viewvote?.vote_total || 0}</span> votes
 		{#if user_id}
 			<div class='up'>
-				<Button img='/vote_up.svg' title='Normal upvote' class={myvote==1?"sel":""} value='1' onclick={clkVote} --bkg='#EFE' --bdr='#8F8' --bkg-sel='#8F8' --bdr-sel='#888' />
+				<Button img='/vote_up.svg' title='Normal upvote' class={myvote==1?"sel":""} value='1' onclick={clkVote} />
+				<!--
 				<Button img='/vote_happy.svg' title='Upvote & happy/excited' class={myvote==2?"sel":""} value='2' onclick={clkVote} --bkg='#EFE' --bdr='#8F8' --bkg-sel='#8F8' --bdr-sel='#888' />
 				<Button img='/vote_heart.svg' title='Upvote & love/sympathy' class={myvote==3?"sel":""} value='3' onclick={clkVote} --bkg='#EFE' --bdr='#8F8' --bkg-sel='#8F8' --bdr-sel='#888' />
 				<Button img='/vote_quality.svg' title='Upvote & top quality' class={myvote==4?"sel":""} value='4' onclick={clkVote} --bkg='#EFE' --bdr='#8F8' --bkg-sel='#8F8' --bdr-sel='#888' />
+				-->
 			</div>
 
 			<div class='dn'>
-				<Button img='/vote_dn.svg' title='Normal downvote' class={myvote==5?"sel":""} value='5' onclick={clkVote} --bkg='#FEE' --bdr='#F88' --bkg-sel='#F88' --bdr-sel='#888' />
+				<Button img='/vote_dn.svg' title='Normal downvote' class={myvote==5?"sel":""} value='5' onclick={clkVote} />
+				<!--
 				<Button img='/vote_what.svg' title='What is this?' class={myvote==6?"sel":""} value='6' onclick={clkVote} --bkg='#FEE' --bdr='#F88' --bkg-sel='#F88' --bdr-sel='#888' />
 				<Button img='/vote_spam.svg' title='This is spam' class={myvote==7?"sel":""} value='7' onclick={clkVote} --bkg='#FEE' --bdr='#F88' --bkg-sel='#F88' --bdr-sel='#888' />
 				<Button img='/vote_troll.svg' title='Troll food' class={myvote==8?"sel":""} value='8' onclick={clkVote} --bkg='#FEE' --bdr='#F88' --bkg-sel='#F88' --bdr-sel='#888' />
+				-->
 			</div>
 		{/if}
 	{/if}

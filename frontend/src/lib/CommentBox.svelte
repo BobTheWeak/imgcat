@@ -27,7 +27,6 @@
 			// TODO:
 		});
 	}
-	
 </script>
 
 <!-- TODO: Strip this out into its own control, so Comment can reuse it -->
@@ -45,9 +44,9 @@
 		<!-- TODO: This only handles a single layer, not a nested chain -->
 		<!-- NOTE: Be careful about performance. Copy-by-ref, not value. -->
 		{#if c.id in nested}
-			<Comment post_id={post.id} {user_id} comment={c} nested={nested[c.id]} />
+			<Comment post_link={post.link} {user_id} comment={c} nested={nested[c.id]} />
 		{:else}
-			<Comment post_id={post.id} {user_id} comment={c} />
+			<Comment post_link={post.link} {user_id} comment={c} />
 		{/if}
 	{/each}
 {:catch}

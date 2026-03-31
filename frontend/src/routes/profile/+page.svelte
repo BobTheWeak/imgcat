@@ -56,7 +56,7 @@
 		</select>
 	</div>
 
-	<p>On my viral page, I want to see more or less of the following:</p>
+	<h4>On my viral page, I want to see more or less of the following:</h4>
 	<div>
 		<label for='content-politics'>Politics</label>
 		<select name='content-politics'>
@@ -134,27 +134,23 @@
 <style>
 	div.section {
 		margin-top: 10px;
-		background-color: var(--cbk1);
+		border: 1px solid var(--cb1);
 		padding: 10px;
-
-		h2 {
-			margin: 0px 0px 5px 0px;
-		}
 
 		label {
 			display: inline-block;
-			width: 200px;
+			width: 250px;
 		}
 		select {
-			width: 150px;
+			width: 200px;
 		}
 	}
 
 	div#blocked span.tag {
-		background-color: var(--cbk2);
+		background-color: var(--cb2);
 		padding: 5px 10px;
 		margin: 5px 5px 5px 0px;
-		border: 1px solid var(--cbk4);
+		border: 1px solid var(--cb1);
 		border-radius: 20px;
 
 		button {

@@ -5,14 +5,76 @@
 <meta charset="utf-8" />
 <style>
 	:root {
-		--cbk1:#EEF;
-		--cbk2:#CCC;
-		--cbk3:#899;
-		--cbk4:#456;
-		--cbk5:#225;
+		/* color-background-[4 to 1: darkest to grey] */
+		--cb4: #141414;
+		--cb3: #1e1e1e;
+		--cb2: #252525;
+		--cb1: #595959;
+		
+		/* color-text-[main text, links, secondary text] */
+		--cttxt: #f5f5f5;
+		--ctlnk: #87b3cf;
+		--cticy: #b8d2e3;
+
+		/* color-accent-[cold to hot] */
+		--cacold: #469cd2;
+		--cacool: #87b3cf;
+		--cawarm: #cfa184;
+		--cahot:  #d27c46;
+	}
+	html {
+		background: radial-gradient(circle at top right, var(--cb3), var(--cb4) 40%) no-repeat;
+		background-color: var(--cb4);
+		overflow-y: scroll;
+		scrollbar-color: var(--cacool) var(--cb4);
+
+		font-family: Inter, sans-serif;
+		/* See https://rsms.me/inter/#features for more info */
+		font-feature-settings: 'calt' 1, 'cv06' 1, 'cv08' 1;
+		
+		/* NOTE: Any overrides to font-sizes must use 'em' to scale OK */
+		font-size: 18px;
+		line-height: 1.4;
+
+		color: var(--cttxt);
+		
+		a {text-decoration:none}
+		a:link {color: var(--ctlnk) !important; }
+		a:visited {color: var(--ctlnk) !important;}
+		a:hover {color: var(--cacold) !important;}
+		a:active {color: var(--cacold) !important;}
+
+		h1,h2,h3,h4 {
+			color: var(--cacold);
+			margin-bottom: 0.2em;
+		}
+		h1 {font-size:1.6em; margin-top:0.8em;}
+		h2 {font-size:1.4em; margin-top:0.6em;}
+		h3 {font-size:1.2em; margin-top:0.4em;}
+		h4 {font-size:1.0em; margin-top:0.2em; font-weight:normal}
+
+		p {margin:0.2em 0em};
+
+		textarea, input, select, button {
+			font-size: 0.9em;
+			color: var(--cttxt);
+			background-color: var(--cb2);
+			border: 1px solid var(--cawarm);
+			border-radius: 10px;
+			padding: 0px 10px;
+		};
+	}
+	@supports (font-variation-settings: normal) {
+		body {
+			font-family: 'InterVariable', sans-serif;
+		}
 	}
 </style>
-<link rel="icon" href="%sveltekit.assets%/favicon.ico" />
+<link rel='icon' type='image/png' sizes='16x16' href='/favicon_16.png' />
+<link rel='icon' type='image/png' sizes='32x32' href='/favicon_32.png' />
+<link rel='icon' type='image/png' sizes='128x128' href='/favicon_128.png' />
+<link rel='apple-touch-icon' type='image/png' sizes='128x128' href='/favicon_128.png' />
+<link rel="stylesheet" href="/fonts/inter.css">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 %sveltekit.head%
 </head>

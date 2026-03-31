@@ -8,7 +8,7 @@
 	<!-- svelte-ignore a11y_missing_attribute (b/c it's a user-generated img) -->
 	<div><img src='/api/img/{post["first_img"]}' /></div>
 	{#if post["title"]}
-	<p>{post["title"]}</p>
+	<h4>{post["title"]}</h4>
 	{/if}
 	{#if post.is_public}
 		<p>{post["views"]} views, {post["votes"]} points</p>
@@ -24,10 +24,12 @@
 <style>
 	div.post_thumb {
 		display: inline-block;
-		border: 1px solid black;
+		background-color: var(--cb3);
+		border: 1px solid var(--cb2);
+		border-radius: 0px 0px 10px 10px;
 		width: 300px;
 		vertical-align: top;
-		margin: 3px;
+		margin: 5px;
 		
 		a {
 			text-decoration:none;
@@ -43,8 +45,8 @@
 			}
 		}
 
-		p {
-			padding: 0px 5px;
+		h4, p {
+			padding: 0px 6px;
 			margin: 0px;
 		}
 	}
