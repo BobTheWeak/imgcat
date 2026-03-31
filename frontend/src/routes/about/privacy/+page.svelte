@@ -1,94 +1,104 @@
-<h1>Privacy Policy for ImgCat</h1>
-<b>Last updated: 2025-08-24</b>
+<script lang='ts'>
+	import LegalContactBlock from '../LegalContact.svelte';
+</script>
 
-<h2 id='intro'>Introduction</h2>
+<div id='intro'>
+	<h1>ImgCat Privacy Policy</h1>
+	<i>Updated: March 30th, 2026</i>
+	<br/>
 
-<p>The ImgCat Service (referred to as "the service", owned by "NC Blue Tool Analysis, LLC.") operates this website: https://www.imgcat.io. This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use the service, and your rights associated with that data.</p>
+	<p>This privacy policy describes how the ImgCat Foundation ("we" or "the ICF") collects, stores, uses, and discloses your personal information, while using imgcat.io (the "website").</p>
+</div>
 
-<p>As a short summary, we take your privacy seriously. Our aim is to apply EU-level privacy to all users. We collect as little information as possible, while remaining legally compliant and providing a useful service. We sell ads, but not your personal data.</p>
+<div id='collection'>
+	<h2>Data Collection</h2>
 
+	<p>You may be prompted to enter some or all of the following data types to use various services on our website:</p>
+	<ul>
+		<li>Contact information (ie. name, email address, phone number)</li>
+		<li>Login information (ie. username, password)</li>
+		<li>Physical location (ie. country, state)</li>
+		<li>Payment information (ie. credit card)</li>
+		<li>Preferences (ie. mailing lists)</li>
+	</ul>
 
-<h2 id='collection'>Information We Collect</h2>
+	<p>We may collect some or all of the following data types automatically:</p>
+	<ul>
+		<li>Browser type and operating system</li>
+		<li>Network location (ie. IP address, geolocation)</li>
+		<li>Times and durations of your visit to the website and activities therein</li>
+		<li>Local links clicked on during your visit</li>
+		<li>Referral links from websites that you came from</li>
+	</ul>
+</div>
 
-<h3 id='pii'>Personal Information</h3>
-<p>We may collect personally identifiable information that you provide to us, such as:</p>
-<ul>
-	<li>Email addres</li>
-	<li>Username</li>
-	<li>Age</li>
-	<li>Geographic location</li>
-	<li>IP address and similar technologies</li>
-</ul>
+<div id='storage'>
+	<h2>Data Storage</h2>
 
-<h3 id='cookies'>Cookies and Tracking Data</h3>
-<p>We use cookies and similar tracking technologies to provide account authentication and other required site features.</p>
+	<p>We have implemented reasonable technical, administrative, and physical procedures to protect your information from loss, misuse, and alteration. Please note that no data transmission or storage can be guaranteed to be 100% secure. We want you to feel confident using the Services but we cannot ensure or warrant the security of any information you transmit to us. Despite our efforts, if we learn of a security breach, we'll notify you so that you can take appropriate protective steps.</p>
 
-<p>We use Google advertising services and technologies. Users may opt-in to their cookies and similar tracking technologies, to receive more relevant ads. Consent is not required to use the service.</p>
+	<p>Donations are processed by DonorBox via Stripe, and we do not store payment information. Contact information may be retained for transaction processing, accounting, and compliance purposes.</p>
 
-<h2 id='usage'>How We Use Your Information</h2>
+	<p>We will keep your personal information for no longer than is necessary for the purposes in this policy.</p>
 
-<p>We use the collected data for various purposes:</p>
-<ul>
-	<li>To provide and maintain the Service</li>
-	<li>To notify you about changes to the Service</li>
-	<li>To provide customer support</li>
-	<li>To monitor the usage of the Service</li>
-	<li>To detect, prevent, and address technical issues</li>
-</ul>
+	<p>You may request deletion of your personal information by contacting the ICF at the addresses below.</p>
+</div>
 
-<h2 id='sharing'>Data Sharing and Disclosure</h2>
+<div id='usage'>
+	<h2>Data Usage</h2>
 
-<p>We do not share your personal data with third parties except as described in this policy.</p>
+	<p>We use the information provided to:</p>
+	<ul>
+		<li>Fulfill your requests and provide website functionality</li>
+		<li>Contact you for website functionality purposes, using your communication preferences</li>
+		<li>Contact you for legal purposes, when required by law or similar reasons</li>
+		<li>Process your donation and payment information</li>
+		<li>Protect the website, the ICF, or the public, from fraud, abuse, or illegal activities</li>
+		<li>Protect and enforce the ICF's legal rights</li>
+	</ul>
+</div>
 
-<h2 id='retention'>Data Retention</h2>
+<div id='disclosure'>
+	<h2>Data Disclosure</h2>
 
-<p>We retain your personal information only for as long as necessary for the purposes set out in this Privacy Policy. We will retain and use your information to comply with our legal obligations, resolve disputes, and enforce our policies.</p>
+	<p>We may disclose information to: respond to verifiable and legitimate subpoenas, court orders, legal process, law enforcement requests, legal claims, government inquiries, and related processes; and to protect and defend the rights, interests, property, safety, and security of the ImgCat Foundation, users, or the public.</p>
+</div>
 
-<h2 id='rights'>Your Data Rights</h2>
+<div id='children'>
+	<h2>Children</h2>
 
-<p>You have certain rights regarding your personal data:</p>
-<ul>
-	<li>Right to Delete: You can request deletion of your personal data</li>
-	<li>Right to Access: You can request copies of your personal data</li>
-	<li>Right to Rectification: You can request correction of inaccurate data</li>
-	<li>Right to Data Portability: You can request transfer of your data</li>
-	<li>Right to Object: You can object to our processing of your data</li>
-</ul>
+	<p>Our services are not designed for anyone under 18. If we discover a child is using our site, we will delete all such information.</p>
+</div>
 
-<p>To exercise these rights, please use the tools available within the account settings, or contact us at <a href='PrivacyPolicy@NCBlueTools.org'>PrivacyPolicy@NCBlueTools.org</a>.</p>
+<div id='rights'>
+	<h2>Your Rights</h2>
 
-<h2 id='compliance'>Compliance</h2>
+	<p>You may have additional rights granted by certain laws (ie. "General Data Protection Regulation" within the EU, "California Consumer Privacy Act" within California). The ICF applies the following rights to all users, regardless of location:</p>
 
-<h3>General Compliance</h3>
-<p>The service operates around the globe and impacts users from every country. We believe in the principle of privacy. Where reasonable and legally permissible, we apply the highest standard of privacy to all users, regardless of geographic location.</p>
+	<ul>
+		<li>The right to be informed</li>
+		<li>The right of access, portability, rectification, and erasure</li>
+		<li>The right to restrict, object, or opt-out</li>
+		<li>Rights regarding automated profiling and decision making</li>
+		<li>The right to non-discrimination for exercising these rights</li>
+	</ul>
+</div>
 
-<h3 id='GDPR'>GDPR Compliance</h3>
-<p>If you are a resident of the European Economic Area (EEA), you have certain data protection rights. We aim to take reasonable steps to allow you to correct, amend, delete, or limit the use of your personal data.</p>
+<div id='changes'>
+	<h2>Changes to this Policy</h2>
 
-<h3 id='CCPA'>CCPA Compliance</h3>
-<p>If you are a California resident, you have certain rights under the California Consumer Privacy Act (CCPA), including the right to know what personal information we collect, the right to delete personal information, and the right to opt-out of the sale of personal information.</p>
+	<p>We may need to change this policy and our notices. The updates will be posted online. If the changes are substantive, we will announce the update through usual channels, or in accordance to your communication preferences. Continuing to use the website after the effective date of such changes to the policy constitutes your acceptance of such changes.</p>
+</div>
 
-<h2 id='security'>Security</h2>
-<p>The security of your data is important to us. We implement above-standard technical and organizational security measures. We use modern encryption algorithms, large key lengths, hash & salt passwords, mask sensitive data in logs, and use technical systems to limit unauthorized activity.</p>
-
-<h2 id='age_limit'>Children's Privacy</h2>
-<p>The service is not intended for use by children under the age of 18. We do not knowingly collect personally identifiable information from children. If you are a parent or guardian and you are aware that your child has created an account, please contact us at <a href='PrivacyPolicy@NCBlueTools.org'>PrivacyPolicy@NCBlueTools.org</a>.</p>
-
-<h2 id='CSAM'>Illegal Content</h2>
-<p>We scan all user-generated content for Child Sexual Abuse Material (CSAM), using PhotoDNA and other technologies. If a violation is detected, your data may be shared with relevant third parties and law enforcement agencies.</p>
-
-<h2 id='changes'>Changes to This Privacy Policy</h2>
-<p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.</p>
-
-<h2 id='contact'>Contact Information</h2>
-<p>If you have any questions about this Privacy Policy, please contact us at <a href='PrivacyPolicy@NCBlueTools.org'>PrivacyPolicy@NCBlueTools.org</a>.</p>
-
+<LegalContactBlock id='contact'/>
 
 <style>
-	h2,h3 {
-		padding-top:1em;
-	}
-	hr {
-		margin: 3em 0em;
+	div {
+		margin: 1em;
+		margin-bottom: 2em;
+		p {
+			margin: 1em 0em;
+			text-align: justify;
+		}
 	}
 </style>

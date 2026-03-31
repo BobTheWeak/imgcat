@@ -1,24 +1,38 @@
-<h1>Core Principles</h1>
-<p>ImgCat.io (officially: NC Blue Tool Analysis, LLC) was established in 2025, following the enshittification of the owner's favorite social media site. He searched for another community that was as friendly, welcoming, and as comminity-focused as he remembered, but couldn't find one. So he built it.</p>
-<ul>
-	<li>We do not sell your information, and protect it with modern tech</li>
-	<li>We do sell ads, but try to be as privacy-focused as possible</li>
-	<li>We collect as little data as we're allowed to, by law</li>
-</ul>
-<p>We built this site for the community, and their interests must come first.</p>
+<script lang='ts'>
+	import LegalContactBlock from '../LegalContact.svelte';
+</script>
 
-<hr/>
+<div id='intro'>
+	<h1>ImgCat Cookie Policy</h1>
+	<i>Updated: March 30th, 2026</i>
+	<br/>
 
-<h1>Cookie Policy</h1>
+	<p>The ImgCat website uses cookies.</p>
+</div>
 
+<div id='cookies'>
+	<h2>Cookies</h2>
+	<p>We try our best to comply with the General Data Protection Regulation (GDPR) and the ePrivacy Directive, in all jurisdictions, which defines four categories of cookies: strictly necessary, preferences (or functionality), statistics (or performance), and marketing.</p>
 
+	<p>We use "strictly necessary" cookies, for logging into the site and responding to direct requests by the user.</p>
 
+	<p>We do not use preference, statistics, or marketing cookies.</p>
+</div>
+
+<div id='principles'>
+	<h2>Principles</h2>
+	<p>Furthermore, we believe marketing cookies, trackers, pixels, and other forms of cross-domain tracking, are incompatible with the ImgCat Foundation's <a href='https://ImgCatFoundation.org/principles'>Privacy Principles</a>, and a responsible social web.</p>
+</div>
+
+<LegalContactBlock id='contact'/>
 
 <style>
-	h2,h3 {
-		padding-top:1em;
-	}
-	hr {
-		margin: 3em 0em;
+	div {
+		margin: 1em;
+		margin-bottom: 2em;
+		p {
+			margin: 1em 0em;
+			text-align: justify;
+		}
 	}
 </style>
