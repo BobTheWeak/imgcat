@@ -1,4 +1,4 @@
-import type { Handle, redirect } from '@sveltejs/kit';
+import type { Handle, HandleFetch, redirect } from '@sveltejs/kit';
 import { GetUserData, CreateAuthJwt } from '$lib/server/jwtserver.ts';
 import { LogInFromRefreshJwt } from '$lib/server/userdb.ts';
 
@@ -71,3 +71,34 @@ export const handle: Handle = async ({ event, resolve }) => {
 	
 	return response;
 };
+
+
+// Svelte rewrites fetch() to do fancy, in-app things. However, it intercepts all
+// HTTP fetch() calls and reroutes them to Svelte pages w/o the HTTP overhead.
+// But we can't do this... anything /api MUST be routed through the proxy
+export const handleFetch:HandleFetch = async({ event, request, fetch }) => {
+	const url = new URL(request.url);
+	if (url.pathname.startsWith('/api')) {
+		
+		console.log("Fetch hook rewrite");
+		console.log(request.url);
+		console.log(request.url.replace(url.host, 'localhost:8080'));
+
+		// TODO: Does this need to be configurable?
+		url.host = 'localhost:8080';
+
+
+		// clone the original request, but change the URL
+		request = new Request(url.href, request);
+
+		// Add our internal headers
+		if(event.locals.user_id){
+			request.headers.set('x-ic-user-id', event.locals.user_id);
+		}
+		request.headers.set('x-ic-user-ip', event.getClientAddress());
+
+		console.log(request);
+	}
+
+	return fetch(request);
+}
