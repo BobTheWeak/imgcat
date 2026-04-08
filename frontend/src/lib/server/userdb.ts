@@ -1,5 +1,4 @@
 
-import mariadb from 'mariadb';
 import 'dotenv/config';
 import { createHash, randomBytes } from 'crypto';
 import { error } from '@sveltejs/kit';

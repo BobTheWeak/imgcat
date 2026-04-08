@@ -1,5 +1,6 @@
 
-import mariadb from 'mariadb';
+import { createConnection, createPool } from 'mariadb';
+
 import 'dotenv/config';
 import { building } from '$app/environment';
 import { error } from '@sveltejs/kit';
@@ -24,7 +25,7 @@ if(!appdb && !building) {
 	if(!process.env.IC_DB_PASS) {ok=false;console.error('Missing pass for appdb pool: IC_DB_PASS');}
 	if(ok) {
 		// Test if a single, manual query works
-		mariadb.createConnection({
+		createConnection({
 			host: process.env.IC_DB_HOST,
 			port: process.env.IC_DB_PORT,
 			user: process.env.IC_DB_USER,
@@ -35,7 +36,7 @@ if(!appdb && !building) {
 				if(res) {
 					// Everything checks out!
 					// Build a pool and assign it to appdb
-					appdb = mariadb.createPool({
+					appdb = createPool({
 						idleTimeout: 60, //sec
 						connectionLimit: 10,
 						acquireTimeout: 1000,
@@ -81,7 +82,7 @@ if(!userdb && !building) {
 	if(!process.env.IC_USERDB_PASS) {ok=false;console.error('Missing pass for UserDB pool: IC_USERDB_PASS');}
 	if(ok) {
 		// Test if a single, manual query works
-		mariadb.createConnection({
+		createConnection({
 			host: process.env.IC_USERDB_HOST,
 			port: process.env.IC_USERDB_PORT,
 			user: process.env.IC_USERDB_USER,
@@ -92,7 +93,7 @@ if(!userdb && !building) {
 				if(res) {
 					// Everything checks out!
 					// Build a pool and assign it to userdb
-					userdb = mariadb.createPool({
+					userdb = createPool({
 						idleTimeout: 60, //sec
 						connectionLimit: 5,
 						acquireTimeout: 1000,
