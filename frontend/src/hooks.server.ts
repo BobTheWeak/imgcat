@@ -79,16 +79,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 export const handleFetch:HandleFetch = async({ event, request, fetch }) => {
 	const url = new URL(request.url);
 	if (url.pathname.startsWith('/api')) {
-		
-		console.log("Fetch hook rewrite");
-		console.log(request.url);
-		console.log(request.url.replace(url.host, 'localhost:8080'));
 
+		// Clone the original request, but change the URL
 		// TODO: Does this need to be configurable?
 		url.host = 'localhost:8080';
-
-
-		// clone the original request, but change the URL
 		request = new Request(url.href, request);
 
 		// Add our internal headers
@@ -96,8 +90,6 @@ export const handleFetch:HandleFetch = async({ event, request, fetch }) => {
 			request.headers.set('x-ic-user-id', event.locals.user_id);
 		}
 		request.headers.set('x-ic-user-ip', event.getClientAddress());
-
-		console.log(request);
 	}
 
 	return fetch(request);
