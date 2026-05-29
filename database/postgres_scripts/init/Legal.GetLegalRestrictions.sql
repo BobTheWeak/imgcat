@@ -6,7 +6,7 @@ CREATE TYPE Legal.GetLegalRestrictions_Result AS (
 	legal_see_gore bool,
 	legal_see_trauma bool,
 	legal_about_me_visibility UserDB.VISIBILITY_LEVEL,
-	legal_badges_visibility UserDB.VISIBILITY_LEVEL,
+	legal_activity_visibility UserDB.VISIBILITY_LEVEL,
 	legal_dm_visibility UserDB.VISIBILITY_LEVEL
 );
 
@@ -32,9 +32,7 @@ DECLARE
 
 	-- Adults (18+)
 	_DEFAULT_ADULT Legal.GetLegalRestrictions_Result := ROW(
-		-- At the moment, on app startup, we DO NOT want to host
-		-- ANY mature content AT ALL. NO NO NO NO NO. In the future,
-		-- that option exists, theoretically, but likely never ever.
+		-- At the moment, we DO NOT want to host ANY mature content.
 		'LEWD'::UserDB.CONTENT_LEVEL,
 		TRUE,
 		TRUE,
@@ -45,7 +43,10 @@ DECLARE
 	);
 
 	-- Teens (16+ only)
-	-- NOTE: We will not support any kid/teen accounts on launch
+	-- NOTE: We will not support any kid/teen accounts on launch, maybe not ever.
+	-- NOTE: Most countries consider 16+ as "old-enough" to handle (mostly)
+	--       un-restricted social media. And so this would be our cutoff.
+	--       
 	-- _DEFAULT_TEEN Legal.GetLegalRestrictions_Result := ROW(
 	-- 	-- Most regs allow normal content to be served to (older) teens.
 	-- 	-- We're being a little conservative and removing any bikini pics
@@ -58,13 +59,16 @@ DECLARE
 	-- 	FALSE,
 	-- 	-- The accounts should be visible, that's fine
 	-- 	'PUBLIC'::UserDB.VISIBILITY_LEVEL,
-	-- 	'PUBLIC'::UserDB.VISIBILITY_LEVEL,
+	--  -- The activity feed should be private to friends only
+	-- 	'FRIENDS ONLY'::UserDB.VISIBILITY_LEVEL,
 	-- 	-- Allow DMs, but only to certified friends, not random strangers
 	-- 	'FRIENDS ONLY'::UserDB.VISIBILITY_LEVEL
 	-- );
 
 	-- Kids (<16)
-	-- NOTE: We DO NOT plan on supporting kid accounts, ever.
+	-- NOTE: We DO NOT plan on supporting kid accounts, ever. Legally, its not
+	--       worth it. Morally, we mostly agree with bans. The social media
+	--       today is so much more toxic than we had growing up. 
 	-- _DEFAULT_KID Legal.GetLegalRestrictions_Result := ROW(
 	-- 	-- Only show things that have been certified kid-friendly
 	-- 	'PRUDE'::UserDB.CONTENT_LEVEL,

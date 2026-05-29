@@ -27,7 +27,7 @@ DECLARE
 	_default_see_trauma BOOL := TRUE;
 	-- By default, make profiles public
 	_default_about_me_visibility UserDB.VISIBILITY_LEVEL := 'PUBLIC';
-	_default_badges_visibility UserDB.VISIBILITY_LEVEL := 'PUBLIC';
+	_default_activity_visibility UserDB.VISIBILITY_LEVEL := 'PUBLIC';
 	_default_dm_visibility UserDB.VISIBILITY_LEVEL := 'PUBLIC';
 	-- By default, leave your profile blank
 	_default_about_me_content TEXT := NULL;
@@ -113,19 +113,19 @@ BEGIN
 	INSERT INTO UserDB.AccountVisibilityPreferences (
 		account_id,
 		legal_about_me_visibility,
-		legal_badges_visibility,
+		legal_activity_visibility,
 		legal_dm_visibility,
 		about_me_visibility,
-		badges_visibility,
+		activity_visibility,
 		dm_visibility,
 		about_me_content
 	) VALUES (
 		_account_id,
 		_legal.legal_about_me_visibility,
-		_legal.legal_badges_visibility,
+		_legal.legal_activity_visibility,
 		_legal.legal_dm_visibility,
 		LEAST(_default_about_me_visibility, _legal.legal_about_me_visibility),
-		LEAST(_default_badges_visibility, _legal.legal_badges_visibility),
+		LEAST(_default_activity_visibility, _legal.legal_activity_visibility),
 		LEAST(_default_dm_visibility, _legal.legal_dm_visibility),
 		_default_about_me_content
 	);

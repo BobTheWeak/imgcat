@@ -28,8 +28,8 @@ RETURNS TABLE (
 	-- Visibility Flags
 	about_me_visibility UserDB.VISIBILITY_LEVEL,
 	legal_about_me_visibility UserDB.VISIBILITY_LEVEL,
-	badges_visibility UserDB.VISIBILITY_LEVEL,
-	legal_badges_visibility UserDB.VISIBILITY_LEVEL,
+	activity_visibility UserDB.VISIBILITY_LEVEL,
+	legal_activity_visibility UserDB.VISIBILITY_LEVEL,
 	dm_visibility UserDB.VISIBILITY_LEVEL,
 	legal_dm_visibility UserDB.VISIBILITY_LEVEL
 )
@@ -63,8 +63,8 @@ AS $$
 
 		,c.about_me_visibility
 		,c.legal_about_me_visibility
-		,c.badges_visibility
-		,c.legal_badges_visibility
+		,c.activity_visibility
+		,c.legal_activity_visibility
 		,c.dm_visibility
 		,c.legal_dm_visibility
 	FROM UserDB.Account a
