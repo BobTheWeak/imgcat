@@ -1,95 +1,118 @@
-import type { Handle, HandleFetch, redirect } from '@sveltejs/kit';
-import { GetUserData, CreateAuthJwt } from '$lib/server/jwtserver.ts';
-import { LogInFromRefreshJwt } from '$lib/server/userdb.ts';
+import type { Handle, HandleFetch } from '@sveltejs/kit';
+import { jwtDecode, jwtValidate } from '$lib/server/jwt2.ts';
+import { parseCookie } from 'cookie';
 
-export const handle: Handle = async ({ event, resolve }) => {
-	let success:bool = false;
+import { building } from '$app/environment'
 
-	// If we have a valid auth JWT, just copy the data into locals
-	const auth = event.cookies.get('imgcat_auth');
-	if(auth) {
-		const user_data = GetUserData(auth);
-		if(user_data) {
-			// Happy-path: We have a valid AuthJwt and just need to decode it
-			event.locals.logged_in = true;
-			event.locals.content_level = 2;
-			event.locals.user_id = user_data.user_id;
-			event.locals.username = user_data.username;
-			event.locals.claims = user_data.claims;
-			success = true;
-		} else {
-			// We have the cookie, but it probably expired
-			event.cookies.delete('imgcat_auth', {path:'/'});
+// The cookie library decodes a cookie into different field names than
+// Svelte's cookie.set(name, val, opts) accepts, so we have to translate
+function cookie_to_svelte_opts(cookie_obj) {
+	const translations = {
+		'Path': 'path',
+		'Max-Age': 'maxAge',
+		'SameSite': 'sameSite'
+		// TODO: These are unverified, but theoretically accurate
+		// 'Domain': 'domain',
+		// 'Expires': 'expires',
+		// 'Secure': 'secure',
+		// 'HttpOnly': 'httpOnly',
+		// 'Partitioned': 'partitioned'
+	}
+	const result = {};
+	for(const k in cookie_obj) {
+		if(translations[k]) {
+			result[translations[k]] = cookie_obj[k];
 		}
 	}
+	return result;
+}
 
-	// If that didn't work, try the refresh token
-	if(!success) {
-		const refresh_jwt = event.cookies.get('imgcat_refresh');
-		if(refresh_jwt) {
-			const user_id = GetUserData(refresh_jwt)['user_id'];
-			if(user_id) {
-				const user_data = await LogInFromRefreshJwt(user_id);
-				if(user_data) {
-					event.locals.logged_in = true;
-					event.locals.content_level = 2;
-					event.locals.user_id = user_data.user_id;
-					event.locals.username = user_data.username;
-					event.locals.claims = user_data.claims;
-					success = true;
 
-					// Besides setting page access, we also need to save the AuthJwt
-					// to avoid a DB hit every pageload.
-					// NOTE: Keep this in sync with /src/routes/login/+server.ts
-					let auth = CreateAuthJwt(user_data);
-					event.cookies.set('imgcat_auth', auth, {
-						//domain: process.env.JWT_DOMAIN,
-						path: '/',
-						httpOnly: true,
-						secure: true,
-						sameSite: 'strict',
-						//maxAge: null - Session cookie
-					});
-				} else {
-					// Probably a server/login error
-					event.cookies.delete('imgcat_refresh', {path:'/'});
+export const handle: Handle = async ({ event, resolve }) => {
+
+	// Assume stranger-danger until proven otherwise
+	event.locals.logged_in = false;
+	// TODO: We want to move away from this being browser-side,
+	// but for now, web stuff depends on it...
+	event.locals.content_level = 2;
+
+	// Grab the auth JWT
+	// This is the main, short-lived (~5 min) JWT with data storage
+	const auth_s = event.cookies.get('ic_auth');
+	const auth_j = jwtDecode(auth_s);
+	if(auth_s && !auth_j) {
+		event.cookies.delete('ic_auth', {path:'/'});
+	}
+
+	if(auth_j) {
+		// Happy path - just load the cookie data into locals so pages can use it
+		// NOTE: Keep aligned with code in the more complicated path below - TODO: simplify
+		event.locals.logged_in = true;
+		event.locals.user_id = auth_j.sub;
+		event.locals.username = auth_j.user;
+		event.locals.claims = auth_j.claims;
+	} else {
+		// Ok, slightly more complicated path, check if we can refresh the auth token
+
+		// Grab the refresh JWT
+		// This is the longer-lived (~2 wks) JWT that we use for manual signins
+		const refresh_s = event.cookies.get('ic_refresh');
+		const refresh_valid = jwtValidate(refresh_s);
+		if(refresh_s && !refresh_valid) {
+			event.cookies.delete('ic_refresh', {path:'/'});
+			event.cookies.delete('ic_auth', {path:'/'});
+		}
+
+		if(refresh_valid) {
+			// Still good, so grab a new one from the Auth service
+			const refresh_response = await event.fetch('/api/auth/refresh', {
+				method: 'GET',
+				headers: {'Authorization': 'Bearer ' + refresh_s}
+			});
+
+			// It returns a body-less response, with JWTs in the Set-Cookie header
+			// Parsing it out kinda sucks, but that's OK
+			if(refresh_response.status === 200) {
+				for(const cookie_str of refresh_response.headers.getSetCookie()) {
+					const cookie_obj = parseCookie(cookie_str);
+					const cookie_val = cookie_obj['ic_auth'];
+					if(cookie_val){
+						// Extract the core data into locals
+						const ajwt = jwtDecode(cookie_val);
+						const cookie_opt = cookie_to_svelte_opts(cookie_obj);
+						if(ajwt) {
+							// Set the cookie
+							event.cookies.set('ic_auth', cookie_val, cookie_opt);
+
+							// NOTE: Keep aligned with code in the happy-path above - TODO: simplify
+							event.locals.logged_in = true;
+							event.locals.user_id = ajwt.sub;
+							event.locals.username = ajwt.user;
+							event.locals.claims = ajwt.claims;
+						}
+					}
 				}
-			} else {
-				// Probably a JWT timeout
-				event.cookies.delete('imgcat_refresh', {path:'/'});
 			}
 		}
 	}
 
-	// We couldn't read from either JWTs, so we can't log in
-	if(!success) {
-		event.locals.logged_in = false;
-		event.locals.content_level = 2;
-	}
-
-	const response = await resolve(event);
-	
-	return response;
-};
+	return resolve(event);
+}
 
 
-// Svelte rewrites fetch() to do fancy, in-app things. However, it intercepts all
-// HTTP fetch() calls and reroutes them to Svelte pages w/o the HTTP overhead.
-// But we can't do this... anything /api MUST be routed through the proxy
-export const handleFetch:HandleFetch = async({ event, request, fetch }) => {
+// Svelte rewrites fetch() to do fancy, in-app things. One of those is intercepting
+// all HTTP fetch() calls and rerouting them to Svelte pages w/o the HTTP overhead.
+// But we can't do this... anything /api MUST be routed through the proxy, not Svelte.
+// Mechanically, we get a Request w/ modifications, and we clobber it with a base one.
+export const handleFetch:HandleFetch = async({ request, fetch }) => {
 	const url = new URL(request.url);
 	if (url.pathname.startsWith('/api')) {
 
-		// Clone the original request, but change the URL
-		// TODO: Does this need to be configurable?
-		url.host = 'localhost:8080';
-		request = new Request(url.href, request);
+		// It gets a little weird behind a proxy
+		url.hostname = new URL(process.env.IC_ORIGIN).hostname;
 
-		// Add our internal headers
-		if(event.locals.user_id){
-			request.headers.set('x-ic-user-id', event.locals.user_id);
-		}
-		request.headers.set('x-ic-user-ip', event.getClientAddress());
+		// Clone the original request so Svelte doesn't serve it internally
+		request = new Request(url, request);
 	}
 
 	return fetch(request);
