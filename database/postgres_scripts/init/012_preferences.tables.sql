@@ -7,6 +7,9 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountContentPreferences (
 		REFERENCES UserDB.Account(id),
 
 	-- Legal maturity restrictions
+	-- Due to defaults (usually), or an age-check on account creation,
+	-- we set the maximum legally-allowed levels for these fields.
+	-- TODO: This is NOT efficient and should change to a system of standard templates
 	legal_content_level
 		UserDB.CONTENT_LEVEL NOT NULL,
 	legal_see_sexuality
@@ -17,6 +20,7 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountContentPreferences (
 		bool NOT NULL,
 
 	-- User maturity settings
+	-- These are what the user has set.
 	content_level
 		UserDB.CONTENT_LEVEL NOT NULL
 		CHECK(content_level <= legal_content_level),
@@ -31,23 +35,24 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountContentPreferences (
 		CHECK(see_trauma <= legal_see_trauma),
 	
 	-- Content Topics
-	-- NOTE: +1000 is twice as likely to recommend that topic, -1000 is half
-	news_weight
+	-- NOTE: +1000 is twice as likely to recommend that topic, -1000 is half (range: 32x to 1/32nd)
+	-- TODO: This list probably can't stay hardcoded like this & needs to be expanded
+	news_weight -- News and current events (facts, not opinions)
 		SMALLINT NOT NULL
 		DEFAULT 0,
-	politics_weight
+	politics_weight -- Politics & advocacy (heavy opinions)
 		SMALLINT NOT NULL
 		DEFAULT 0,
-	creators_weight
+	creators_weight -- OC creators (good), but also small-business promotion
 		SMALLINT NOT NULL
 		DEFAULT 0,
-	selfies_weight
+	selfies_weight -- Individual self-pics, cosplay, body positivity, thirst traps
 		SMALLINT NOT NULL
 		DEFAULT 0,
-	pets_weight
+	pets_weight -- Pictures of our fuzzy wuzzy family (always good)
 		SMALLINT NOT NULL
 		DEFAULT 0,
-	ai_weight
+	ai_weight -- AI generated pictures (always bad)
 		SMALLINT NOT NULL
 		DEFAULT 0,
 
@@ -63,20 +68,23 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountVisibilityPreferences (
 	-- Legal visibility restrictions
 	legal_about_me_visibility
 		UserDB.VISIBILITY_LEVEL NOT NULL,
-	legal_badges_visibility
+	legal_activity_visibility
 		UserDB.VISIBILITY_LEVEL NOT NULL,
 	legal_dm_visibility
 		UserDB.VISIBILITY_LEVEL NOT NULL,
 	
 	-- User visibility settings
+	-- When another user clicks on a user profile, is that public?
 	about_me_visibility
 		UserDB.VISIBILITY_LEVEL NOT NULL
 		DEFAULT 'PUBLIC'
 		CHECK(about_me_visibility <= legal_about_me_visibility),
-	badges_visibility
+	-- When another user looks at comment/post histories, is that public?
+	activity_visibility
 		UserDB.VISIBILITY_LEVEL NOT NULL
 		DEFAULT 'PUBLIC'
-		CHECK(badges_visibility <= legal_badges_visibility),
+		CHECK(activity_visibility <= legal_activity_visibility),
+	-- Does the user allow DMs from random people, from a list of friends, or not at all?
 	dm_visibility
 		UserDB.VISIBILITY_LEVEL NOT NULL
 		DEFAULT 'PUBLIC'
@@ -87,7 +95,7 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountVisibilityPreferences (
 		TEXT NULL,
 	-- -- TBD -- --
 	-- account_pic: Not sure how we want to do this. Probably select from a fixed list?
-	-- badges: Or trophies? IDK how any of it works yet.
+	-- activity: Or trophies? IDK how any of it works yet.
 	-- direct messages: Other than Y/N, I'm not sure what we can set here.
 
 	PRIMARY KEY(account_id)
