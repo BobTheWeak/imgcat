@@ -12,8 +12,17 @@ softmod:
 		--file softmod.container \
 		.
 
+#deploy_softmod:
+#	docker run --detach -p 9732:8080 smact
+
 deploy_softmod:
-	docker run --detach -p 9732:8080 smact
+	docker stop smact || true
+	docker rm smact || true
+	docker run \
+		--detach \
+		--network ic-net \
+		--name smact \
+		smact
 
 clean:
 	docker rmi --force smact
