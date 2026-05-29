@@ -8,6 +8,9 @@
 		img,
 		onclick = $bindable(),
 
+		// Core (optional) props:
+		href = null,
+
 		// HTML props:
 		id = null,
 		class: classes = null,
@@ -33,6 +36,8 @@
 
 </script>
 
+
+{#snippet buttonblock()}
 <button {id} class={classes} {onclick} {title} {name} {value} {style}>
 	{#if img}
 	<img src="{img}" alt='{lbl}'/>
@@ -41,6 +46,17 @@
 	<span>{lbl}</span>
 	{/if}
 </button>
+{/snippet}
+
+
+{#if href}
+	<a href='{href}'>
+		{@render buttonblock()}
+	</a>
+{:else}
+	{@render buttonblock()}
+{/if}
+
 
 <style>
 	button {
