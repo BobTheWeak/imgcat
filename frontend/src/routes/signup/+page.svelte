@@ -2,77 +2,116 @@
 	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
 	import { GetCountryCodes } from '$lib/country_codes.ts';
+	import { IsUsernameFree } from '$lib/is_username_free.remote.ts';
+	import Button from '$lib/Button.svelte';
 
-	export let form: ActionData;
+	let { data, form } = $props();
+
+	function unamefree(e) {
+		const username = e.target.value;
+		IsUsernameFree(username).run().then((x)=>{
+			if(typeof x === 'boolean') {
+				if(!x) {
+					form = {success:false,message:'Username is not available', username: username};
+				};
+			}
+			if(typeof x === 'string') {
+				form = {success:false,message:x, username: username};
+			}
+		}).catch((e)=>{
+			form = {success:false,message:'Could not check username', username: username}
+		});
+	}
+
 </script>
 
 <h2>Signup</h2>
+
+<p>We are excited for you to join the ImgCat community!</p>
+
 <form method="POST" use:enhance={() => {
 		return async ({ update }) => {
 			return await update({reset:false});
 		};
 	}}>
 
-	<label for='email'>Email</label>
-	<input type='text' name='email' required placeholder='user@example.com' value={form?.email || ''}/>
-
-	<label for='username'>Username</label>
-	<input type='text' name='username' required value={form?.username || ''}/>
-
-	<label style="grid-column-start:1;grid-column-end:3" for='country'>Country</label>
-	<label style="grid-column-start:3;grid-column-end:4" for='age'>Age</label>
-	<select style="grid-column-start:1;grid-column-end:3" type='text' name='country' required value={form?.country || 'US'}>
-		<option></option>
-		{#each GetCountryCodes() as {k, v} }
-		<option value="{v}">{k}</option>
-		{/each}
-	</select>
-	<input style="grid-column-start:3;grid-column-end:4" type='number' name='age' required value={form?.age} />
-
-	<label for='password'>Password</label>
-	<input type='password' name='password' required />
-
 	{#if form?.success === false}
 	<p style="color:red">{form?.message}</p>
 	{/if}
-	
-	<a href="/login">I have an account</a>
-	<button type='submit'>Signup</button>
+
+	<label for='username'>Username</label>
+	<input type='text' name='username' required value={form?.username || ''} minlength='4' maxlength='40' autocomplete='off' onchange={unamefree}/>
+
+	{#if data.ck_age}
+	<div id='agever'>
+		<label for='age'>Age Verification</label>
+		<input type='hidden' name='age' value={form?.age} />
+		<Button href="/api/auth/getage/google" lbl='Verify with Google' style='width:100%' />
+	</div>
+	{/if}
+
+	<label>
+		<input type='checkbox' name='toc' />
+		I accept the <a href='http://localhost/about/terms' target="_blank">Terms of Use</a> and the <a href='http://localhost/about/privacy' target="_blank">Privacy Policy</a>
+	</label>
+
+	<div id='cmds'>
+		<a href="/login">Back</a>
+		<button type='submit'>Create account</button>
+	</div>
 </form>
+
 
 <style>
 	form {
-		display: grid;
-		grid-template-columns: repeat(3, 100px);
 		width: 300px;
-		
-		* {	
-			margin-top: 15px;
+
+		label, input, select {
+			display:block;
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		input[type='checkbox'] {
+			display:inline;
+			width: unset;
 		}
 
 		label {
-			
-			grid-column-start: 1;
-  			grid-column-end: 4;
+			margin-top: 1em;
 		}
 
 		input {
-			margin-top: 0px;
-			grid-column-start: 1;
-  			grid-column-end: 4;
+			margin-bottom: 1em;
 		}
 		select {
 			margin-top: 0px;
 		}
 
-		a {
-			grid-column-start: 1;
-  			grid-column-end: 3;
+		
+
+		div#agever {
+			/* border:1px solid white; */
+			/* padding: 1em 0.5em; */
+			/* background-color: var(--cb3); */
 		}
 
-		button {
-			grid-column-start: 3;
-  			grid-column-end: 4;
+		div#cmds {
+			display: grid;
+			grid-template-columns: repeat(4, 75px);
+			margin-top: 2em;
+			
+			a {
+				text-align: center;
+				grid-column-start: 1;
+				grid-column-end: 2;
+			}
+
+			button {
+				grid-column-start: 3;
+				grid-column-end: 5;
+				cursor: pointer;
+			}
 		}
 	}
 </style>
