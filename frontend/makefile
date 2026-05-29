@@ -13,7 +13,23 @@ frontend:
 	--file frontend.container \
 	.
 
+#deploy_frontend:
+#	docker run \
+#	--detach \
+#	--env IC_DB_USER \
+#	--env IC_DB_PASS \
+#	--env IC_USERDB_USER \
+#	--env IC_USERDB_PASS \
+#	--env IC_S3_URL \
+#	--env IC_S3_BUCKET \
+#	--env IC_S3_ACCESS_KEY \
+#	--env IC_S3_SECRET_KEY \
+#	--add-host host.docker.internal:host-gateway \
+#	-p 9720:8080 \
+#	icfe
+
 deploy_frontend:
+	docker rm icfe || true
 	docker run \
 	--detach \
 	--env IC_DB_USER \
@@ -24,6 +40,6 @@ deploy_frontend:
 	--env IC_S3_BUCKET \
 	--env IC_S3_ACCESS_KEY \
 	--env IC_S3_SECRET_KEY \
-	--add-host host.docker.internal:host-gateway \
-	-p 9720:8080 \
+	--network ic-net \
+	--name icfe \
 	icfe
