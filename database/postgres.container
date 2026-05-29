@@ -1,0 +1,28 @@
+FROM postgres:18.3-alpine
+
+# Create configs
+COPY ./postgres.conf /etc/postgresql/postgres.conf
+RUN echo "local all postgres scram-sha-256" >> /etc/postgresql/pg_hba.conf
+RUN echo "host all all all scram-sha-256" >> /etc/postgresql/pg_hba.conf
+
+# Copy all the init scripts
+COPY ./postgres_scripts/init/* /docker-entrypoint-initdb.d/
+
+# Restrict all users from creating objects
+RUN echo "REVOKE CREATE ON SCHEMA public FROM PUBLIC;" >> /docker-entrypoint-initdb.d/000_init_users.sql
+
+# Create an application user using the passed in creds
+RUN --mount=type=secret,required=true,id=IC_UDB_USER,env=IC_UDB_USER \
+	--mount=type=secret,required=true,id=IC_UDB_PASS,env=IC_UDB_PASS \
+	echo "CREATE USER ${IC_UDB_USER} WITH PASSWORD '${IC_UDB_PASS}';" >> /docker-entrypoint-initdb.d/000_init_users.sql
+
+# Update the perms file to swap the username
+RUN --mount=type=secret,required=true,id=IC_UDB_USER,env=IC_UDB_USER \
+	sed -i -e "s/imgcat_jwt/${IC_UDB_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
+
+# Create a random root password
+RUN dd if=/dev/random bs=18 count=1 | base64 > /home/root_pass.txt
+ENV POSTGRES_PASSWORD_FILE=/home/root_pass.txt
+
+EXPOSE 8080/tcp
+CMD ["postgres", "-c", "config_file=/etc/postgresql/postgres.conf"]

@@ -17,11 +17,59 @@ mariadb:
 	--secret type=env,id=IC_USERDB_PASS \
 	.
 
+postgres:
+	docker build \
+	-t localdev-postgres \
+	--file postgres.container \
+	--secret type=env,id=IC_UDB_USER \
+	--secret type=env,id=IC_UDB_PASS \
+	.
+
+#deploy_mariadb:
+#	docker run \
+#		--detach \
+#		-p 9710:8080 \
+#		--env MARIADB_RANDOM_ROOT_PASSWORD=1 \
+#		localdev-mariadb
+#
+#deploy_postgres:
+#	docker run \
+#		--detach \
+#		-p 9712:8080 \
+#		--env IC_UDB_HOST \
+#		--env IC_UDB_PORT \
+#		--env IC_UDB_DB \
+#		--env IC_UDB_USER \
+#		--env IC_UDB_PASS \
+#		localdev-postgres
+
 deploy_mariadb:
-	docker run --detach -p 9710:8080 --env MARIADB_RANDOM_ROOT_PASSWORD=1 localdev-mariadb
+	docker stop localdev-mariadb || true
+	docker rm localdev-mariadb || true
+	docker run \
+		--detach \
+		--network ic-net \
+		--env MARIADB_RANDOM_ROOT_PASSWORD=1 \
+		--name localdev-mariadb \
+		localdev-mariadb
+
+deploy_postgres:
+	docker stop localdev-postgres || true
+	docker rm localdev-postgres || true
+	docker run \
+		--detach \
+		--network ic-net \
+		--env IC_UDB_HOST \
+		--env IC_UDB_PORT \
+		--env IC_UDB_DB \
+		--env IC_UDB_USER \
+		--env IC_UDB_PASS \
+		--name localdev-postgres \
+		localdev-postgres
 
 clean:
-	docker rmi --force localdev-mariadb
+	#docker rmi --force localdev-mariadb
+	#docker rmi --force localdev-postgres
 	docker container prune --force
 	docker image prune --force
 	docker buildx prune --force
