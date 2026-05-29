@@ -1,0 +1,55 @@
+ARG PROJ_NAME="auth_service"
+
+FROM rust:alpine AS build
+ARG PROJ_NAME
+
+ENV RUSTFLAGS="-C target-feature=-crt-static"
+RUN apk update
+RUN apk add --no-cache musl-dev
+RUN apk add curl
+RUN apk add lld clang
+
+
+# Build dependencies only
+WORKDIR /app
+WORKDIR ${PROJ_NAME}
+COPY ./Cargo.toml ./Cargo.toml
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./src ./src
+
+RUN --mount=type=cache,target=/app/target/deps/ \
+	--mount=type=cache,target=/usr/local/cargo/registry/ \
+	cargo fetch
+
+# Build application
+RUN --mount=type=cache,target=/app/target/deps/ \
+	--mount=type=cache,target=/app/target/build/ \
+	--mount=type=cache,target=/app/target/incremental/ \
+	--mount=type=cache,target=/usr/local/cargo/registry/ \
+	cargo build --release
+
+
+RUN strip target/release/${PROJ_NAME}
+
+
+FROM alpine AS runtime
+ARG PROJ_NAME
+RUN apk add --no-cache libgcc
+# app specific environment variables
+ENV APP_ENVIRONMENT=prod
+#ENV RUST_BACKTRACE=1
+#ENV RUST_LOG=actix_web=debug
+
+# We are ignoring whatever local ENV value is set and using a mounted volume
+# It is up to the user to populate it properly
+# This relies on a runtime volume mount at /mnt/ic-keys
+ENV IC_JWT_PVT=/mnt/ic-keys/id_jwt.pvt
+ENV IC_JWT_PUB=/mnt/ic-keys/id_jwt.pub
+ENV IC_JWT_PUB_ROTATED=/mnt/ic-keys/id_jwt_rotated.pub
+
+# copy the binary, and config folders
+WORKDIR /app
+COPY --from=build /app/${PROJ_NAME}/target/release/${PROJ_NAME} ./main
+
+ENTRYPOINT ["./main"]
+EXPOSE 8080/tcp
