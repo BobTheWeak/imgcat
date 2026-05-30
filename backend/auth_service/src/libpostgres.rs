@@ -95,26 +95,32 @@ impl AppStatePostgres {
 	}
 
 	pub async fn get_account_data(&self, account_id:i64) -> Result<Option<AccountData>, Error> {
-		let client = self.get_conn().await.expect("Postgres connection error");
-
+		let mut client = self.get_conn().await.expect("Postgres connection error");
+		let transaction = client.transaction().await.expect("Postgres connection error");
+		
 		let mut result = AccountData::default();
 
-		let Some(rs) = client.query_typed_opt(
-			"SELECT username FROM UserDB.GetAccountData_Profile($1)", &[
+		let Some(rs) = transaction.query_typed_opt(
+			// BUG: The postgres_types library DOES NOT have a FromSQL defined for a RefCursor type
+			// This means we have to cast it as a string in SQL, to be able to read it in Rust
+			"SELECT id, username, claims_cur::TEXT FROM UserDB.GetAccountData($1)", &[
 			(&account_id, Type::INT8), //BIGINT
 		]).await? else {return Ok(None)};
 
 		// NOTE: rs (result-set) is a Row
-		result.account_id = account_id;
-		result.username = rs.get::<_,String>("username");
+		result.account_id = rs.get("id");
+		result.username = rs.get("username");
+		let claims_cur:String = rs.get("claims_cur");
 
-		let rs = client.query_typed(
-			"SELECT UserDB.GetAccountData_Claims($1)", &[
-			(&account_id, Type::INT8), //BIGINT
-		]).await?;
+		let rs = transaction.query_typed(
+			&format!("FETCH ALL IN \"{}\"", &claims_cur), &[]
+		).await?;
 
 		// NOTE: rs (result-set) is a Vec<Row>
 		result.claims = rs.into_iter().map(|r|{r.get::<_,String>(0)}).collect();
+
+		// Cleanup
+		transaction.commit().await?;
 
 		return Ok(Some(result));
 	}
