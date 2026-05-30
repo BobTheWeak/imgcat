@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION UserDB.GetAccountData_Preferences(
+CREATE OR REPLACE FUNCTION UserDB.GetAccountPreferences(
 	_id BIGINT
 )
 RETURNS TABLE (
