@@ -3,6 +3,18 @@ import type { PageServerLoad, Actions } from './$types';
 import { redirect, fail, json } from '@sveltejs/kit';
 import { jwtDecode, jwtVerify } from '$lib/server/jwt2';
 import { IsUsernameFree } from '$lib/is_username_free.remote.ts';
+import { parseCookie } from 'cookie';
+
+
+// Borrowed/simplified from hooks.server.ts
+// TODO: Shared library? (prolly not worth the effort)
+function cookie_to_svelte_opts(cookie_obj) {
+	const result = {};
+	if(cookie_obj['Path']) {result['path'] = cookie_obj['Path']}
+	if(cookie_obj['Max-Age']) {result['maxAge'] = cookie_obj['Max-Age']}
+	if(cookie_obj['SameSite']) {result['sameSite'] = cookie_obj['SameSite']}
+	return result;
+}
 
 
 export const load: PageServerLoad = async({ locals, cookies, request }) => {
@@ -66,5 +78,58 @@ export const actions:Actions = {
 		});
 
 		console.log(signup_response);
+
+		if(signup_response.status === 201) {
+
+			// Grab the cookies returned, and set them
+			for(const c_str of signup_response.headers.getSetCookie()) {
+				const c_name = c_str.substring(0, c_str.indexOf("="));
+				if(c_name?.startsWith("ic_")) {
+					const c_obj = parseCookie(c_str);
+					const c_val = c_obj[c_name];
+					console.log(c_name, c_val);
+					console.log(c_obj);
+					cookies.set(c_name, c_val, cookie_to_svelte_opts(c_obj));
+				}
+			}
+
+			// Cleanup the signup cookie
+			cookies.delete("ic_signup", {path:"/"});
+
+			// Success!
+			redirect(307, '/home');
+		}
+
+		return {success:false, message:"There was a problem creating your account", username: username}
 	}
 }
+
+
+
+/*
+for(const cookie_str of refresh_response.headers.getSetCookie()) {
+	const cookie_obj = parseCookie(cookie_str);
+	if(cookie_obj) {
+		const cookie_val = cookie_obj['ic_auth'];
+		const cookie_opt = cookie_to_svelte_opts(cookie_obj);
+
+	}
+	event.cookies.set('ic_auth', cookie_val, cookie_opt);
+
+	if(cookie_val){
+		// Extract the core data into locals
+		const ajwt = jwtDecode(cookie_val);
+		const cookie_opt = cookie_to_svelte_opts(cookie_obj);
+		if(ajwt) {
+			// Set the cookie
+			event.cookies.set('ic_auth', cookie_val, cookie_opt);
+
+			// NOTE: Keep aligned with code in the happy-path above - TODO: simplify
+			event.locals.logged_in = true;
+			event.locals.user_id = ajwt.sub;
+			event.locals.username = ajwt.user;
+			event.locals.claims = ajwt.claims;
+		}
+	}
+}
+*/
