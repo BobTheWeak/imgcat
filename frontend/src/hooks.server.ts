@@ -6,6 +6,7 @@ import { building } from '$app/environment'
 
 // The cookie library decodes a cookie into different field names than
 // Svelte's cookie.set(name, val, opts) accepts, so we have to translate
+// NOTE: There's a similar version copied & pasted for /signup (server-side)
 function cookie_to_svelte_opts(cookie_obj) {
 	const translations = {
 		'Path': 'path',
@@ -92,6 +93,15 @@ export const handle: Handle = async ({ event, resolve }) => {
 						}
 					}
 				}
+			} else if ([401, 403, 418, 400].includes(refresh_response.status)) {
+				// 401 - Missing Auth Header
+				// 403 - Header validation issues
+				// 418 - User is banned (IDK if temp or permanently)
+				// 400 - Could not find that user in the DB
+				// In these cases, delete the refresh cookie
+				event.cookies.delete('ic_refresh', {path:'/'});
+			} else {
+				// Service outage. Maybe they can refresh?
 			}
 		}
 	}
