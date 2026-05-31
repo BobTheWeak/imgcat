@@ -40,8 +40,7 @@ CREATE TABLE IF NOT EXISTS Content.TagRelationship (
 -- If a user feels a tag is missing from a post, they can add it in this queue
 CREATE TABLE IF NOT EXISTS Content.TagVote (
 	user_id
-		INT UNSIGNED NOT NULL
-		REFERENCES UserDB.Account(id),
+		BIGINT NOT NULL,
 	upload_time
 		TIMESTAMP NOT NULL
 		DEFAULT CURRENT_TIMESTAMP,
@@ -62,8 +61,7 @@ CREATE TABLE IF NOT EXISTS Content.TagVote (
 -- If a user feels a post is spicy/NSFW, or incorrectly classified, they can add it in this queue
 CREATE TABLE IF NOT EXISTS Content.MaturityVote (
 	user_id
-		INT UNSIGNED NOT NULL
-		REFERENCES UserDB.Account(id),
+		BIGINT NOT NULL,
 	upload_time
 		TIMESTAMP NOT NULL
 		DEFAULT CURRENT_TIMESTAMP,
@@ -95,8 +93,7 @@ CREATE TABLE IF NOT EXISTS Content.MaturityVote (
 -- If a user feels a post is one of several divisive categories, they can add it in this queue
 CREATE TABLE IF NOT EXISTS Content.CategoryVote (
 	user_id
-		INT UNSIGNED NOT NULL
-		REFERENCES UserDB.Account(id),
+		BIGINT NOT NULL,
 	upload_time
 		TIMESTAMP NOT NULL
 		DEFAULT CURRENT_TIMESTAMP,
@@ -121,8 +118,7 @@ CREATE TABLE IF NOT EXISTS Content.CategoryVote (
 -- We do require a comment, but otherwise we don't know why they flagged it
 CREATE TABLE IF NOT EXISTS Content.ModReviewVote (
 	user_id
-		INT UNSIGNED NOT NULL
-		REFERENCES UserDB.Account(id),
+		BIGINT NOT NULL,
 	upload_time
 		TIMESTAMP NOT NULL
 		DEFAULT CURRENT_TIMESTAMP,

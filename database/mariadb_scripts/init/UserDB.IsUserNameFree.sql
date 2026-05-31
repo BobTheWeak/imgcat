@@ -1,21 +1,22 @@
-DELIMITER $$
-CREATE OR REPLACE FUNCTION UserDB.IsUsernameFree(
-	_username varchar(50)
-)
-RETURNS BOOL
-NOT DETERMINISTIC
-READS SQL DATA
-SQL SECURITY DEFINER
-BEGIN
-	IF _username IS NULL OR EXISTS (
-		SELECT 1
-		FROM UserDB.Account
-		WHERE username = _username
-	) THEN
-		RETURN 0;
-	ELSE
-		RETURN 1;
-	END IF;
-END
-$$
-DELIMITER ;
+-- DEPRECATED: Migrated to PostgreSQL
+-- DELIMITER $$
+-- CREATE OR REPLACE FUNCTION UserDB.IsUsernameFree(
+-- 	_username varchar(50)
+-- )
+-- RETURNS BOOL
+-- NOT DETERMINISTIC
+-- READS SQL DATA
+-- SQL SECURITY DEFINER
+-- BEGIN
+-- 	IF _username IS NULL OR EXISTS (
+-- 		SELECT 1
+-- 		FROM UserDB.Account
+-- 		WHERE username = _username
+-- 	) THEN
+-- 		RETURN 0;
+-- 	ELSE
+-- 		RETURN 1;
+-- 	END IF;
+-- END
+-- $$
+-- DELIMITER ;

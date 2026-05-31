@@ -32,13 +32,14 @@ BEGIN
 			a.id,
 			a.title,
 			a.user_id,
-			b.username,
+			-- b.username,
+			'TBD username' as username,
 			a.upload_time as 'time',
 			a.is_public,
 			a.link
 		FROM Posts.Post a
-		INNER JOIN UserDB.Account b
-			ON a.user_id=b.id
+		-- INNER JOIN UserDB.Account b
+		-- 	ON a.user_id=b.id
 		WHERE a.id = v_post_id
 		LIMIT 1;
 
