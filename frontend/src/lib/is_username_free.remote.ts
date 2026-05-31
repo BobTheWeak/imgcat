@@ -24,13 +24,21 @@ export const IsUsernameFree = query(v.string(), async(username) => {
 	if(lc.indexOf('moderator') !== -1) {return "Improper username"}
 	
 	const { fetch, cookies } = getRequestEvent();
-	const res = await fetch('/api/auth/namefree?u='+encodeURI(username), {
-		headers: {
-			'Authorization': "Bearer " + cookies.get('ic_auth')
+	const sjwt = cookies.get('ic_signup');
+	if(sjwt){
+		const res = await fetch('/api/auth/namefree?u='+encodeURI(username), {
+			headers: {
+				'Authorization': "Bearer " + cookies.get('ic_signup')
+			}
+		});
+		if(res.status === 200) {
+			// Body is either "1" or "0"
+			return await res.text() === "1";
 		}
-	});
-	if(res.status === 200) {
-		// Body is either "1" or "0"
-		return await res.text() === "1";
 	}
+	// TODO: Error handling here
+	// To the user, I think ignoring this is fine. "Sorry, we can't check if
+	// your username is available", is not helpful, fixable, or reassuring.
+	// But this is something backend folks should know about b/c it's probably
+	// a bug or a cert problem
 });
