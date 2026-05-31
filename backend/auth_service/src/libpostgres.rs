@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::sync::Mutex;
 use std::time::Duration;
-use tokio_postgres::{Error, NoTls, types::Type};
+use tokio_postgres::{Row, Error, NoTls, types::Type};
 use deadpool_postgres::{Config, Pool, PoolError, Client, Runtime};
 
 use crate::age_verification::AgeVerification;
@@ -69,29 +69,28 @@ impl AppStatePostgres {
 	pub async fn is_age_needed_on_signup(&self, country:&str, state:Option<&str>) -> Result<bool, Error> {
 		let client = self.get_conn().await.expect("Postgres connection error");
 
-		let row = client.query_typed_one(
+		// Returns (1 row): bool
+		let row:Row = client.query_typed_one(
 			"SELECT Legal.IsAgeNeededOnSignup($1, $2)", &[
 				(&country, Type::TEXT),
 				(&state, Type::TEXT),
 			])
 			.await?;
-		return Ok(row.get::<_,bool>(0));
+		return row.try_get(0);
 	}
 
 	pub async fn get_account_id(&self, provider:&str, subject:&str) -> Result<Option<i64>, Error> {
 		let client = self.get_conn().await.expect("Postgres connection error");
 
-		if let Some(row) = client.query_typed_opt(
+		// Returns (1 row): bigint|null
+		let row:Row = client.query_typed_one(
 				"SELECT UserDB.GetAccountId($1, $2)", &[
 					(&provider, Type::TEXT),
 					(&subject, Type::TEXT),
 				])
-				.await? {
-			let account_id:Option<i64> = row.get("getaccountid");
-			return Ok(account_id)
-		} else {
-			return Ok(None);
-		}
+				.await?;
+
+		return row.try_get(0);
 	}
 
 	pub async fn get_account_data(&self, account_id:i64) -> Result<Option<AccountData>, Error> {
@@ -100,24 +99,29 @@ impl AppStatePostgres {
 		
 		let mut result = AccountData::default();
 
-		let Some(rs) = transaction.query_typed_opt(
+		// Returns (1 row): i64|null, text|null, test|null
+		let row:Row = transaction.query_typed_one(
 			// BUG: The postgres_types library DOES NOT have a FromSQL defined for a RefCursor type
 			// This means we have to cast it as a string in SQL, to be able to read it in Rust
 			"SELECT id, username, claims_cur::TEXT FROM UserDB.GetAccountData($1)", &[
 			(&account_id, Type::INT8), //BIGINT
-		]).await? else {return Ok(None)};
+		]).await?;// else {return Ok(None)};
 
-		// NOTE: rs (result-set) is a Row
-		result.account_id = rs.get("id");
-		result.username = rs.get("username");
-		let claims_cur:String = rs.get("claims_cur");
+		if let Some(acct_id) = row.get::<_,Option<i64>>("id") {
+			result.account_id = acct_id;
+			result.username = row.get("username");
+			let claims_cur:String = row.get("claims_cur");
 
-		let rs = transaction.query_typed(
-			&format!("FETCH ALL IN \"{}\"", &claims_cur), &[]
-		).await?;
+			// Returns (N rows): text
+			let rows:Vec<Row> = transaction.query_typed(
+				&format!("FETCH ALL IN \"{}\"", &claims_cur), &[]
+			).await?;
 
-		// NOTE: rs (result-set) is a Vec<Row>
-		result.claims = rs.into_iter().map(|r|{r.get::<_,String>(0)}).collect();
+			result.claims = rows.into_iter().map(|r|{r.get::<_,String>(0)}).collect();
+		} else {
+			transaction.commit().await?;
+			return Ok(None);
+		}
 
 		// Cleanup
 		transaction.commit().await?;
@@ -128,7 +132,8 @@ impl AppStatePostgres {
 	pub async fn create_account(&self, prv:&str, sub:&str, username:&str, age_ver:&Option<AgeVerification>) -> Result<Option<i64>, Error> {
 		let client = self.get_conn().await.expect("Postgres connection error");
 
-		let Some(rs) = client.query_typed_opt(
+		// Returns (1 row): bigint|null
+		let row:Row = client.query_typed_one(
 			"SELECT UserDB.CreateAccount($1,$2,$3,$4,$5,$6)", &[
 			(&prv, Type::TEXT),
 			(&sub, Type::TEXT),
@@ -136,22 +141,20 @@ impl AppStatePostgres {
 			(&age_ver.as_ref().and_then(|x| Some(x.country.clone())), Type::TEXT), // CHAR(2)
 			(&age_ver.as_ref().and_then(|x| Some(x.state.clone())), Type::TEXT), // CHAR(2)
 			(&age_ver.as_ref().and_then(|x| Some(x.age as i16)), Type::INT2), // SMALLINT
-		]).await? else {
-			// If it didn't create an account (unknown reason)
-			return Ok(None)
-		};
+		]).await?;
 
-		return Ok(Some(rs.get::<_,i64>("CreateAccount")));
+		return row.try_get(0);
 	}
 
 	pub async fn is_username_free(&self, username:&str) -> Result<bool, Error> {
 		let client = self.get_conn().await.expect("Postgres connection error");
 
-		let row = client.query_typed_one(
+		// Returns (1 row): bool
+		let row:Row = client.query_typed_one(
 			"SELECT UserDB.IsUsernameFree($1)", &[
 			(&username, Type::TEXT),
 		]).await?;
 
-		return Ok(row.get::<_,bool>(0));
+		return row.try_get(0);
 	}
 }
