@@ -2,17 +2,17 @@ use crate::libredis::AppStateRedis;
 use crate::libpostgres::AppStatePostgres;
 use crate::helper_error::{HelperResult, HelperError};
 
-use actix_web::{HttpResponse, HttpResponseBuilder};
+use actix_web::{HttpRequest, HttpResponse, HttpResponseBuilder};
 use actix_web::http::StatusCode;
 use actix_web::cookie::{Cookie, SameSite, time::Duration};
 
-use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt, EncodeJwt};
+use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt, EncodeJwt, validate};
 
 
 async fn is_user_banned(account_id:i64, redis:&AppStateRedis, pg:&AppStatePostgres) -> HelperResult<bool> {
 	// Check if they're banned in Redis (temporarially)
 	let Ok(is_banned_temp) = redis.is_user_banned(account_id) else {
-		return Err(HelperError::new(500, "Check ban, Redis").into());
+		return Err(HelperError::new(503, "Redis connection").into());
 	};
 
 	// If they're banned temporarially, don't bother checking the DB
@@ -31,7 +31,7 @@ async fn is_user_banned(account_id:i64, redis:&AppStateRedis, pg:&AppStatePostgr
 
 pub async fn get_refresh_jwt(account_id:i64, redis:&AppStateRedis, pg:&AppStatePostgres) -> HelperResult<RefreshJwt> {
 	if is_user_banned(account_id, redis, pg).await? == true {
-		return Err(HelperError::new(403, "Banned").into());
+		return Err(HelperError::new(418, "Banned").into());
 	};
 
 	return Ok(RefreshJwt::new(account_id));
@@ -39,22 +39,23 @@ pub async fn get_refresh_jwt(account_id:i64, redis:&AppStateRedis, pg:&AppStateP
 
 pub async fn get_auth_jwt(jwt:&RefreshJwt, redis:&AppStateRedis, pg:&AppStatePostgres) -> HelperResult<AuthJwt> {
 	if is_user_banned(jwt.sub, redis, pg).await? == true {
-		return Err(HelperError::new(403, "Banned").into());
+		return Err(HelperError::new(418, "Banned").into());
 	};
 
 	let Ok(d) = pg.get_account_data(jwt.sub).await else {
-		return Err(HelperError::new(500, "Postgres connection").into());
+		return Err(HelperError::new(503, "Postgres connection").into());
 	};
 
 	if let Some(d) = d {
 		// Create & encode the Auth cookie
 		return Ok(AuthJwt::new(
-			jwt.sub,
+			d.account_id,
 			d.username.as_ref(),
 			&d.claims,
 		));
 	} else {
-		return Err(HelperError::new(500, "Postgres fetch acct").into());
+		// For some reason, we couldn't find that user in our database
+		return Err(HelperError::new(400, "Postgres fetch acct").into());
 	}
 }
 
@@ -84,7 +85,9 @@ pub fn get_refresh_cookie(rjwt:&RefreshJwt) -> Cookie {
 #[inline]
 pub fn get_signup_cookie(sjwt:&SignupJwt) -> Cookie {
 	Cookie::build("ic_signup", sjwt.encode().unwrap())
-		.path("/signup")
+		// NOTE: I'd like to set this to /signup, but it breaks b/c the
+		// remote function is_username_free doesn't inherit the cookie.
+		.path("/")
 		.secure(true)
 		.http_only(true)
 		.same_site(SameSite::Lax) // TODO: Strict isn't working
@@ -114,4 +117,23 @@ pub fn send_redirect(redirect_url:Option<String>, rjwt:Option<&RefreshJwt>, ajwt
 	}
 
 	return result.finish();
+}
+
+pub fn validate_bearer_auth(request:&HttpRequest) -> HelperResult<&str> {
+	let Some(jwt_string) = request.headers().get("Authorization") else {
+		return Err(HelperError::new(401, "Header").into());
+	};
+	let Ok(jwt_string) = jwt_string.to_str() else {
+		return Err(HelperError::new(401, "Header").into());
+	};
+	let Some(jwt_string) = jwt_string.strip_prefix("Bearer ") else {
+		return Err(HelperError::new(401, "Header").into());
+	};
+
+	// Decode the JWT & make sure it's ours
+	return if validate(jwt_string) {
+		Ok(jwt_string)
+	} else {
+		Err(HelperError::new(403, "Header validation").into())
+	};
 }

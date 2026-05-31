@@ -9,7 +9,7 @@ use crate::libredis::AppStateRedis;
 use crate::libpostgres::AppStatePostgres;
 use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt, DecodeJwt};
 
-use crate::login_helpers::{get_refresh_jwt, get_auth_jwt, send_redirect};
+use crate::login_helpers::{validate_bearer_auth, get_refresh_jwt, get_auth_jwt, get_refresh_cookie, get_auth_cookie};
 
 #[derive(Debug, Deserialize)]
 struct CreateFormData {
@@ -31,17 +31,8 @@ pub async fn create(
 	// TODO: Rate Limiter
 
 	// Grab the Bearer header & check it's encoding
-	let Some(jwt_string) = request.headers().get("Authorization") else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
-	};
-	let Ok(jwt_string) = jwt_string.to_str() else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
-	};
-	let Some(jwt_string) = jwt_string.strip_prefix("Bearer ") else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
+	let jwt_string = match validate_bearer_auth(&request) {
+		Ok(v) => v, Err(e) => return e.into()
 	};
 
 	// Decode the JWT & make sure it's ours
@@ -76,7 +67,7 @@ pub async fn create(
 
 
 	let Ok(account_id) = postgres.create_account(&sjwt.prv, &sjwt.sub, &form.user, &sjwt.age_ver).await else {
-		return HttpResponse::InternalServerError()
+		return HttpResponse::ServiceUnavailable()
 			.insert_header(("IC-Error","Postgres connection")).finish();
 	};
 	let Some(account_id) = account_id else {
@@ -90,5 +81,11 @@ pub async fn create(
 	let ajwt:AuthJwt = match get_auth_jwt(&rjwt, &redis, &postgres).await {
 		Ok(v) => v, Err(e) => return e.into()
 	};
-	return send_redirect(Some("/".to_string()), Some(&rjwt), Some(&ajwt), None);
+	//return send_redirect(Some("/".to_string()), Some(&rjwt), Some(&ajwt), None);
+
+	return HttpResponse::Created() // 201
+		.insert_header(("Location", "/home"))
+		.cookie(get_refresh_cookie(&rjwt))
+		.cookie(get_auth_cookie(&ajwt))
+		.finish();
 }

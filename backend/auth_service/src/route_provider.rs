@@ -74,8 +74,18 @@ pub async fn provider(
 	// // // // // // // // // // // // // // // // // // // //
 	// TODO: Move this to the sign-up logic entirely. This is an extra
 	// DB check that doesn't need to happen for logins. It's just a
-	// convenient thing to ask perms once, but no... This is too early
-	// and we can't explain why we need it, yet.
+	// convenient thing to ask perms once, but TBH it's a better flow
+	// to ask on the signup page, b/c we can explain *why* we're asking
+	// for someone's age.
+	// It should be a form:
+	//    Welcome to ImgCat
+	//    Username: [____________]
+	//    [_] Accept Terms
+	//    We must perform an additional age check, using the birthday of
+	//    this account. It's a one-time check, and the value is not stored.
+	//    _back_        <Verify your age>
+	// When that's complete, flash a success message and change the button:
+	//    _back_        <Create account>
 
 	// In some jurisdictions, we may have to ask a user's age...
 	// Check for the existance of the "CF-IPCountry" header (trust Cloudflare to do this for us)
@@ -97,18 +107,18 @@ pub async fn provider(
 		if country_code != "XX" {
 			// NOTE: As of today, the UK, AU & BR need validation
 			// TODO: I'm not sure how to get the state-code... For now, pass None.
-			if let Ok(needed) = postgres.is_age_needed_on_signup(country_code, None).await {
-				if needed {
-					// OK... the user is from a juristiction that requires age verification
-					// Upgrade our request and ask for more than the basic (implied) "openid" scope
-					for claim in data.age_claims.iter() {
-						authorizer = authorizer.add_scope(Scope::new(claim.to_string()));
-					}
-				}
-			} else {
-				return HttpResponse::InternalServerError() // 500
+			let Ok(needed) = postgres.is_age_needed_on_signup(country_code, None).await else {
+				return HttpResponse::ServiceUnavailable() // 503
 					.insert_header(("IC-Error","Postgres connection")).finish();
 			};
+
+			if needed {
+				// OK... the user is from a juristiction that requires age verification
+				// Upgrade our request and ask for more than the basic (implied) "openid" scope
+				for claim in data.age_claims.iter() {
+					authorizer = authorizer.add_scope(Scope::new(claim.to_string()));
+				}
+			}
 		}
 	}
 

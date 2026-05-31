@@ -5,7 +5,7 @@ use actix_web::{HttpRequest, HttpResponse};
 use crate::libredis::AppStateRedis;
 use crate::libpostgres::AppStatePostgres;
 use crate::libjwt::{AuthJwt, RefreshJwt, DecodeJwt};
-use crate::login_helpers::{get_auth_jwt, get_refresh_cookie, get_auth_cookie};
+use crate::login_helpers::{validate_bearer_auth, get_auth_jwt, get_refresh_cookie, get_auth_cookie};
 
 #[get("/refresh")]
 pub async fn refresh(
@@ -15,17 +15,8 @@ pub async fn refresh(
 	) -> HttpResponse {
 
 	// Grab the Bearer header & check it's encoding
-	let Some(jwt_string) = request.headers().get("Authorization") else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
-	};
-	let Ok(jwt_string) = jwt_string.to_str() else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
-	};
-	let Some(jwt_string) = jwt_string.strip_prefix("Bearer ") else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
+	let jwt_string = match validate_bearer_auth(&request) {
+		Ok(v) => v, Err(e) => return e.into()
 	};
 
 	// Decode the JWT & make sure it's ours
@@ -41,7 +32,6 @@ pub async fn refresh(
 
 	// Return both JWTs and the data of the auth JWT in the body
 	return HttpResponse::Ok()
-		.content_type("application/json")
 		.cookie(get_refresh_cookie(&rjwt))
 		.cookie(get_auth_cookie(&ajwt))
 		.finish();

@@ -53,8 +53,8 @@ pub async fn callback(
 
 	// Verify URL Issuer:
 	if params.iss != data.issuer_url {
-		return HttpResponse::BadRequest()
-			.insert_header(("IC-Error","Validation, issuer")).finish();
+		return HttpResponse::Forbidden() // 403
+			.insert_header(("IC-Error","Header validation")).finish();
 	}
 
 	// TODO: Verify more headers
@@ -65,8 +65,8 @@ pub async fn callback(
 		if let Some(cc) = request.headers().get("CF-IPCountry") {
 			let Ok(cc) = cc.to_str() else {
 				// This parsing could fail if the header has invalid characters
-				return HttpResponse::BadRequest() // 400
-					.insert_header(("IC-Error","Header validation")).finish();
+				return HttpResponse::Unauthorized() // 401
+					.insert_header(("IC-Error","Header")).finish();
 			};
 
 			// Block Tor traffic. There are good reasons to allow it, but we need
@@ -88,8 +88,8 @@ pub async fn callback(
 
 	// Grab the state key from redis
 	let Ok(redis_key) = redis.get_login(&params.state) else {
-		return HttpResponse::InternalServerError()
-			.insert_header(("IC-Error","Redis")).finish();
+		return HttpResponse::ServiceUnavailable() // 503
+			.insert_header(("IC-Error","Redis connection")).finish();
 	};
 
 	// Unpack the variables into openid structures
@@ -122,8 +122,8 @@ pub async fn callback(
 		.exchange_code(AuthorizationCode::new(params.code.clone())).unwrap()
 		.set_pkce_verifier(pkce_v)
 		.request_async(&http_client).await else {
-			return HttpResponse::InternalServerError()
-				.insert_header(("IC-Error","Provider, exchange")).finish();
+			return HttpResponse::ServiceUnavailable() // 503
+				.insert_header(("IC-Error","Provider exchange")).finish();
 		};
 
 	// A giant block of validation
@@ -131,7 +131,7 @@ pub async fn callback(
 	let id_token = token_response.id_token().unwrap();
 	let id_token_verifier = client.id_token_verifier();
 	let Ok(claims) = id_token.claims(&id_token_verifier, &nonce) else {
-		return HttpResponse::InternalServerError()
+		return HttpResponse::ServiceUnavailable() // 503
 			.insert_header(("IC-Error","Validation, claims")).finish();
 	};
 	
@@ -143,7 +143,7 @@ pub async fn callback(
 			id_token.signing_key(&id_token_verifier).unwrap(),
 		).unwrap();
 		if actual_access_token_hash != *expected_access_token_hash {
-			return HttpResponse::InternalServerError()
+			return HttpResponse::ServiceUnavailable() // 503
 				.insert_header(("IC-Error","Validation, hash")).finish();
 		}
 	}
@@ -153,7 +153,7 @@ pub async fn callback(
 
 	// Grab the account_id
 	let Ok(account_id) = postgres.get_account_id(&provider, &subject).await else {
-		return HttpResponse::InternalServerError() // 500
+		return HttpResponse::ServiceUnavailable() // 503
 			.insert_header(("IC-Error","Postgres, connection error")).finish();
 	};
 
@@ -177,7 +177,7 @@ pub async fn callback(
 			if let Some(country_code) = country_code {
 				// TODO: I'm not sure how to get the state-code... For now, pass None.
 				let Ok(needed) = postgres.is_age_needed_on_signup(country_code, None).await else {
-					return HttpResponse::InternalServerError() // 500
+					return HttpResponse::ServiceUnavailable() // 503
 						.insert_header(("IC-Error","Postgres connection")).finish();
 				};
 
@@ -191,7 +191,7 @@ pub async fn callback(
 					// we pass around, but it was getting *really* nasty. So easy mode:
 					let age:Option<u16> = match provider.as_ref() {
 						"google" => provider_google::getage(access_token.secret()).await,
-						_ => unimplemented!(),
+						_ => unimplemented!("Provider is missing from match block"),
 					};
 
 					// NOTE: If they deny permission, we return age=0

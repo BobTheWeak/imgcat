@@ -6,7 +6,7 @@ use actix_web::{HttpRequest, HttpResponse};
 
 //use crate::libredis::AppStateRedis;
 use crate::libpostgres::AppStatePostgres;
-use crate::libjwt::{validate};
+use crate::login_helpers::{validate_bearer_auth};
 
 #[derive(Debug, Deserialize)]
 struct UsernameParams {
@@ -24,26 +24,9 @@ pub async fn namefree(
 
 	// TODO: Rate-limiter
 
-
 	// Grab the Bearer header & check it's encoding
-	let Some(jwt_string) = request.headers().get("Authorization") else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
-	};
-	let Ok(jwt_string) = jwt_string.to_str() else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
-	};
-	let Some(jwt_string) = jwt_string.strip_prefix("Bearer ") else {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header")).finish();
-	};
-
-	// Validate the JWT & make sure it's ours
-	// We don't care what JWT was passed in, or need to view the data itself
-	if !validate(jwt_string) {
-		return HttpResponse::Forbidden() // 403
-			.insert_header(("IC-Error","Header validation")).finish();
+	let _jwt_string = match validate_bearer_auth(&request) {
+		Ok(v) => v, Err(e) => return e.into()
 	};
 
 	let Ok(is_free) = postgres.is_username_free(&params.username).await else {
