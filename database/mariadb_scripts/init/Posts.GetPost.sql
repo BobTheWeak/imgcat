@@ -2,7 +2,7 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE Posts.GetPost(
 	p_post_link CHAR(12),
 	p_user_content_level TINYINT UNSIGNED,
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_register_view BOOL
 )
 LANGUAGE SQL

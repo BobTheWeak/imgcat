@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Actions.ToggleFavMedia(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_media_id INT UNSIGNED,
 	p_name TINYTEXT
 )
@@ -46,7 +46,7 @@ DELIMITER ;
 -- DEPRECATED... Migrate All UserActions to Actions schema
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Posts.ToggleFavMedia(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_media_id INT UNSIGNED,
 	p_name TINYTEXT
 )

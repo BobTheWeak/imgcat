@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Posts.CreateSimpleMedia(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_filename CHAR(12),
 	p_mime_type TINYTEXT,
 	p_sha256 BINARY(32)

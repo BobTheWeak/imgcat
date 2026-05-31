@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE Posts.GetMyFavs(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_pg_start TINYINT UNSIGNED,
 	p_pg_cnt TINYINT UNSIGNED
 )

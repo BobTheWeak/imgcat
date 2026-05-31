@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE Posts.SetPostPublic(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id INT UNSIGNED,
 	p_is_public BOOL
 )

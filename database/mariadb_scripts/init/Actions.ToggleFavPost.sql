@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Actions.ToggleFavPost(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id INT UNSIGNED,
 	p_name TINYTEXT
 )
@@ -45,7 +45,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Posts.ToggleFavPost(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id INT UNSIGNED,
 	p_name TINYTEXT
 )

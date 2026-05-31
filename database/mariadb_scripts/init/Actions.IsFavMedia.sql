@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Actions.IsFavMedia(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_media_id INT UNSIGNED
 )
 RETURNS BOOL
@@ -23,7 +23,7 @@ DELIMITER ;
 -- DEPRECATED... Migrate All UserActions to Actions schema
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Posts.IsFavMedia(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_media_id INT UNSIGNED
 )
 RETURNS BOOL

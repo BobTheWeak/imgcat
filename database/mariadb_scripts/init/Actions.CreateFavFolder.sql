@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Actions.CreateFavFolder(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_name TINYTEXT
 )
 RETURNS INT UNSIGNED
@@ -21,7 +21,7 @@ DELIMITER ;
 -- DEPRECATED... Migrate All UserActions to Actions schema
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Posts.CreateFavFolder(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_name TINYTEXT
 )
 RETURNS INT UNSIGNED

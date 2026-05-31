@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Posts.CreateSimplePost(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_title TINYTEXT,
 	p_media_id INT UNSIGNED,
 	p_media_desc TINYTEXT

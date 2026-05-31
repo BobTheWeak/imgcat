@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE Actions.GetFavFolders(
-	p_user_id INT UNSIGNED
+	p_user_id BIGINT
 )
 LANGUAGE SQL
 NOT DETERMINISTIC
@@ -18,7 +18,7 @@ DELIMITER ;
 -- DEPRECATED... Migrate All UserActions to Actions schema
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE Posts.GetFavFolders(
-	p_user_id INT UNSIGNED
+	p_user_id BIGINT
 )
 LANGUAGE SQL
 NOT DETERMINISTIC

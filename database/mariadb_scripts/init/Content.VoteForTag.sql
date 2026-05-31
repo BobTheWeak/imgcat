@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE Content.VoteForTag(
-	p_user_id BIGINT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id BIGINT UNSIGNED,
 	p_tag TINYTEXT
 )

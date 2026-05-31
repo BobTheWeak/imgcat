@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Posts.CreateComment(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id INT UNSIGNED,
 	p_reply_to BIGINT UNSIGNED,
 	p_link_v1 CHAR(12),

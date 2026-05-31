@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE Content.VoteForMaturity(
-	p_user_id BIGINT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id BIGINT UNSIGNED,
 	p_maturity TINYINT UNSIGNED,
 	p_is_sexual BOOL,

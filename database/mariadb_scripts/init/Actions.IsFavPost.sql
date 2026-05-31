@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Actions.IsFavPost(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id INT UNSIGNED
 )
 RETURNS BOOL
@@ -23,7 +23,7 @@ DELIMITER ;
 -- DEPRECATED... Migrate All UserActions to Actions schema
 DELIMITER $$
 CREATE OR REPLACE FUNCTION Posts.IsFavPost(
-	p_user_id INT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id INT UNSIGNED
 )
 RETURNS BOOL

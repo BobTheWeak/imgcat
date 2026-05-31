@@ -1,6 +1,6 @@
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE Content.VoteForCategory(
-	p_user_id BIGINT UNSIGNED,
+	p_user_id BIGINT,
 	p_post_id BIGINT UNSIGNED,
 	p_is_politics BOOL,
 	p_is_thirst_trap BOOL,
