@@ -18,7 +18,7 @@ RUN --mount=type=secret,required=true,id=IC_UDB_USER,env=IC_UDB_USER \
 
 # Update the perms file to swap the username
 RUN --mount=type=secret,required=true,id=IC_UDB_USER,env=IC_UDB_USER \
-	sed -i -e "s/imgcat_jwt/${IC_UDB_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
+	sed -i -e "s/IC_UDB_USER/${IC_UDB_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
 
 # Create a random root password
 RUN dd if=/dev/random bs=18 count=1 | base64 > /home/root_pass.txt
