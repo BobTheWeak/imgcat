@@ -72,61 +72,61 @@ if(!appdb && !building) {
 }
 
 
-let userdb = null;
-if(!userdb && !building) {
-	// Test if we have the required parameters
-	let ok = true;
-	if(!process.env.IC_USERDB_HOST) {ok=false;console.error('Missing host for UserDB pool: IC_USERDB_HOST');}
-	if(!process.env.IC_USERDB_PORT) {ok=false;console.error('Missing port for UserDB pool: IC_USERDB_PORT');}
-	if(!process.env.IC_USERDB_USER) {ok=false;console.error('Missing user for UserDB pool: IC_USERDB_USER');}
-	if(!process.env.IC_USERDB_PASS) {ok=false;console.error('Missing pass for UserDB pool: IC_USERDB_PASS');}
-	if(ok) {
-		// Test if a single, manual query works
-		createConnection({
-			host: process.env.IC_USERDB_HOST,
-			port: process.env.IC_USERDB_PORT,
-			user: process.env.IC_USERDB_USER,
-			password: process.env.IC_USERDB_PASS
-		}).then((conn)=>{
-			conn.query("SELECT UserDB.IsUsernameFree('any')")
-			.then((res)=>{
-				if(res) {
-					// Everything checks out!
-					// Build a pool and assign it to userdb
-					userdb = createPool({
-						idleTimeout: 60, //sec
-						connectionLimit: 5,
-						acquireTimeout: 1000,
-						connectTimeout: 250,
-						queryTimeout: 1000,
-						leakDetectionTimeout: 10000,
-						host: process.env.IC_USERDB_HOST,
-						port: Number(process.env.IC_USERDB_PORT) || 3306,
-						user: process.env.IC_USERDB_USER,
-						password: process.env.IC_USERDB_PASS
-					});
-					console.log('UserDB pool started');
-				}
-			}).catch((e)=>{
-				console.error('Connected, but could not query, using the following params:')
-				console.error('Host: ', process.env.IC_USERDB_HOST || '- null -');
-				console.error('Port: ', process.env.IC_USERDB_PORT || '- null -');
-				console.error('User: ', process.env.IC_USERDB_USER || '- null -');
-				console.error('Pass: ', process.env.IC_USERDB_PASS?'-some value-':'- null -' );
-				console.error(e);
-			}).finally(()=>{
-				conn?.end()
-			});
-		}).catch((e)=>{
-			console.error('Could not establish connection, using the following params:')
-			console.error('Host: ', process.env.IC_USERDB_HOST || '- null -');
-			console.error('Port: ', process.env.IC_USERDB_PORT || '- null -');
-			console.error('User: ', process.env.IC_USERDB_USER || '- null -');
-			console.error('Pass: ', process.env.IC_USERDB_PASS?'-some value-':'- null -' );
-			console.error(e);
-		});
-	}
-}
+//let userdb = null;
+//if(!userdb && !building) {
+//	// Test if we have the required parameters
+//	let ok = true;
+//	if(!process.env.IC_USERDB_HOST) {ok=false;console.error('Missing host for UserDB pool: IC_USERDB_HOST');}
+//	if(!process.env.IC_USERDB_PORT) {ok=false;console.error('Missing port for UserDB pool: IC_USERDB_PORT');}
+//	if(!process.env.IC_USERDB_USER) {ok=false;console.error('Missing user for UserDB pool: IC_USERDB_USER');}
+//	if(!process.env.IC_USERDB_PASS) {ok=false;console.error('Missing pass for UserDB pool: IC_USERDB_PASS');}
+//	if(ok) {
+//		// Test if a single, manual query works
+//		createConnection({
+//			host: process.env.IC_USERDB_HOST,
+//			port: process.env.IC_USERDB_PORT,
+//			user: process.env.IC_USERDB_USER,
+//			password: process.env.IC_USERDB_PASS
+//		}).then((conn)=>{
+//			conn.query("SELECT 1")
+//			.then((res)=>{
+//				if(res) {
+//					// Everything checks out!
+//					// Build a pool and assign it to userdb
+//					userdb = createPool({
+//						idleTimeout: 60, //sec
+//						connectionLimit: 5,
+//						acquireTimeout: 1000,
+//						connectTimeout: 250,
+//						queryTimeout: 1000,
+//						leakDetectionTimeout: 10000,
+//						host: process.env.IC_USERDB_HOST,
+//						port: Number(process.env.IC_USERDB_PORT) || 3306,
+//						user: process.env.IC_USERDB_USER,
+//						password: process.env.IC_USERDB_PASS
+//					});
+//					console.log('UserDB pool started');
+//				}
+//			}).catch((e)=>{
+//				console.error('Connected, but could not query, using the following params:')
+//				console.error('Host: ', process.env.IC_USERDB_HOST || '- null -');
+//				console.error('Port: ', process.env.IC_USERDB_PORT || '- null -');
+//				console.error('User: ', process.env.IC_USERDB_USER || '- null -');
+//				console.error('Pass: ', process.env.IC_USERDB_PASS?'-some value-':'- null -' );
+//				console.error(e);
+//			}).finally(()=>{
+//				conn?.end()
+//			});
+//		}).catch((e)=>{
+//			console.error('Could not establish connection, using the following params:')
+//			console.error('Host: ', process.env.IC_USERDB_HOST || '- null -');
+//			console.error('Port: ', process.env.IC_USERDB_PORT || '- null -');
+//			console.error('User: ', process.env.IC_USERDB_USER || '- null -');
+//			console.error('Pass: ', process.env.IC_USERDB_PASS?'-some value-':'- null -' );
+//			console.error(e);
+//		});
+//	}
+//}
 
 
 /*
@@ -179,26 +179,26 @@ export async function getDbConn() {
 	return appdb?.getConnection();
 }
 
-export async function getUserDbConn() {
-	// TODO: Phase this out in favor of an OAuth server
-	if(!userdb) {
-		console.log('WARNING: UserDB pool not initialized on start, retrying');
-		userdb = mariadb.createPool({
-			idleTimeout: 60, //sec
-			connectionLimit: 5,
-			acquireTimeout: 1000,
-			connectTimeout: 250,
-			queryTimeout: 1000,
-			leakDetectionTimeout: 10000,
-			host: process.env.IC_USERDB_HOST,
-			port: Number(process.env.IC_USERDB_PORT) || 3306,
-			user: process.env.IC_USERDB_USER,
-			password: process.env.IC_USERDB_PASS
-		});
-		console.log('UserDB pool started. But connection NOT validated.');
-	}
-	return userdb?.getConnection();
-}
+//export async function getUserDbConn() {
+//	// TODO: Phase this out in favor of an OAuth server
+//	if(!userdb) {
+//		console.log('WARNING: UserDB pool not initialized on start, retrying');
+//		userdb = mariadb.createPool({
+//			idleTimeout: 60, //sec
+//			connectionLimit: 5,
+//			acquireTimeout: 1000,
+//			connectTimeout: 250,
+//			queryTimeout: 1000,
+//			leakDetectionTimeout: 10000,
+//			host: process.env.IC_USERDB_HOST,
+//			port: Number(process.env.IC_USERDB_PORT) || 3306,
+//			user: process.env.IC_USERDB_USER,
+//			password: process.env.IC_USERDB_PASS
+//		});
+//		console.log('UserDB pool started. But connection NOT validated.');
+//	}
+//	return userdb?.getConnection();
+//}
 
 export async function query(sql:string, args:any, handler:(response:any)=>any) {
 	return appdb?.getConnection()
