@@ -51,7 +51,7 @@
 <div>
 	{#if user_id == post.user_id}
 		<!-- Your post -->
-		<Button img='/add.svg' lbl='{post.is_public?'Make private':'Share with community'}' onclick={make_pub} />
+		<Button img='/add.svg' lbl={post.is_public?'Make private':'Share with community'} onclick={make_pub} />
 		<Button img='/share.svg' lbl='Copy link' onclick={copy_link} />
 		<Button img='/download.svg' lbl='Download' onclick={()=>{window.location=post.img[0].link}} />
 	{:else if user_id}
