@@ -1,5 +1,5 @@
 use crate::libredis::AppStateRedis;
-use crate::libpostgres::AppStatePostgres;
+use crate::ic_postgres::AppStatePostgres;
 use crate::helper_error::{HelperResult, HelperError};
 
 use actix_web::{HttpRequest, HttpResponse, HttpResponseBuilder};

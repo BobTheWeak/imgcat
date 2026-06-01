@@ -17,7 +17,7 @@ use openidconnect::{
 };
 
 use crate::app_state::{AppStateProviders};
-use crate::libpostgres::{AppStatePostgres};
+use crate::ic_postgres::{AppStatePostgres};
 use crate::libredis::{AppStateRedis, LoginState};
 
 #[derive(Debug, Deserialize)]

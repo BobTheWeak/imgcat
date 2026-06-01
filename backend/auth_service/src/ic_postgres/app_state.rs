@@ -5,18 +5,15 @@ use tokio_postgres::{Row, Error, NoTls, types::Type};
 use deadpool_postgres::{Config, Pool, PoolError, Client, Runtime};
 
 use crate::age_verification::AgeVerification;
+use crate::ic_postgres::{AccountData, AccountPreferences};
+use crate::ic_postgres::{get_account_data as fn_get_account_data};
+use crate::ic_postgres::{get_account_preferences as fn_get_account_preferences};
 
 // use a mutex so we can use a single pool for each thread
 pub struct AppStatePostgres {
 	pool: Mutex<Pool>
 }
 
-#[derive(Default, Debug)]
-pub struct AccountData {
-	pub account_id: i64,
-	pub username: String,
-	pub claims: Vec<String>,
-}
 
 impl AppStatePostgres {
 	pub async fn new() -> Self {
@@ -95,38 +92,7 @@ impl AppStatePostgres {
 
 	pub async fn get_account_data(&self, account_id:i64) -> Result<Option<AccountData>, Error> {
 		let mut client = self.get_conn().await.expect("Postgres connection error");
-		let transaction = client.transaction().await.expect("Postgres connection error");
-		
-		let mut result = AccountData::default();
-
-		// Returns (1 row): i64|null, text|null, test|null
-		let row:Row = transaction.query_typed_one(
-			// BUG: The postgres_types library DOES NOT have a FromSQL defined for a RefCursor type
-			// This means we have to cast it as a string in SQL, to be able to read it in Rust
-			"SELECT id, username, claims_cur::TEXT FROM UserDB.GetAccountData($1)", &[
-			(&account_id, Type::INT8), //BIGINT
-		]).await?;// else {return Ok(None)};
-
-		if let Some(acct_id) = row.get::<_,Option<i64>>("id") {
-			result.account_id = acct_id;
-			result.username = row.get("username");
-			let claims_cur:String = row.get("claims_cur");
-
-			// Returns (N rows): text
-			let rows:Vec<Row> = transaction.query_typed(
-				&format!("FETCH ALL IN \"{}\"", &claims_cur), &[]
-			).await?;
-
-			result.claims = rows.into_iter().map(|r|{r.get::<_,String>(0)}).collect();
-		} else {
-			transaction.commit().await?;
-			return Ok(None);
-		}
-
-		// Cleanup
-		transaction.commit().await?;
-
-		return Ok(Some(result));
+		fn_get_account_data(&mut client, account_id).await
 	}
 
 	pub async fn create_account(&self, prv:&str, sub:&str, username:&str, age_ver:&Option<AgeVerification>) -> Result<Option<i64>, Error> {
@@ -156,5 +122,10 @@ impl AppStatePostgres {
 		]).await?;
 
 		return row.try_get(0);
+	}
+
+	pub async fn get_account_preferences(&self, account_id:i64) -> Result<Option<AccountPreferences>, Error> {
+		let client = self.get_conn().await.expect("Postgres connection error");
+		fn_get_account_preferences(&client, account_id).await
 	}
 }

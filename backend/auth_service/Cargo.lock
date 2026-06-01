@@ -312,6 +312,7 @@ dependencies = [
  "env_logger",
  "jsonwebtoken",
  "openidconnect",
+ "postgres-types",
  "redis",
  "serde",
  "serde_json",
@@ -1969,6 +1970,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "postgres-derive"
+version = "0.4.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca1dad89d9ffdbf78502fde418eeede499b87772d88be780478f7f76dc8d471f"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "postgres-protocol"
 version = "0.6.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1994,6 +2007,7 @@ checksum = "8dc729a129e682e8d24170cd30ae1aa01b336b096cbb56df6d534ffec133d186"
 dependencies = [
  "bytes",
  "fallible-iterator",
+ "postgres-derive",
  "postgres-protocol",
 ]
 

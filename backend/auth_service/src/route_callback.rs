@@ -21,7 +21,7 @@ use crate::provider_google;
 
 use crate::app_state::AppStateProviders;
 use crate::libredis::AppStateRedis;
-use crate::libpostgres::AppStatePostgres;
+use crate::ic_postgres::AppStatePostgres;
 use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt};
 use crate::login_helpers::{get_refresh_jwt, get_auth_jwt, send_redirect};
 use crate::age_verification::AgeVerification;

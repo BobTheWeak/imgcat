@@ -6,7 +6,7 @@ use actix_web::{HttpRequest, HttpResponse};
 
 use crate::app_state::AppStateProviders;
 use crate::libredis::AppStateRedis;
-use crate::libpostgres::AppStatePostgres;
+use crate::ic_postgres::AppStatePostgres;
 use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt, DecodeJwt};
 
 use crate::login_helpers::{validate_bearer_auth, get_refresh_jwt, get_auth_jwt, get_refresh_cookie, get_auth_cookie};

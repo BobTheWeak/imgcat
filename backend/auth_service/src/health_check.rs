@@ -3,7 +3,7 @@ pub const MAX_TASKS_IN_QUEUE:usize = 200; // I have NO IDEA if this is a decent 
 
 use tokio::runtime::Handle;
 use actix_web::{web, get, HttpResponse};
-use crate::libpostgres::{AppStatePostgres};
+use crate::ic_postgres::{AppStatePostgres};
 
 #[get("/livez")]
 /// Ok if we can fetch a connection from the pool
