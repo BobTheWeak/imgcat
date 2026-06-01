@@ -1,7 +1,8 @@
+use serde::{Serialize, Deserialize};
 use tokio_postgres::{Client, Row, Error, types::Type};
 
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct AccountData {
 	pub account_id: i64,
 	pub username: String,

@@ -1,8 +1,9 @@
+use serde::{Serialize, Deserialize};
 use tokio_postgres::{Client, Row, Error, types::Type};
 use crate::ic_postgres::{ ContentLevel, VisibilityLevel };
 
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct AccountPreferences {
 	pub account_id: i64,
 	pub username: String,
