@@ -37,6 +37,7 @@ STABLE
 LEAKPROOF
 STRICT
 SECURITY DEFINER
+ROWS 1
 LANGUAGE SQL
 AS $$
 	-- Return claims
@@ -72,5 +73,6 @@ AS $$
 		ON a.id = b.account_id
 	INNER JOIN UserDB.AccountVisibilityPreferences c
 		ON a.id = c.account_id
-	WHERE a.id = _id;
+	WHERE a.id = _id
+	LIMIT 1;
 $$;
