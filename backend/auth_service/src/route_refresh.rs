@@ -5,7 +5,7 @@ use actix_web::{HttpRequest, HttpResponse};
 use crate::libredis::AppStateRedis;
 use crate::ic_postgres::AppStatePostgres;
 use crate::libjwt::{AuthJwt, RefreshJwt, DecodeJwt};
-use crate::login_helpers::{validate_bearer_auth, get_auth_jwt, get_refresh_cookie, get_auth_cookie};
+use crate::login_helpers::{get_bearer_auth, get_auth_jwt, get_refresh_cookie, get_auth_cookie};
 
 #[get("/refresh")]
 pub async fn refresh(
@@ -15,7 +15,7 @@ pub async fn refresh(
 	) -> HttpResponse {
 
 	// Grab the Bearer header & check it's encoding
-	let jwt_string = match validate_bearer_auth(&request) {
+	let jwt_string = match get_bearer_auth(&request) {
 		Ok(v) => v, Err(e) => return e.into()
 	};
 

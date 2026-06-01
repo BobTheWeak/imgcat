@@ -6,7 +6,7 @@ use actix_web::{HttpRequest, HttpResponse, HttpResponseBuilder};
 use actix_web::http::StatusCode;
 use actix_web::cookie::{Cookie, SameSite, time::Duration};
 
-use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt, EncodeJwt, validate};
+use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt, EncodeJwt};
 
 
 async fn is_user_banned(account_id:i64, redis:&AppStateRedis, pg:&AppStatePostgres) -> HelperResult<bool> {
@@ -119,7 +119,7 @@ pub fn send_redirect(redirect_url:Option<String>, rjwt:Option<&RefreshJwt>, ajwt
 	return result.finish();
 }
 
-pub fn validate_bearer_auth(request:&HttpRequest) -> HelperResult<&str> {
+pub fn get_bearer_auth(request:&HttpRequest) -> HelperResult<&str> {
 	let Some(jwt_string) = request.headers().get("Authorization") else {
 		return Err(HelperError::new(401, "Header").into());
 	};
@@ -130,10 +130,5 @@ pub fn validate_bearer_auth(request:&HttpRequest) -> HelperResult<&str> {
 		return Err(HelperError::new(401, "Header").into());
 	};
 
-	// Decode the JWT & make sure it's ours
-	return if validate(jwt_string) {
-		Ok(jwt_string)
-	} else {
-		Err(HelperError::new(403, "Header validation").into())
-	};
+	Ok(jwt_string)
 }

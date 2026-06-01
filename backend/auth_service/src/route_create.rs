@@ -9,7 +9,7 @@ use crate::libredis::AppStateRedis;
 use crate::ic_postgres::AppStatePostgres;
 use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt, DecodeJwt};
 
-use crate::login_helpers::{validate_bearer_auth, get_refresh_jwt, get_auth_jwt, get_refresh_cookie, get_auth_cookie};
+use crate::login_helpers::{get_bearer_auth, get_refresh_jwt, get_auth_jwt, get_refresh_cookie, get_auth_cookie};
 
 #[derive(Debug, Deserialize)]
 struct CreateFormData {
@@ -31,7 +31,7 @@ pub async fn create(
 	// TODO: Rate Limiter
 
 	// Grab the Bearer header & check it's encoding
-	let jwt_string = match validate_bearer_auth(&request) {
+	let jwt_string = match get_bearer_auth(&request) {
 		Ok(v) => v, Err(e) => return e.into()
 	};
 
