@@ -50,9 +50,6 @@ pub async fn getage(auth_token: &str) -> Option<u16> {
 		return Some(0);
 	};
 
-	// DEBUG CHECK TYPE
-	let _:&Vec<Value> = json;
-
 	// A Google b-day needs to be reconstructed, but date blocks aren't
 	// guaranteed to have each part. So loop through them all. Last wins.
 	let mut y:u16 = 0;
