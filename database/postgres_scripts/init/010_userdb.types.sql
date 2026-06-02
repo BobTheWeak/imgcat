@@ -16,7 +16,8 @@ CREATE TYPE UserDB.VISIBILITY_LEVEL AS ENUM (
 	-- ,'LIMITED'         -- Kids: visible to parents, groups
 	-- ,'LIMITED FRIENDS' -- Kids: visible to parents, groups, friends
 	,'FRIENDS'         -- Adult: approval list
-	,'PUBLIC'          -- Public visibility
+	,'PUBLIC'          -- Public, to other ImgCat users
+	,'GLOBAL'          -- Public, to anyone surfing the interwebs
 );
 
 

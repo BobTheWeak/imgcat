@@ -16,5 +16,8 @@ pub enum VisibilityLevel {
 	#[postgres(name="FRIENDS")]
 	Friends = 4,        // Adult: approval list
 	#[postgres(name="PUBLIC")]
-	Public = 5,         // Public visibility
+	Public = 5,         // Public, to other ImgCat users
+	
+	#[postgres(name="GLOBAL")]
+	Global = 9,         // Public, to anyone surfing the interwebs
 }
