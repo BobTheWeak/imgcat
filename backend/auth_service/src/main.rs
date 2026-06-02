@@ -3,7 +3,7 @@ mod ic_postgres;
 mod libredis;
 mod libjwt;
 mod app_state;
-mod helper_error;
+mod ic_error;
 mod login_helpers;
 mod age_verification;
 
@@ -15,6 +15,9 @@ mod route_refresh;
 mod route_namefree;
 //mod route_agecheck;
 
+// Account functions
+mod route_my_preferences;
+
 // Account Management functions
 mod route_create;
 
@@ -25,12 +28,13 @@ mod provider_google;
 mod health_check;
 
 use actix_web::{App, HttpServer, middleware::Logger};
-use actix_web::web::{Data};
+use actix_web::web::{Data, get};
 use env_logger::Env;
 
 use crate::ic_postgres::{AppStatePostgres};
 use crate::libredis::{AppStateRedis};
 use crate::app_state::{AppStateProviders, AppStateItem};
+
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -99,6 +103,12 @@ async fn main() -> std::io::Result<()> {
 		.service(route_create::create)
 		.service(route_namefree::namefree)
 		//.service(route_agecheck::agecheck)
+
+		// Get user information (/my)
+		// NOTE: This fn is different than every other service. It returns:
+		// ICResult< Json<AccountPreferences> >, not raw HttpResponses.
+		// TODO: This is the model we want to move towards.
+		.route("/my/prefs", get().to(route_my_preferences::get_my_prefs))
 
 		// Wildcard paths MUST be below fixed paths, otherwise
 		// "GET /refresh" resolves to "GET /{provider=refresh}"

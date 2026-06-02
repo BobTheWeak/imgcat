@@ -1,6 +1,6 @@
 use crate::libredis::AppStateRedis;
 use crate::ic_postgres::AppStatePostgres;
-use crate::helper_error::{HelperResult, HelperError};
+use crate::ic_error::{ICResult, ICError};
 
 use actix_web::{HttpRequest, HttpResponse, HttpResponseBuilder};
 use actix_web::http::StatusCode;
@@ -9,41 +9,39 @@ use actix_web::cookie::{Cookie, SameSite, time::Duration};
 use crate::libjwt::{RefreshJwt, AuthJwt, SignupJwt, EncodeJwt};
 
 
-async fn is_user_banned(account_id:i64, redis:&AppStateRedis, pg:&AppStatePostgres) -> HelperResult<bool> {
+async fn check_ban(account_id:i64, redis:&AppStateRedis, pg:&AppStatePostgres) -> ICResult<()> {
 	// Check if they're banned in Redis (temporarially)
 	let Ok(is_banned_temp) = redis.is_user_banned(account_id) else {
-		return Err(HelperError::new(503, "Redis connection").into());
+		return Err(ICError::REDIS_ERROR);
 	};
 
 	// If they're banned temporarially, don't bother checking the DB
-	// NOTE: We do this for speed, but we may want to reverse this
+	// TODO: We do this for speed, but we may want to reverse this
 	// because users would want to know about a permanent ban first.
 	// ie. "OK I'll wait a week. Oh no, it's permanent!? HULK MAD!"
-	if is_banned_temp {return Ok(is_banned_temp)}
+	if is_banned_temp {
+		return Err(ICError::BAN_TEMP);
+	}
 
 	// Check if they're banned in Postgres (permanently)
 	// TODO:
 	let _ = pg;
 
 	// fallthrough
-	return Ok(is_banned_temp);
+	return Ok(());
 }
 
-pub async fn get_refresh_jwt(account_id:i64, redis:&AppStateRedis, pg:&AppStatePostgres) -> HelperResult<RefreshJwt> {
-	if is_user_banned(account_id, redis, pg).await? == true {
-		return Err(HelperError::new(418, "Banned").into());
-	};
+pub async fn get_refresh_jwt(account_id:i64, redis:&AppStateRedis, pg:&AppStatePostgres) -> ICResult<RefreshJwt> {
+	check_ban(account_id, redis, pg).await?;
 
 	return Ok(RefreshJwt::new(account_id));
 }
 
-pub async fn get_auth_jwt(jwt:&RefreshJwt, redis:&AppStateRedis, pg:&AppStatePostgres) -> HelperResult<AuthJwt> {
-	if is_user_banned(jwt.sub, redis, pg).await? == true {
-		return Err(HelperError::new(418, "Banned").into());
-	};
+pub async fn get_auth_jwt(jwt:&RefreshJwt, redis:&AppStateRedis, pg:&AppStatePostgres) -> ICResult<AuthJwt> {
+	check_ban(jwt.sub, redis, pg).await?;
 
 	let Ok(d) = pg.get_account_data(jwt.sub).await else {
-		return Err(HelperError::new(503, "Postgres connection").into());
+		return Err(ICError::POSTGRES_ERROR);
 	};
 
 	if let Some(d) = d {
@@ -54,8 +52,9 @@ pub async fn get_auth_jwt(jwt:&RefreshJwt, redis:&AppStateRedis, pg:&AppStatePos
 			&d.claims,
 		));
 	} else {
-		// For some reason, we couldn't find that user in our database
-		return Err(HelperError::new(400, "Postgres fetch acct").into());
+		// This should NEVER happen. The user exists (b/c we have a signed refresh JWT),
+		// but for some reason we can't pull that account and create an Auth JWT. WTF?
+		return Err(ICError::panic("Could not generate auth JWT"));
 	}
 }
 
@@ -119,15 +118,15 @@ pub fn send_redirect(redirect_url:Option<String>, rjwt:Option<&RefreshJwt>, ajwt
 	return result.finish();
 }
 
-pub fn get_bearer_auth(request:&HttpRequest) -> HelperResult<&str> {
+pub fn get_bearer_auth(request:&HttpRequest) -> ICResult<&str> {
 	let Some(jwt_string) = request.headers().get("Authorization") else {
-		return Err(HelperError::new(401, "Header").into());
+		return Err(ICError::HEADER_MISSING);
 	};
 	let Ok(jwt_string) = jwt_string.to_str() else {
-		return Err(HelperError::new(401, "Header").into());
+		return Err(ICError::HEADER_MISSING);
 	};
 	let Some(jwt_string) = jwt_string.strip_prefix("Bearer ") else {
-		return Err(HelperError::new(401, "Header").into());
+		return Err(ICError::HEADER_MISSING);
 	};
 
 	Ok(jwt_string)

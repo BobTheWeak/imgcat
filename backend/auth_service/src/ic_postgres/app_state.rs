@@ -8,6 +8,7 @@ use crate::age_verification::AgeVerification;
 use crate::ic_postgres::{AccountData, AccountPreferences};
 use crate::ic_postgres::{get_account_data as fn_get_account_data};
 use crate::ic_postgres::{get_account_preferences as fn_get_account_preferences};
+use crate::ic_error::{ICError, ICResult};
 
 // use a mutex so we can use a single pool for each thread
 pub struct AppStatePostgres {
@@ -124,7 +125,7 @@ impl AppStatePostgres {
 		return row.try_get(0);
 	}
 
-	pub async fn get_account_preferences(&self, account_id:i64) -> Result<Option<AccountPreferences>, Error> {
+	pub async fn get_account_preferences(&self, account_id:i64) -> ICResult<AccountPreferences> {
 		let client = self.get_conn().await.expect("Postgres connection error");
 		fn_get_account_preferences(&client, account_id).await
 	}

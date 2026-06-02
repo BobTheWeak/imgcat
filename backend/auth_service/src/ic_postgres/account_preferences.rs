@@ -1,42 +1,42 @@
 use serde::{Serialize, Deserialize};
-use tokio_postgres::{Client, Row, Error, types::Type};
+use tokio_postgres::{Client, types::Type};
 use crate::ic_postgres::{ ContentLevel, VisibilityLevel };
-
+use crate::ic_error::{ICResult, ICError};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AccountPreferences {
 	pub account_id: i64,
 	pub username: String,
-	pub about_me: String,
+	pub about_me: Option<String>,
 
-	content_level: (ContentLevel, ContentLevel),
-	see_sexuality: (bool, bool),
-	see_gore: (bool, bool),
-	see_trauma: (bool, bool),
+	pub content_level: (ContentLevel, ContentLevel),
+	pub see_sexuality: (bool, bool),
+	pub see_gore: (bool, bool),
+	pub see_trauma: (bool, bool),
 
-	news_weight: i16,
-	politics_weight: i16,
-	creators_weight: i16,
-	selfies_weight: i16,
-	pets_weight: i16,
-	ai_weight: i16,
+	pub news_weight: i16,
+	pub politics_weight: i16,
+	pub creators_weight: i16,
+	pub selfies_weight: i16,
+	pub pets_weight: i16,
+	pub ai_weight: i16,
 
-	about_me_visibility: (VisibilityLevel, VisibilityLevel),
-	activity_visibility: (VisibilityLevel, VisibilityLevel),
-	dm_visibility: (VisibilityLevel, VisibilityLevel),
+	pub about_me_visibility: (VisibilityLevel, VisibilityLevel),
+	pub activity_visibility: (VisibilityLevel, VisibilityLevel),
+	pub dm_visibility: (VisibilityLevel, VisibilityLevel),
 }
 
 
-pub async fn get_account_preferences(client:&Client, account_id:i64) -> Result<Option<AccountPreferences>, Error> {
+pub async fn get_account_preferences(client:&Client, account_id:i64) -> ICResult<AccountPreferences> {
 
 	// Returns (0-1 rows): lots of fields
-	let row:Option<Row> = client.query_typed_opt(
+	let Ok(row) = client.query_typed_opt(
 		"SELECT * FROM UserDB.GetAccountPreferences($1)", &[
 		(&account_id, Type::INT8), //BIGINT
-	]).await?;
+	]).await else { return Err(ICError::POSTGRES_ERROR) };
 
 	if let Some(row) = row {
-		Ok(Some(AccountPreferences {
+		Ok(AccountPreferences {
 			account_id: row.get("account_id"),
 			username:   row.get("username"),
 			about_me:   row.get("about_me"),
@@ -77,8 +77,8 @@ pub async fn get_account_preferences(client:&Client, account_id:i64) -> Result<O
 				row.get("dm_visibility"),
 				row.get("legal_dm_visibility"),
 			),
-		}))
+		})
 	} else {
-		Ok(None)
+		Err(ICError::new("Could not load preferences"))
 	}
 }
