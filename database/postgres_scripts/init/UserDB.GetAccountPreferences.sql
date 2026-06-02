@@ -18,12 +18,12 @@ RETURNS TABLE (
 	legal_see_trauma BOOL,
 	
 	-- Content Weights
-	news_weight SMALLINT,
-	politics_weight SMALLINT,
-	creators_weight SMALLINT,
-	selfies_weight SMALLINT,
-	pets_weight SMALLINT,
-	ai_weight SMALLINT,
+	news_weight UserDB.CONTENT_WEIGHT,
+	politics_weight UserDB.CONTENT_WEIGHT,
+	creators_weight UserDB.CONTENT_WEIGHT,
+	selfies_weight UserDB.CONTENT_WEIGHT,
+	pets_weight UserDB.CONTENT_WEIGHT,
+	ai_weight UserDB.CONTENT_WEIGHT,
 
 	-- Visibility Flags
 	about_me_visibility UserDB.VISIBILITY_LEVEL,

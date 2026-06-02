@@ -38,23 +38,23 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountContentPreferences (
 	-- NOTE: +1000 is twice as likely to recommend that topic, -1000 is half (range: 32x to 1/32nd)
 	-- TODO: This list probably can't stay hardcoded like this & needs to be expanded
 	news_weight -- News and current events (facts, not opinions)
-		SMALLINT NOT NULL
-		DEFAULT 0,
+		UserDB.CONTENT_WEIGHT NOT NULL
+		DEFAULT 'NORMAL',
 	politics_weight -- Politics & advocacy (heavy opinions)
-		SMALLINT NOT NULL
-		DEFAULT 0,
+		UserDB.CONTENT_WEIGHT NOT NULL
+		DEFAULT 'NORMAL',
 	creators_weight -- OC creators (good), but also small-business promotion
-		SMALLINT NOT NULL
-		DEFAULT 0,
+		UserDB.CONTENT_WEIGHT NOT NULL
+		DEFAULT 'NORMAL',
 	selfies_weight -- Individual self-pics, cosplay, body positivity, thirst traps
-		SMALLINT NOT NULL
-		DEFAULT 0,
+		UserDB.CONTENT_WEIGHT NOT NULL
+		DEFAULT 'NORMAL',
 	pets_weight -- Pictures of our fuzzy wuzzy family (always good)
-		SMALLINT NOT NULL
-		DEFAULT 0,
+		UserDB.CONTENT_WEIGHT NOT NULL
+		DEFAULT 'NORMAL',
 	ai_weight -- AI generated pictures (always bad)
-		SMALLINT NOT NULL
-		DEFAULT 0,
+		UserDB.CONTENT_WEIGHT NOT NULL
+		DEFAULT 'NORMAL',
 
 	PRIMARY KEY(account_id)
 );

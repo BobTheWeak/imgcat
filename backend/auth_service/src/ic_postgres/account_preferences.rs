@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 use tokio_postgres::{Client, types::Type};
-use crate::ic_postgres::{ ContentLevel, VisibilityLevel };
+use crate::ic_postgres::{ ContentLevel, VisibilityLevel, ContentWeight };
 use crate::ic_error::{ICResult, ICError};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -14,12 +14,12 @@ pub struct AccountPreferences {
 	pub see_gore: (bool, bool),
 	pub see_trauma: (bool, bool),
 
-	pub news_weight: i16,
-	pub politics_weight: i16,
-	pub creators_weight: i16,
-	pub selfies_weight: i16,
-	pub pets_weight: i16,
-	pub ai_weight: i16,
+	pub news_weight: ContentWeight,
+	pub politics_weight: ContentWeight,
+	pub creators_weight: ContentWeight,
+	pub selfies_weight: ContentWeight,
+	pub pets_weight: ContentWeight,
+	pub ai_weight: ContentWeight,
 
 	pub about_me_visibility: (VisibilityLevel, VisibilityLevel),
 	pub activity_visibility: (VisibilityLevel, VisibilityLevel),

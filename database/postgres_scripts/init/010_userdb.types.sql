@@ -3,9 +3,9 @@ CREATE TYPE UserDB.CONTENT_LEVEL AS ENUM (
 	 'PRUDE'   -- Confirmed kid-safe (as pretty much everything 'normal' is)
 	-- Adult users
 	,'DUDE'    -- Normal or unclassified content (originally 'NORMAL', but we like whimsy)
-	,'LEWD'    -- Something spicy, like sexy selfies
+	,'LEWD'    -- Mature but SFW, like selfies & TT
 	-- Mods & staff
-	,'NUDE'    -- Something with nudity, violence, emotional triggers
+	,'NUDE'    -- Mature and NSFW (not supported)
 	,'ILLEGAL' -- Straight up illegal, like terrorist beheading videos
 );
 
@@ -19,6 +19,20 @@ CREATE TYPE UserDB.VISIBILITY_LEVEL AS ENUM (
 	,'PUBLIC'          -- Public visibility
 );
 
+
+-- I don't know what these values mean (yet), but we don't want to store
+-- actual weights in user preferences b/c the formulas will change.
+-- NOTE: I'm not going to do casting translations either...
+CREATE TYPE UserDB.CONTENT_WEIGHT AS ENUM (
+	'NONE',
+	'MUCH LESS',
+	'LESS',
+	'LITTLE LESS',
+	'NORMAL',
+	'LITTLE MORE',
+	'MORE',
+	'MUCH MORE'
+);
 
 
 
