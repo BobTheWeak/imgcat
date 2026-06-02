@@ -2,7 +2,7 @@ use serde_repr::{Serialize_repr, Deserialize_repr};
 use tokio_postgres::types::{ToSql, FromSql};
 
 #[derive(Debug, ToSql, FromSql, Serialize_repr, Deserialize_repr)]
-#[postgres(name="CONTENT_LEVEL")]
+#[postgres(name="content_level")]
 #[repr(u8)]
 pub enum ContentLevel {
 	#[postgres(name="PRUDE")]

@@ -3,7 +3,7 @@ use tokio_postgres::types::{ToSql, FromSql};
 
 
 #[derive(Debug, ToSql, FromSql, Serialize_repr, Deserialize_repr)]
-#[postgres(name="VISIBILITY_LEVEL")]
+#[postgres(name="visibility_level")]
 #[repr(u8)]
 pub enum VisibilityLevel {
 	#[postgres(name="PRIVATE")]
