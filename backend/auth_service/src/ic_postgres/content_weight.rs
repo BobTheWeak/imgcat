@@ -8,7 +8,7 @@ use tokio_postgres::types::{ToSql, FromSql};
 pub enum ContentWeight {
 	#[postgres(name="NONE")]
 	None = 0,
-	// reserved
+
 	#[postgres(name="MUCH LESS")]
 	MuchLess = 2,
 	#[postgres(name="LESS")]
