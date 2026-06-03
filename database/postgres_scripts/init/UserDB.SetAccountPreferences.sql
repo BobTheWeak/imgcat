@@ -39,8 +39,6 @@ BEGIN
 		RETURN 0;
 	END IF;
 
-	RAISE DEBUG 'User % updating settings', account_id;
-
 	-- UserDB.Account (username)
 	IF username IS NOT NULL
 	THEN
