@@ -35,18 +35,16 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountContentPreferences (
 		CHECK(see_trauma <= legal_see_trauma),
 	
 	-- Content Topics
-	-- NOTE: +1000 is twice as likely to recommend that topic, -1000 is half (range: 32x to 1/32nd)
-	-- TODO: This list probably can't stay hardcoded like this & needs to be expanded
 	news_weight -- News and current events (facts, not opinions)
 		UserDB.CONTENT_WEIGHT NOT NULL
 		DEFAULT 'NORMAL',
-	politics_weight -- Politics & advocacy (heavy opinions)
+	politics_weight -- Politics & opinions
 		UserDB.CONTENT_WEIGHT NOT NULL
 		DEFAULT 'NORMAL',
-	creators_weight -- OC creators (good), but also small-business promotion
+	creators_weight -- Artists, creators, and original content 
 		UserDB.CONTENT_WEIGHT NOT NULL
 		DEFAULT 'NORMAL',
-	selfies_weight -- Individual self-pics, cosplay, body positivity, thirst traps
+	selfies_weight -- Selfies, body pics, cosplay, workout progress 
 		UserDB.CONTENT_WEIGHT NOT NULL
 		DEFAULT 'NORMAL',
 	pets_weight -- Pictures of our fuzzy wuzzy family (always good)
@@ -77,7 +75,7 @@ CREATE TABLE IF NOT EXISTS UserDB.AccountVisibilityPreferences (
 	-- When another user clicks on a user profile, is that public?
 	about_me_visibility
 		UserDB.VISIBILITY_LEVEL NOT NULL
-		DEFAULT 'PUBLIC'
+		DEFAULT 'GLOBAL'
 		CHECK(about_me_visibility <= legal_about_me_visibility),
 	-- When another user looks at comment/post histories, is that public?
 	activity_visibility
