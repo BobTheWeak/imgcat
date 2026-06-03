@@ -22,11 +22,12 @@ DECLARE
 	-- By default, set this to Normal/DUDE. If they're allowed to set it to LEWD, they can do it later.
 	_default_content_level UserDB.CONTENT_LEVEL := 'DUDE';
 	-- By default, yes. But it won't matter unless they set content_level higher
-	_default_see_sexuality BOOL := TRUE;
-	_default_see_gore BOOL := TRUE;
+	_default_see_sexuality BOOL := FALSE;
+	_default_see_gore BOOL := FALSE;
 	_default_see_trauma BOOL := TRUE;
 	-- By default, make profiles public
-	_default_about_me_visibility UserDB.VISIBILITY_LEVEL := 'PUBLIC';
+	_default_about_me_visibility UserDB.VISIBILITY_LEVEL := 'GLOBAL';
+	-- Activity & DMs can only be seen by other folks with an ImgCat account
 	_default_activity_visibility UserDB.VISIBILITY_LEVEL := 'PUBLIC';
 	_default_dm_visibility UserDB.VISIBILITY_LEVEL := 'PUBLIC';
 	-- By default, leave your profile blank
