@@ -61,9 +61,9 @@
 <style>
 	button {
 		display: inline-block;
-		padding: 5px 10px;
+		padding: 0.5em 1em;
 		border: 1px solid var(--bdr, var(--cawarm));
-		border-radius: 10px;
+		border-radius: 1em;
 		color: var(--txt, var(--cahot));
 		background-color: var(--bkg, var(--cb3));
 		cursor: pointer;
@@ -72,7 +72,7 @@
 	button:hover {
 		background-color: var(--bkg-sel, var(--cb4));
 		border-color: var(--bdr-sel, var(--bdr, var(--cahot)));
-		padding: 4px 9px;
+		padding: calc(0.5em - 1px) calc(1em - 1px);
 		border-width: 2px;
 	}
 	button.sel {
