@@ -1,135 +1,265 @@
 <script lang='ts'>
-	let { data } = $props();
+	import type { PageProps } from './$types';
+	import Button from '$lib/Button.svelte';
+
+	let { data, form }: PageProps = $props();
+
+	let selected_maturity = $state(data.prefs.content_level[0]);
 </script>
+
+{#snippet secured_option(data, label, value, disabled)}
+	{#if data[1] >= value}
+		{#if !disabled}
+			{#if data[0] == value}
+				<option value={value} selected>{label}</option>
+			{:else}
+				<option value={value}>{label}</option>
+			{/if}
+		{:else}
+			{#if data[0] == value}
+				<option value={value} disabled selected>{label}</option>
+			{:else}
+				<option value={value} disabled>{label}</option>
+			{/if}
+		{/if}
+	{/if}
+{/snippet}
+
+{#snippet weight_option(data, label, value)}
+	{#if data == value}
+		<option value={value} selected>{label}</option>
+	{:else}
+		<option value={value}>{label}</option>
+	{/if}
+{/snippet}
+
+{#snippet weight_dd(data)}
+	{@render weight_option(data, 'Much more', 8)}
+	{@render weight_option(data, 'More', 7)}
+	<!-- {@render weight_option(data, 'Little more', 6)} Removed to simplify UI/UX -->
+	{@render weight_option(data, 'Normal', 5)}
+	<!-- {@render weight_option(data, 'Little less', 4)} Removed to simplify UI/UX -->
+	{@render weight_option(data, 'Less', 3)}
+	{@render weight_option(data, 'Much less', 2)}
+	{@render weight_option(data, '- None -', 0)}
+{/snippet}
 
 <h1>Profile</h1>
 
-<form>
-<div id='account' class='section'>
-	<h2>Account</h2>
+<div id='about' class='section'>
+	<h2>About Me</h2>
+	<p>Introduce yourself to the community</p>
 
-	<div>
-		<label for='username'>Username</label>
-		<input name='username' type='text' value='{data.username}' autocomplete='off' />
-	</div>
-	<div>
-		<label for='location'>Location</label>
-		<input name='location' type='text' value='{data.location}' autocomplete='off' />
-	</div>
-	<div>
-		<label for='age'>Age</label>
-		<input name='age' type='number' value='{data.age}' autocomplete='off' />
-	</div>
-</div>
+	<form method="POST" action='?/save'>
+		<div>
+			<label>
+				Username
+				<input name='username' type='text' value={data.prefs.username} autocomplete='off' disabled />
+			</label>
+		</div><div>
+			<label>
+				About me
+				<textarea name='about_me' placeholder='Tell the ImgCat community about you!'>{data.prefs.about_me}</textarea>
+			</label>
+		</div>
 
-<div id='security' class='section'>
-	<h2>Security</h2>
-
-	<div>
-		<label for='email'>Email address</label>
-		<input name='email' type='text' value='{data.email}' />
-	</div>
-	<div>
-		<label for='password'>Change password</label>
-		<input name='password' type='password' value='{data.email}' autocomplete='new-password' />
-	</div><div>
-		
-	</div>
+		<Button class='sbutton' lbl='Save changes' />
+	</form>
 </div>
 
 <div id='content' class='section'>
 	<h2>Content Settings</h2>
-	<div>
-		<label for='content-category'>Allowed content</label>
-		<select name='content-category'>
-			<option value='1'>Kid-friendly</option>
-			<option value='2'>Standard</option>
-			<option value='3' selected>Lewd or suggestive</option>
-			<option value='4' disabled>NSFW content</option>
-		</select>
-	</div>
-	<div>
-		<label for='content-messaging'>Enable direct messages</label>
-		<select name='content-messaging'>
-			<option value='Y' selected>Enabled</option>
-			<option value='N'>Disabled</option>
-		</select>
-	</div>
+	<p>How much "spiciness" do you want?</p>
 
-	<h4>On my viral page, I want to see more or less of the following:</h4>
-	<div>
-		<label for='content-politics'>Politics</label>
-		<select name='content-politics'>
-			<option value='more'>More</option>
-			<option value='normal' selected>Normal</option>
-			<option value='less'>Less</option>
-			<option value='none'>Block all</option>
-		</select>
-	</div>
-	<div>
-		<label for='content-news'>News</label>
-		<select name='content-news'>
-			<option value='more'>More</option>
-			<option value='normal' selected>Normal</option>
-			<option value='less'>Less</option>
-			<option value='none'>Block all</option>
-		</select>
-	</div>
-	<div>
-		<label for='content-creators'>Creator content</label>
-		<select name='content-creators'>
-			<option value='more'>More</option>
-			<option value='normal' selected>Normal</option>
-			<option value='less'>Less</option>
-			<option value='none'>Block all</option>
-		</select>
-	</div>
-	<div>
-		<label for='content-ai'>AI generated</label>
-		<select name='content-ai'>
-			<option value='more'>More</option>
-			<option value='normal' selected>Normal</option>
-			<option value='less'>Less</option>
-			<option value='none'>Block all</option>
-		</select>
-	</div>
-	<div>
-		<label for='content-ai'>Low quality</label>
-		<select name='content-ai'>
-			<option value='more'>More</option>
-			<option value='normal' selected>Normal</option>
-			<option value='less'>Less</option>
-			<option value='none'>Block all</option>
-		</select>
-	</div>
+	<form method="POST" action='?/save'>
+		<div>
+			<label>Maturity level
+				<select name='content_level' bind:value={selected_maturity}>
+					{@render secured_option(data.prefs.content_level, 'Kid-friendly', 1)}
+					{@render secured_option(data.prefs.content_level, 'Standard', 2)}
+					{@render secured_option(data.prefs.content_level, 'Mature (Safe For Work)', 3)}
+					{@render secured_option(data.prefs.content_level, 'Mature (Not Safe For Work)', 4)}
+				</select>
+			</label>
+		</div>
+		{#if selected_maturity >= 2}
+			<div id='maturityss'>
+				{#if selected_maturity >= 3}
+					<div>
+						<label>Lewd or sexual
+							<select name='see_sexuality'>
+								{@render secured_option(data.prefs.see_sexuality, 'Allowed', true)}
+								{@render secured_option(data.prefs.see_sexuality, 'Block', false)}
+							</select>
+						</label>
+					</div>
+				{:else}
+					<input type='hidden' name='see_sexuality' value='false' />
+				{/if}
+
+				{#if selected_maturity >= 3}
+					<div>
+						<label>Violence or gore
+							<select name='see_gore'>
+								{@render secured_option(data.prefs.see_gore, 'Allowed', true)}
+								{@render secured_option(data.prefs.see_gore, 'Block', false)}
+							</select>
+						</label>
+					</div>
+				{:else}
+					<input type='hidden' name='see_gore' value='false' />
+				{/if}
+
+				{#if selected_maturity >= 2}
+					<div>
+						<label>Emotional or traumatic
+							<select name='see_trauma'>
+								{@render secured_option(data.prefs.see_trauma, 'Allowed', true)}
+								{@render secured_option(data.prefs.see_trauma, 'Block', false)}
+							</select>
+						</label>
+					</div>
+				{:else}
+					<input type='hidden' name='see_trauma' value='false' />
+				{/if}
+			</div>
+		{:else}
+			<input type='hidden' name='see_sexuality' value='false' />
+			<input type='hidden' name='see_gore' value='false' />
+			<input type='hidden' name='see_trauma' value='false' />
+		{/if}
+	
+		<br/>
+		<h2>Content Weights</h2>
+		<p>What do you want to see?</p>
+	
+		<div>
+			<label>News and current events
+				<select name='news_weight'>
+					{@render weight_dd(data.prefs.news_weight)}
+				</select>
+			</label>
+		</div><div>
+			<label>Politics and opinions
+				<select name='politics_weight'>
+					{@render weight_dd(data.prefs.politics_weight)}
+				</select>
+			</label>
+		</div><div>
+			<label>Artists, creators, and original content
+				<select name='creators_weight'>
+					{@render weight_dd(data.prefs.creators_weight)}
+				</select>
+			</label>
+		</div><div>
+			<label>Selfies, body pics, workout progress
+				<select name='selfies_weight'>
+					{@render weight_dd(data.prefs.selfies_weight)}
+				</select>
+			</label>
+		</div><div>
+			<label>Animals, pets, fuzzy friends
+				<select name='pets_weight'>
+					{@render weight_dd(data.prefs.pets_weight)}
+				</select>
+			</label>
+		</div><div>
+			<label>Generative AI
+				<select name='ai_weight'>
+					{@render weight_dd(data.prefs.ai_weight)}
+				</select>
+			</label>
+		</div>
+
+		<Button class='sbutton' lbl='Save changes' />
+	</form>
+</div>
+
+<div id='privacy' class='section'>
+	<h2>Privacy Settings</h2>
+	<p>What can others see about you?</p>
+
+	<form method="POST" action='?/save'>
+		<div>
+			<label>
+				"About me" bio
+				<select name='about_me_visibility'>
+					{@render secured_option(data.prefs.about_me_visibility, 'Global', 9)}
+					{@render secured_option(data.prefs.about_me_visibility, 'ImgCat community', 5)}
+					{@render secured_option(data.prefs.about_me_visibility, 'Friends only', 4)}
+					{@render secured_option(data.prefs.about_me_visibility, 'Private', 1)}
+				</select>
+			</label>
+		</div>
+		<div>
+			<label>
+				Post and comment history
+				<select name='activity_visibility'>
+					{@render secured_option(data.prefs.activity_visibility, 'ImgCat community', 5)}
+					{@render secured_option(data.prefs.activity_visibility, 'Friends only', 4)}
+					{@render secured_option(data.prefs.activity_visibility, 'Private', 1)}
+				</select>
+			</label>
+		</div>
+		<!-- NOTE: We won't have DMs on launch
+		<div>
+			<label>
+				Who can send you DMs?
+				<select name='dm_visibility'>
+					{@render secured_option(data.prefs.dm_visibility, 'ImgCat community', 5)}
+					{@render secured_option(data.prefs.dm_visibility, 'Friends only', 4)}
+					{@render secured_option(data.prefs.dm_visibility, 'Private', 1)}
+				</select>
+			</label>
+		</div>
+		-->
+
+		<Button class='sbutton' lbl='Save changes' />
+	</form>
 </div>
 
 <div id='blocked' class='section'>
-	<h2>Blocked</h2>
-	<div>
-		<h4>Users</h4>
-		<div style='display:flex'>
-			<span class='tag'>Testing1<button>X</button></span>
-			<span class='tag'>Testing2<button>X</button></span>
-			<span class='tag'>Testing3<button>X</button></span>
-			{#each data?.blocked_users as user}
-			<span class='tag'>{user}<button>X</button></span>
-			{/each}
+	<h2>Blocked Users</h2>
+	<p>Which frustrations can we stop?</p>
+
+
+	<p>- TODO - WORK IN PROGRESS</p>
+
+
+	<form method="POST" action='?/save'>
+		<div>
+			<h4>Users</h4>
+			<div style='display:flex'>
+				<span class='tag'>Testing1<button>X</button></span>
+				<span class='tag'>Testing2<button>X</button></span>
+				<span class='tag'>Testing3<button>X</button></span>
+				{#each data?.blocked_users as user}
+				<span class='tag'>{user}<button>X</button></span>
+				{/each}
+			</div>
+			<input /><button>Add</button>
 		</div>
-		<input /><button>Add</button>
-	</div>
-	<div>
-		<h4>Tags</h4>
-		<div style='display:flex'>
-			{#each data?.blocked_tags as tag}
-			<span class='tag'>{tag}<button>X</button></span>
-			{/each}
+		<div>
+			<h4>Tags</h4>
+			<div style='display:flex'>
+				{#each data?.blocked_tags as tag}
+				<span class='tag'>{tag}<button>X</button></span>
+				{/each}
+			</div>
+			<input /><button>Add</button>
 		</div>
-		<input /><button>Add</button>
-	</div>
+
+		<Button class='sbutton' lbl='Save changes' />
+	</form>
 </div>
 
-</form>
+
+<div id='tools' class='section'>
+	<h2>Actions</h2>
+	<form method="POST" action='?/logout'>
+		<Button lbl='Log out' />
+	</form>
+</div>
 
 <style>
 	div.section {
@@ -137,12 +267,31 @@
 		border: 1px solid var(--cb1);
 		padding: 10px;
 
-		label {
+		label, input, select, textarea {
 			display: inline-block;
-			width: 250px;
+			width: 25em;
+			box-sizing: border-box;
 		}
-		select {
-			width: 200px;
+		textarea {
+			height: 6em;
+		}
+		label {
+			margin-top: 1em;
+		}
+
+		p {
+			color: var(--cticy);
+		}
+	}
+
+	:global(.sbutton) {
+		margin-top: 2em;
+	}
+
+	div#maturityss {
+		margin-left: 2em;
+		label, input, select, textarea {
+			width: 22em;
 		}
 	}
 
