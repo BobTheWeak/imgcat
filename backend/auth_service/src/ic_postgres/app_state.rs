@@ -6,8 +6,7 @@ use deadpool_postgres::{Config, Pool, PoolError, Client, Runtime};
 
 use crate::age_verification::AgeVerification;
 use crate::ic_postgres::{AccountData, AccountPreferences};
-use crate::ic_postgres::{get_account_data as fn_get_account_data};
-use crate::ic_postgres::{get_account_preferences as fn_get_account_preferences};
+use crate::ic_postgres::{get_account_data as fn_get_account_data, get_prefs};
 use crate::ic_error::{ICError, ICResult};
 
 // use a mutex so we can use a single pool for each thread
@@ -47,7 +46,7 @@ impl AppStatePostgres {
 		Self {pool:Mutex::new(pool)}
 	}
 
-	async fn get_conn(&self) -> Result<Client, PoolError> {
+	pub async fn get_conn(&self) -> Result<Client, PoolError> {
 		// TODO: If the pool is poisoned, try to recover w/o a panic
 		let pool = self.pool.lock().expect("Poisoned Postgres mutex");
 		// TODO: If we can't grab a connection, try to recover
@@ -127,6 +126,11 @@ impl AppStatePostgres {
 
 	pub async fn get_account_preferences(&self, account_id:i64) -> ICResult<AccountPreferences> {
 		let client = self.get_conn().await.expect("Postgres connection error");
-		fn_get_account_preferences(&client, account_id).await
+		return get_prefs(&client, account_id).await;
 	}
+
+	//pub async fn set_account_preferences(&self, account_id:i64) -> ICResult<AccountPreferences> {
+	//	let client = self.get_conn().await.expect("Postgres connection error");
+	//	set_prefs(&client, account_id).await
+	//}
 }

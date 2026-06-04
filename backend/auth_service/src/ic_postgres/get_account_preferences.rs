@@ -27,7 +27,7 @@ pub struct AccountPreferences {
 }
 
 
-pub async fn get_account_preferences(client:&Client, account_id:i64) -> ICResult<AccountPreferences> {
+pub async fn get_account_preferences_postgres(client:&Client, account_id:i64) -> ICResult<AccountPreferences> {
 
 	// Returns (0-1 rows): lots of fields
 	let Ok(row) = client.query_typed_opt(

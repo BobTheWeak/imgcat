@@ -16,3 +16,15 @@ pub enum ContentLevel {
 	#[postgres(name="ILLEGAL")]
 	Illegal = 5,
 }
+
+impl ContentLevel {
+	pub const fn to_sql_text(&self) -> &'static str {
+		match self {
+			Self::Prude => "PRUDE",
+			Self::Dude => "DUDE",
+			Self::Lewd => "LEWD",
+			Self::Nude => "NUDE",
+			Self::Illegal => "ILLEGAL",
+		}
+	}
+}

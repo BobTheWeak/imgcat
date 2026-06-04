@@ -24,3 +24,18 @@ pub enum ContentWeight {
 	#[postgres(name="MUCH MORE")]
 	MuchMore = 8,
 }
+
+impl ContentWeight {
+	pub const fn to_sql_text(&self) -> &'static str {
+		match self {
+			Self::None => "NONE",
+			Self::MuchLess => "MUCH LESS",
+			Self::Less => "LESS",
+			Self::LittleLess => "LITTLE LESS",
+			Self::Normal => "NORMAL",
+			Self::LittleMore => "LITTLE MORE",
+			Self::More => "MORE",
+			Self::MuchMore => "MUCH MORE",
+		}
+	}
+}

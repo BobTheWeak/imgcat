@@ -21,3 +21,15 @@ pub enum VisibilityLevel {
 	#[postgres(name="GLOBAL")]
 	Global = 9,         // Public, to anyone surfing the interwebs
 }
+
+// This is to work around some of the limitations of SQL Type translations
+impl VisibilityLevel {
+	pub const fn to_sql_text(&self) -> &'static str {
+		match self {
+			Self::Private => "PRIVATE",
+			Self::Friends => "FRIENDS",
+			Self::Public => "PUBLIC",
+			Self::Global => "GLOBAL",
+		}
+	}
+}

@@ -28,7 +28,7 @@ mod provider_google;
 mod health_check;
 
 use actix_web::{App, HttpServer, middleware::Logger};
-use actix_web::web::{Data, get};
+use actix_web::web::{Data, get, post};
 use env_logger::Env;
 
 use crate::ic_postgres::{AppStatePostgres};
@@ -109,6 +109,7 @@ async fn main() -> std::io::Result<()> {
 		// ICResult< Json<AccountPreferences> >, not raw HttpResponses.
 		// TODO: This is the model we want to move towards.
 		.route("/my/prefs", get().to(route_my_preferences::get_my_prefs))
+		.route("/my/prefs", post().to(route_my_preferences::set_my_prefs))
 
 		// Wildcard paths MUST be below fixed paths, otherwise
 		// "GET /refresh" resolves to "GET /{provider=refresh}"

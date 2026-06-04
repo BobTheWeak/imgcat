@@ -1,7 +1,9 @@
 mod account_data;
 pub use account_data::{AccountData, get_account_data};
-mod account_preferences;
-pub use account_preferences::{AccountPreferences, get_account_preferences};
+mod get_account_preferences;
+pub use get_account_preferences::{AccountPreferences, get_account_preferences_postgres as get_prefs};
+mod set_account_preferences;
+pub use set_account_preferences::{AccountPreferencesSetter, set_account_preferences_postgres as set_prefs};
 mod content_level;
 pub use content_level::ContentLevel;
 mod visibility_level;
