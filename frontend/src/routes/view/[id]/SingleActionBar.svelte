@@ -182,6 +182,9 @@
 		</div>
 		<br />
 
+		<!-- A spacer, so expanding the mature/nsfw types doesn't mess with modal height -->
+		{#if !showTagModal_types}<br style='line-height:calc(2.5em - 5px)'/>{/if}
+
 		{#if form?.form==='tag' && !form.success}
 			<br />
 			<div class='error'>
