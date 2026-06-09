@@ -200,7 +200,9 @@ export async function getDbConn() {
 //	return userdb?.getConnection();
 //}
 
+// Can return multiple result sets, etc.
 export async function query(sql:string, args:any, handler:(response:any)=>any) {
+	if(handler===undefined){handler=r=>r}
 	return appdb?.getConnection()
 	.then((conn)=>{
 		return conn.query(sql, args)
@@ -229,7 +231,9 @@ export async function query(sql:string, args:any, handler:(response:any)=>any) {
 	});
 }
 
-export async function array(sql:string, args:any, handler) {
+// Return multiple result sets... as an array
+export async function array(sql:string, args:any, handler:(response:any)=>any) {
+	if(handler===undefined){handler=r=>r}
 	return appdb?.getConnection()
 	.then((conn)=>{
 		return conn.query({sql:sql, rowsAsArray:true}, args)
@@ -242,6 +246,37 @@ export async function array(sql:string, args:any, handler) {
 	.then((response)=>{
 		if(response?.length > 0) {
 			return handler(response);
+		} else {
+			return null;
+		}
+	})
+	.catch((e)=>{
+		console.error(e);
+		if(e['sqlState'] == '45000') {
+			error(500, e['sqlMessage'] || 'Unknown error');
+		} else if(e['sqlState'] == 'HY000') {
+			error(500, 'The server is temporarially overloaded, please wait a moment and try again');
+		} else {
+			error(500, 'Unknown server error');
+		}
+	});
+}
+
+// Helper function, return a single row, as an array
+export async function row(sql:string, args:any, handler:(response:any)=>any) {
+	if(handler===undefined){handler=r=>r}
+	return appdb?.getConnection()
+	.then((conn)=>{
+		return conn.query({sql:sql, rowsAsArray:true}, args)
+		.catch((e)=>{
+			console.log(e);
+			return null;
+		})
+		.finally(()=>{conn?.release()});
+	})
+	.then((response)=>{
+		if(response?.length > 0) {
+			return handler(response[0][0]);
 		} else {
 			return null;
 		}
