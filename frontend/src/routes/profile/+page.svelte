@@ -82,46 +82,30 @@
 				</select>
 			</label>
 		</div>
-		{#if selected_maturity >= 2}
+		{#if selected_maturity >= 3}
 			<div id='maturityss'>
-				{#if selected_maturity >= 3}
-					<div>
-						<label>Lewd or sexual
-							<select name='see_sexuality'>
-								{@render secured_option(data.prefs.see_sexuality, 'Allowed', true)}
-								{@render secured_option(data.prefs.see_sexuality, 'Block', false)}
-							</select>
-						</label>
-					</div>
-				{:else}
-					<input type='hidden' name='see_sexuality' value='false' />
-				{/if}
-
-				{#if selected_maturity >= 3}
-					<div>
-						<label>Violence or gore
-							<select name='see_gore'>
-								{@render secured_option(data.prefs.see_gore, 'Allowed', true)}
-								{@render secured_option(data.prefs.see_gore, 'Block', false)}
-							</select>
-						</label>
-					</div>
-				{:else}
-					<input type='hidden' name='see_gore' value='false' />
-				{/if}
-
-				{#if selected_maturity >= 2}
-					<div>
-						<label>Emotional or traumatic
-							<select name='see_trauma'>
-								{@render secured_option(data.prefs.see_trauma, 'Allowed', true)}
-								{@render secured_option(data.prefs.see_trauma, 'Block', false)}
-							</select>
-						</label>
-					</div>
-				{:else}
-					<input type='hidden' name='see_trauma' value='false' />
-				{/if}
+				<div>
+					<label>Lewd or sexual
+						<select name='see_sexuality'>
+							{@render secured_option(data.prefs.see_sexuality, 'Allowed', true)}
+							{@render secured_option(data.prefs.see_sexuality, 'Block', false)}
+						</select>
+					</label>
+				</div><div>
+					<label>Violence or gore
+						<select name='see_gore'>
+							{@render secured_option(data.prefs.see_gore, 'Allowed', true)}
+							{@render secured_option(data.prefs.see_gore, 'Block', false)}
+						</select>
+					</label>
+				</div><div>
+					<label>Emotional or traumatic
+						<select name='see_trauma'>
+							{@render secured_option(data.prefs.see_trauma, 'Allowed', true)}
+							{@render secured_option(data.prefs.see_trauma, 'Block', false)}
+						</select>
+					</label>
+				</div>
 			</div>
 		{:else}
 			<input type='hidden' name='see_sexuality' value='false' />
