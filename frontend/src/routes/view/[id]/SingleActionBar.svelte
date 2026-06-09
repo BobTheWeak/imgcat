@@ -128,7 +128,7 @@
 	{:else if user_type==='u'}
 		<div class='btngrp'>
 			<form method='POST' action='?/fav' use:enhance style='display:flex'>
-				<Button img='/star_{is_fav?'on':'off'}.svg' lbl='Fav' type='submit' />
+				<Button img='/star_{is_fav?'on':'off'}.svg' lbl='Fav' type='submit' class={is_fav?'tbtn sel':''} />
 				<Button img='/share.svg' lbl='Link' onclick={copy_link} />
 				<Button img='/politics.svg' lbl='Tag' onclick={()=>{showTagModal=true}} />
 			</form>
