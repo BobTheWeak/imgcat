@@ -14,6 +14,7 @@
 
 		// HTML props:
 		class: ext_classes = $bindable(''),
+		type = 'button',
 		...others
 
 
@@ -39,7 +40,7 @@
 
 
 {#snippet buttonblock()}
-<button bind:this={self} type='button' class={cmb_classes} {onclick} {...others}>
+<button bind:this={self} {type} class={cmb_classes} {onclick} {...others}>
 	{#if img}
 	<img src="{img}" alt='{lbl}' style='height:{size}'/>
 	{/if}
