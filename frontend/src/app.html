@@ -3,6 +3,10 @@
 <head>
 <title>ImgCat</title>
 <meta charset="utf-8" />
+<link rel='icon' type='image/png' sizes='16x16' href='/favicon_16.png' />
+<link rel='icon' type='image/png' sizes='32x32' href='/favicon_32.png' />
+<link rel='icon' type='image/png' sizes='128x128' href='/favicon_128.png' />
+<link rel='apple-touch-icon' type='image/png' sizes='128x128' href='/favicon_128.png' />
 <style>
 	:root {
 		/* color-background-[4 to 1: darkest to grey] */
@@ -60,12 +64,14 @@
 			color: var(--cttxt);
 			background-color: var(--cb2);
 			border: 1px solid var(--cawarm);
-			border-radius: 10px;
-			padding: 5px 10px;
+			border-radius: 0.75em;
+			padding: 0.4em 0.6em;
+			vertical-align: center;
+			box-sizing: border-box;
 		};
 		textarea:disabled, input:disabled, select:disabled, button:disabled {
 			background-color: var(--cb1);
-			border: 1px solid var(--cticy);
+			border-color: var(--cb1);
 		}
 	}
 	@supports (font-variation-settings: normal) {
@@ -74,15 +80,12 @@
 		}
 	}
 </style>
-<link rel='icon' type='image/png' sizes='16x16' href='/favicon_16.png' />
-<link rel='icon' type='image/png' sizes='32x32' href='/favicon_32.png' />
-<link rel='icon' type='image/png' sizes='128x128' href='/favicon_128.png' />
-<link rel='apple-touch-icon' type='image/png' sizes='128x128' href='/favicon_128.png' />
+<link rel='stylesheet' href='/css/btn.css' />
 <link rel="stylesheet" href="/fonts/inter.css">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 %sveltekit.head%
 </head>
 <body data-sveltekit-preload-data="tap" style="max-width:1400px;margin:auto;">
-<div style="display: contents">%sveltekit.body%</div>
+<div style="display:contents">%sveltekit.body%</div>
 </body>
 </html>

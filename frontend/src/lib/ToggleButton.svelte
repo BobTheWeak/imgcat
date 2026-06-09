@@ -1,61 +1,68 @@
 <script lang='ts'>
+	import Button from '$lib/Button.svelte';
 	import type { ClassValue } from 'svelte/elements';
 	import { error } from '@sveltejs/kit';
+	import { onMount } from 'svelte';
 
 	let {
-		// Core (required) props:
+		// Core props:
 		lbl,
 		img,
 		onclick = $bindable(),
 
-		// Core (optional) props:
-		href = null, // Wraps the button in a regular <a> link
-		size = '1.5em', // Controls the size of the button
+		// Add a form element to track the value
+		name = null, // If null, don't track it
+		value = 'true',
 
 		// HTML props:
 		class: ext_classes = $bindable(''),
 		...others
-
-
-		// Color props:
-		// --bkg='#ABCDEF'
-		// --bdr='#ABCDEF'
-		// --txt='#ABCDEF'
-		// Color props (if class='sel')
-		// --bkg-sel='#ABCDEF'
-		// --bdr-sel='#ABCDEF'
-
 	} = $props();
 
 	let self;
-	let int_classes = $state(['btn']);
-	let cmb_classes = $derived(ext_classes.split(' ').concat(int_classes).join(' '));
+	let cmb_classes = $derived.by(()=>{
+		const cl = ext_classes.split(' ');
+		cl.push('tbtn');
+		if(selected){cl.push('sel')}
+		return cl.join(' ');
+	});
 
-	if(!lbl&&!img) {
-		error(500, '<Button> must have either lbl or img');
+	let input;
+	let selected = $state(false);
+
+	export function select(val) {
+		if(val===undefined) {
+			// Toggle
+			selected=!selected;
+		} else {
+			// Set
+			selected=val;	
+		}
+		return select;
+	}
+
+	export function is_selected() {
+		return selected;
+	}
+	
+	// If the toggle button is .sel on creation, move it to internal
+	const IS_SELECTED = /\bsel\b/g
+	if(IS_SELECTED.test(ext_classes)){
+		ext_classes = ext_classes.replaceAll(IS_SELECTED, '');
+		selected = true;
+	}
+
+	function local_onclick(event) {
+		selected = !selected;
+		if(onclick){onclick(event)}
 	}
 
 </script>
 
 
-{#snippet buttonblock()}
-<button bind:this={self} type='button' class={cmb_classes} {onclick} {...others}>
-	{#if img}
-	<img src="{img}" alt='{lbl}' style='height:{size}'/>
-	{/if}
-	{#if lbl}
-	<span style='height:{size};line-height:{size}'>{lbl}</span>
-	{/if}
-</button>
-{/snippet}
-
-
-{#if href}
-	<a href='{href}'>
-		{@render buttonblock()}
-	</a>
-{:else}
-	{@render buttonblock()}
+<Button bind:this={self} class={cmb_classes} {img} {lbl} onclick={local_onclick} {...others} />
+{#if name && selected}
+<input bind:this={input} type='hidden' {name} {value} />
 {/if}
 
 

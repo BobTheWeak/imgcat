@@ -1,0 +1,62 @@
+/* Regular Buttons */
+button.btn {
+	display: inline-block;
+	padding: 0.5em 1em;
+	cursor: pointer;
+	margin-right: 5px;
+	border: 1px solid var(--bdr, var(--cawarm));
+	color: var(--txt, var(--cahot));
+	background-color: var(--bkg, var(--cb3));
+
+	img {
+		margin-right: 5px;
+		vertical-align: middle;
+		filter: brightness(0) saturate(100%) invert(74%) sepia(12%) saturate(6987%) hue-rotate(327deg) brightness(88%) contrast(86%);
+	}
+	span {
+		display:inline-block;
+		vertical-align:middle;
+	}
+
+	&:disabled {
+		cursor: auto;
+	}
+
+	&:hover:enabled:not(.sel) {
+		border-width: 2px;
+		padding: calc(0.5em - 1px) calc(1em - 1px);
+		border-color: var(--bdr-sel, var(--bdr, var(--cahot)));
+		background-color: var(--bkg-sel, var(--cb4));
+	}
+}
+
+/* ToggleButtons change color when selected */
+button.btn.tbtn {
+	&.sel {
+		border-color: var(--bdr-sel, var(--bdr, var(--cahot)));
+		color: var(--txt-sel, var(--cb3));
+		background-color: var(--bkg-sel, var(--cawarm));
+		
+		& img {
+			filter: brightness(0) saturate(100%) invert(36%) sepia(0%) saturate(0%) hue-rotate(284deg) brightness(95%) contrast(96%);
+		}
+	}
+}
+
+/* Creates rounded LCARS buttons */
+div.btngrp {
+	display:inline-flex;
+
+	button.btn {
+		&:not(:first-of-type) {
+			margin-left:0px;
+			border-top-left-radius: 0px;
+			border-bottom-left-radius: 0px;
+		}
+		&:not(:last-of-type) {
+			margin-right:0px;
+			border-top-right-radius: 0px;
+			border-bottom-right-radius: 0px;
+		}
+	}
+}
