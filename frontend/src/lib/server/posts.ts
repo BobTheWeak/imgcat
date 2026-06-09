@@ -3,7 +3,7 @@
 //import 'dotenv/config';
 import { error } from '@sveltejs/kit';
 
-import { query } from '$lib/server/dbpool.ts';
+import { query, row } from '$lib/server/dbpool.ts';
 
 
 
@@ -57,7 +57,7 @@ export async function GetHomePage(content_level:number, pg_num:number, pg_size:n
 	);
 }
 
-export async function GetPost(post_link:string, content_level:number, user_id:number):any {
+export async function GetPost(post_link:string, content_level:number, user_id:number|null):any {
 	if(!post_link || !content_level){return null}
 
 	return query(
@@ -72,3 +72,74 @@ export async function GetPost(post_link:string, content_level:number, user_id:nu
 	);
 }
 
+export async function GetPostIdByLink(post_link:string):number {
+	if(!post_link){return null}
+
+	return row(
+		"SELECT Posts.GetPostIdByLink(?);",
+		[post_link]
+	);
+}
+
+
+
+export async function GetViewVotes(post_id:number):number {
+	return row(
+		"CALL Posts.GetViewVotes(?);",
+		[post_id],
+		(r)=>{
+			return {
+				views: r[0],
+				votes: r[1]
+			}
+		}
+	);
+}
+
+export async function GetMyVote(post_id:number, user_id:number):number {
+	return row(
+		"SELECT Posts.GetMyVote(?,?);",
+		[post_id, user_id]
+	);
+}
+
+export async function IsFavPost(post_id:number, user_id:number):bool {
+	return row(
+		"SELECT Actions.IsFavPost(?,?);",
+		[user_id, post_id] // WARNING: User_id first
+	);
+}
+
+export async function SetView(post_id:number, user_id:number):number {
+	return row(
+		"SELECT Posts.SetView(?,?);",
+		[post_id, user_id],
+		(r)=>r[0]
+	);
+}
+
+// SetVote will set the vote to whatever specified, or toggle it if its already set
+export async function SetVote(post_id:number, user_id:number, value:number):number {
+	// 0: unset, 1:Upvote, 5:Downvote
+	if(value===0 || value===1 || value===5){
+		return row(
+			"SELECT Posts.SetVote(?,?,?);",
+			[post_id, user_id, value]
+		);
+	}
+}
+
+export async function ToggleFavPost(post_id:number, user_id:number, folder_name:string|undefined): bool {
+	// NOTE: The UI doesn't support folder names yet
+	if(!folder_name) {
+		return row(
+			"SELECT Actions.ToggleFavPost(?,?);",
+			[user_id, post_id] // WARNING: User_id first
+		);
+	} else {
+		return row(
+			"SELECT Actions.ToggleFavPost(?,?,?);",
+			[user_id, post_id, folder_name] // WARNING: User_id first
+		);
+	}
+}
