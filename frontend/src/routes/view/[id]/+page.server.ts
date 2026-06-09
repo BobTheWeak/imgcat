@@ -60,7 +60,7 @@ export const actions:Actions = {
 		}
 	},
 
-	public: async({params, locals, cookies, request, fetch}) => {
+	public: async({params, locals, cookies, fetch}) => {
 		// Check permissions
 		if(!locals.logged_in) {return error(403)}
 		const auth_token = cookies.get('ic_auth');
@@ -74,7 +74,7 @@ export const actions:Actions = {
 		return {success:true}
 	},
 
-	upvote: async({params, locals, cookies, request, fetch}) => {
+	upvote: async({params, locals, cookies, fetch}) => {
 		// Check permissions
 		if(!locals.logged_in) {return error(403)}
 		const auth_token = cookies.get('ic_auth');
