@@ -9,6 +9,7 @@ GRANT EXECUTE ON FUNCTION  Actions.ToggleFavPost           TO imgcat_posts;
 
 GRANT EXECUTE ON PROCEDURE Comments.GetPostComments        TO imgcat_posts;
 
+GRANT EXECUTE ON PROCEDURE Content.VoteForCategory         TO imgcat_posts;
 GRANT EXECUTE ON PROCEDURE Content.VoteForMaturity         TO imgcat_posts;
 GRANT EXECUTE ON PROCEDURE Content.VoteForTag              TO imgcat_posts;
 GRANT EXECUTE ON PROCEDURE Content.FlagForReview           TO imgcat_posts;
