@@ -5,7 +5,7 @@ import { fail, error } from '@sveltejs/kit';
 ////////////////////////////////////////////////////////
 //   THIS SHOULD BE DEPRECATED - USE A MICROSERVICE   //
 import { GetPost, GetMyVote } from '$lib/server/posts.ts';
-import { GetPostIdByLink, SetVote, ToggleFavPost } from '$lib/server/posts.ts';
+import { GetPostIdByLink, SetVote, ToggleFavPost, SetPostPublic } from '$lib/server/posts.ts';
 import { CreateComment } from '$lib/server/create_comment.ts';
 ////////////////////////////////////////////////////////
 
@@ -69,7 +69,8 @@ export const actions:Actions = {
 		// Fetch the post_id
 		const post_id = await GetPostIdByLink(params['id']);
 
-		console.log('public');
+		// Just toggle whatever it is. But it does support setter values.
+		await SetPostPublic(post_id, locals.user_id);
 		return {success:true}
 	},
 

@@ -143,3 +143,18 @@ export async function ToggleFavPost(post_id:number, user_id:number, folder_name:
 		);
 	}
 }
+
+export async function SetPostPublic(post_id:number, user_id:number, is_pub:bool|undefined) {
+	// NOTE: If undefined, then it'll toggle states instead of setting
+	if(is_pub!==undefined) {
+		row(
+			"CALL Posts.SetPostPublic(?,?,?);",
+			[user_id, post_id, is_pub] // WARNING: User_id first
+		);
+	} else {
+		row(
+			"CALL Posts.SetPostPublic(?,?);",
+			[user_id, post_id] // WARNING: User_id first
+		);
+	}
+}
