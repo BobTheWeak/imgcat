@@ -3,9 +3,9 @@ use actix_web::{post, web, HttpRequest, HttpResponse};
 
 use crate::DB;
 use crate::deserialize_helpers::bool_from_int;
-use crate::header_helpers::get_user_id;
+use crate::header_helpers::get_bearer_auth;
 use crate::conn_helpers::connect;
-
+use crate::libjwt::{AuthJwt, DecodeJwt};
 
 
 #[derive(Deserialize)]
@@ -26,9 +26,18 @@ struct VoteMatureParams {
 pub async fn vote_mature(path: web::Path<(u64,)>, params: web::Query<VoteMatureParams>, request: HttpRequest) -> HttpResponse {
 	// Grab needed data from path & query params
 	let post_id:u64 = path.0;
-	let Some(user_id) = get_user_id(&request) else {
-		return HttpResponse::Forbidden().into(); // 403
+	
+	// Grab the Bearer header & check it's encoding
+	let jwt_string = match get_bearer_auth(&request) {
+		Ok(v) => v, Err(e) => return e.into()
 	};
+
+	// Decode the JWT & make sure it's ours
+	let Ok(ajwt) = AuthJwt::decode(jwt_string) else {
+		return HttpResponse::Forbidden() // 403
+			.insert_header(("IC-Error","Header validation")).finish();
+	};
+
 	if params.maturity > 4 {
 		//return HttpResponse::BadRequest().into(); // 400
 		return HttpResponse::ImATeapot().into(); // 418 -- DEBUG
@@ -37,7 +46,7 @@ pub async fn vote_mature(path: web::Path<(u64,)>, params: web::Query<VoteMatureP
 
 	// NOTE: Will this work for both MariaDB and PostgreSQL?
 	let query = sqlx::query::<DB>("CALL Content.VoteForMaturity(?, ?, ?, ?, ?, ?);")
-		.bind(user_id)
+		.bind(ajwt.sub)
 		.bind(post_id)
 		// TODO: Accepted values are [0-4] via table contstraint. Should be checked here too.
 		.bind(params.maturity)
@@ -46,7 +55,7 @@ pub async fn vote_mature(path: web::Path<(u64,)>, params: web::Query<VoteMatureP
 		.bind(params.is_trauma);
 	
 	if let Ok(conn) = connect().await {
-		if let Err(err) = query.execute(conn).await {
+		if let Err(err) = query.execute(&conn).await {
 			println!("SQL Error: {}", err);
 			return HttpResponse::InternalServerError().finish(); // 500
 		};

@@ -7,8 +7,6 @@ dev:
 softmod:
 	docker build \
 		-t smact \
-		--secret id=ic-db-user,env=IC_DB_USER \
-		--secret id=ic-db-pass,env=IC_DB_PASS \
 		--file softmod.container \
 		.
 
@@ -19,6 +17,15 @@ deploy_softmod:
 	docker stop smact || true
 	docker rm smact || true
 	docker run \
+		--env IC_ORIGIN \
+		--env IC_JWT_ISS \
+		--env IC_JWT_AUD \
+		--env IC_DB_HOST \
+		--env IC_DB_PORT \
+		--env IC_DB_DB \
+		--env IC_DB_USER \
+		--env IC_DB_PASS \
+		--volume ic-keys:/mnt/ic-keys:ro \
 		--detach \
 		--network ic-net \
 		--name smact \

@@ -1,10 +1,24 @@
+
 use std::net::{Ipv4Addr, Ipv6Addr};
 
 use actix_web::HttpRequest;
+use crate::ic_error::{ICResult, ICError};
 
-use crate::{IC_HEADER_USER_ID, IC_HEADER_USER_IP};
+pub fn get_bearer_auth(request:&HttpRequest) -> ICResult<&str> {
+	let Some(jwt_string) = request.headers().get("Authorization") else {
+		return Err(ICError::HEADER_MISSING);
+	};
+	let Ok(jwt_string) = jwt_string.to_str() else {
+		return Err(ICError::HEADER_MISSING);
+	};
+	let Some(jwt_string) = jwt_string.strip_prefix("Bearer ") else {
+		return Err(ICError::HEADER_MISSING);
+	};
 
+	Ok(jwt_string)
+}
 
+/*
 pub fn get_user_id(request: &HttpRequest) -> Option<u64> {
 	if let Some(header) = request.headers().get(IC_HEADER_USER_ID) {
 		if let Ok(h) = header.to_str() {
@@ -15,6 +29,7 @@ pub fn get_user_id(request: &HttpRequest) -> Option<u64> {
 	}
 	return None;
 }
+*/
 
 
 /// Parses the "x-ic-user-ip" header value from requests, returning None if it doesn't exist.
@@ -24,7 +39,9 @@ pub fn get_user_ip(request: &HttpRequest) -> Option<Ipv6Addr> {
 	// into an IPv6, until 11.3, or LTS 11.4 (May 2024). I know... SMH
 	// Converting all IPv4's into IPv6's is technically a workaround to support
 	// all MariaDB LTS versions. But I wouldn't fix this later. It's fine as is.
-	if let Some(header) = request.headers().get(IC_HEADER_USER_IP) {
+	let ic_header_user_ip:&str = &std::env::var("IC_HEADER_USER_IP").expect("EnvVar not set: IC_DB_HOST");
+
+	if let Some(header) = request.headers().get(ic_header_user_ip) {
 		if let Ok(h) = header.to_str() {
 			// Try parsing as an IPV6 first
 			if let Ok(i) = h.parse::<Ipv6Addr>() {

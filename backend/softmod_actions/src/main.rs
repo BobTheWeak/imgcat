@@ -1,11 +1,9 @@
-// NOTE: This pulls ENV variables at compile-time, not run-time
-const IC_HEADER_USER_ID:&str = if let Some(result) = option_env!("IC_HEADER_USER_ID") {result} else {"x-ic-user-id"};
-const IC_HEADER_USER_IP:&str = if let Some(result) = option_env!("IC_HEADER_USER_IP") {result} else {"x-ic-user-ip"};
+//const IC_DB_HOST:&str = &std::env::var("IC_DB_HOST").expect("Missing IC_DB_HOST");
+//const IC_DB_PORT:&str = &std::env::var("IC_DB_PORT").expect("Missing IC_DB_PORT");
+//const IC_DB_USER:&str = &std::env::var("IC_DB_USER").expect("Missing IC_DB_USER");
+//const IC_DB_PASS:&str = &std::env::var("IC_DB_PASS").expect("Missing IC_DB_PASS");
 
-const IC_DB_HOST:&str = env!("IC_DB_HOST");
-const IC_DB_PORT:&str = env!("IC_DB_PORT"); // NOTE: parsing isn't const w/o experimental funcs
-const IC_DB_USER:&str = env!("IC_DB_USER");
-const IC_DB_PASS:&str = env!("IC_DB_PASS");
+
 
 
 // NOTE: sqlx has AnyConnection, etc. to make this easy, but there are things that
@@ -15,7 +13,8 @@ type DB = sqlx::MySql;
 #[cfg(not(feature = "use_mariadb"))]
 type DB = sqlx::Postgres;
 
-
+mod ic_error;
+mod libjwt;
 mod deserialize_helpers;
 mod header_helpers;
 mod conn_helpers;

@@ -19,6 +19,7 @@ struct VoteReviewParams {
 pub async fn anon_review(path: web::Path<(u64,)>, params: web::Query<VoteReviewParams>, request: HttpRequest) -> HttpResponse {
 	// Grab needed data from path & query params
 	let post_id:u64 = path.0;
+	
 	let Some(user_ip_address) = get_user_ip(&request) else {
 		return HttpResponse::Forbidden().into(); // 403
 	};
@@ -34,7 +35,7 @@ pub async fn anon_review(path: web::Path<(u64,)>, params: web::Query<VoteReviewP
 		.bind(params.comment.clone());
 
 	if let Ok(conn) = connect().await {
-		if let Err(err) = query.execute(conn).await {
+		if let Err(err) = query.execute(&conn).await {
 			println!("SQL Error: {}", err);
 			return HttpResponse::InternalServerError().finish(); // 500
 		};
