@@ -1,20 +1,30 @@
 <script lang="ts">
+	//import { hydratable } from 'svelte';
 	import { pretty_print_relative } from '$lib/time_fmt.ts';
-	import Comment from '$lib/Comment.svelte';
-	import VoteBox from '$lib/VoteBox.svelte';
-	import ActionBox from '$lib/ActionBox.svelte';
+	//import Comment from '$lib/Comment.svelte';
+	//import VoteBox from '$lib/VoteBox.svelte';
+	//import ActionBox from '$lib/ActionBox.svelte';
+	import SingleActionBar from './SingleActionBar.svelte';
 	import CommentBox from '$lib/CommentBox.svelte';
-	const { data } = $props();
+	import { liveViews } from './actions.remote.ts';
 
-	let post = data?.post;
+	const { data, form } = $props();
+	const post = $derived(data.post);
+
+	// Lazy-load various types of data
+	const views = $derived(await liveViews(post.id));
 </script>
 
 {#if post}
 	<div id="header">
 		{#if post.title}
-		<h1>{post.title}</h1>
+			<h1>{post.title}</h1>
 		{/if}
-		<p>{post.username} - {pretty_print_relative(post.time, navigator.language)}</p>
+		<p>{post.username} - {pretty_print_relative(post.time, navigator.language)}
+		{#await views then v}
+			- {v} {#if v > 1}views{:else}view{/if}
+		{/await}
+		</p>
 	</div>
 	<div id="content">
 		{#each post.img as item, i}
@@ -34,11 +44,10 @@
 		</div>
 		{/each}
 	</div>
-	<div id="panel">
-		<VoteBox {post} user_id={data.user_id} />
-		<ActionBox {post} user_id={data.user_id} />
-		<CommentBox {post} user_id={data.user_id} />
-	</div>
+	<SingleActionBar {post} {form} user_id={data.user_id} />
+	<!--
+	<CommentBox {post} user_id={data.user_id} />
+	-->
 {:else}
 	<p>There was an error loading this post</p>
 {/if}
