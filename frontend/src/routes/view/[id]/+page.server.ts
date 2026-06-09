@@ -226,10 +226,10 @@ export const actions:Actions = {
 		const post_id = await GetPostIdByLink(params['id']);
 		const data = await request.formData();
 		
-
+		// TODO:
 		
-		let result = true;
-		return {'form':'report', 'success':result};
+		let result = false;
+		return {'form':'report', 'success':result, message:'Not implemented yet'};
 	},
 	snooze: async({params, locals, cookies, request, fetch}) => {
 		// Check permissions
@@ -241,10 +241,10 @@ export const actions:Actions = {
 		const post_id = await GetPostIdByLink(params['id']);
 		const data = await request.formData();
 		
+		// TODO:
 		
-		
-		let result = true;
-		return {'form':'report', 'success':result};
+		let result = false;
+		return {'form':'report', 'success':result, message:'Not implemented yet'};
 	},
 	block: async({params, locals, cookies, request, fetch}) => {
 		// Check permissions
@@ -256,10 +256,10 @@ export const actions:Actions = {
 		const post_id = await GetPostIdByLink(params['id']);
 		const data = await request.formData();
 		
+		// TODO:
 		
-		
-		let result = true;
-		return {'form':'report', 'success':result};
+		let result = false;
+		return {'form':'report', 'success':result, message:'Not implemented yet'};
 	},
 
 	report: async({params, locals, cookies, request, fetch}) => {
