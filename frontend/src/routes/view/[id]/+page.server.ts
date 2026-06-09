@@ -60,6 +60,19 @@ export const actions:Actions = {
 		}
 	},
 
+	public: async({params, locals, cookies, request, fetch}) => {
+		// Check permissions
+		if(!locals.logged_in) {return error(403)}
+		const auth_token = cookies.get('ic_auth');
+		if(!auth_token) {return error(403)}
+
+		// Fetch the post_id
+		const post_id = await GetPostIdByLink(params['id']);
+
+		console.log('public');
+		return {success:true}
+	},
+
 	upvote: async({params, locals, cookies, request, fetch}) => {
 		// Check permissions
 		if(!locals.logged_in) {return error(403)}

@@ -5,7 +5,7 @@
 	import Button from '$lib/Button.svelte';
 	import ToggleButton from '$lib/ToggleButton.svelte';
 	import Modal from '$lib/Modal.svelte';
-	import { enhance, applyAction } from '$app/forms';
+	import { enhance } from '$app/forms';
 	import { refreshAll } from '$app/navigation';
 	import { liveVotes, getMyVote, isFavPost } from './actions.remote.ts';
 
@@ -37,24 +37,10 @@
 	let showReportAnonModal = $state(false);
 	let showThanksModal = $state(false);
 
-	function make_pub(e) {
-		setPostVisibility([user_id, post.id, !post.is_public]).then(()=>{
-			// Do a total reload of the page, and re-fetch all data
-			//window.location.reload();
-			refreshAll();
-		});
-	}
-
 	function copy_link(e) {
 		const p = navigator.clipboard.writeText('https://www.imgcat.io/view/'+post.link);
 		// TODO: Some kind of animation showing we copied it
 	}
-
-	//function toggleFav() {
-	//	toggleFavPost([user_id, post.id, null]).then((onoff)=>{
-	//		is_fav = onoff;
-	//	});
-	//}
 
 	// Bind controls to Svelte objects
 	let m_kid, m_std, m_sfw, m_nsfw;
@@ -68,7 +54,6 @@
 
 	function submit_success(e){
 		return async({result, update}) => {
-			console.log(result);
 			await update();
 			// Do post-processing
 			if(form?.success) {
@@ -88,40 +73,55 @@
 	<!-- Vote Bar -->
 	<!-- Only logged-in users get to vote on posts -->
 	<div id='vote' class='btngrp'>
-	{#if user_type==='u'}
-		<form method='POST' use:enhance style='display:flex'>
-			{#await my_vote}
-				<Button img='/vote_up.svg' type='submit' formaction='?/upvote' />
-			{:then my_vote}
-				<Button img='/vote_up.svg' type='submit' formaction='?/upvote' class={my_vote===1?'tbtn sel':''} />
-			{/await}
+		{#if user_type==='u'}
+			<form method='POST' use:enhance style='display:flex'>
+				{#await my_vote}
+					<Button img='/vote_up.svg' type='submit' formaction='?/upvote' />
+				{:then my_vote}
+					<Button img='/vote_up.svg' type='submit' formaction='?/upvote' class={my_vote===1?'tbtn sel':''} />
+				{/await}
 
+				<span id='count'>
+					{#await votes}&nbsp;{:then votes}<span id='count'>{votes}</span>{/await}
+				</span>
+
+				{#await my_vote}
+					<Button img='/vote_dn.svg' type='submit' formaction='?/dnvote' />
+				{:then my_vote}
+					<Button img='/vote_dn.svg' type='submit' formaction='?/dnvote' class={my_vote===5?'tbtn sel':''} />
+				{/await}
+			</form>
+		
+		{:else if user_type==='a'}
+			<Button img='/vote_up.svg' disabled title='Log in to vote' />
 			<span id='count'>
 				{#await votes}&nbsp;{:then votes}<span id='count'>{votes}</span>{/await}
 			</span>
-
-			{#await my_vote}
-				<Button img='/vote_dn.svg' type='submit' formaction='?/dnvote' />
-			{:then my_vote}
-				<Button img='/vote_dn.svg' type='submit' formaction='?/dnvote' class={my_vote===5?'tbtn sel':''} />
-			{/await}
-		</form>
-	{:else}
-		<Button img='/vote_up.svg' disabled />
-		<span id='count'>
-			{#await votes}&nbsp;{:then votes}<span id='count'>{votes}</span>{/await}
-		</span>
-		<Button img='/vote_dn.svg' disabled />
-	{/if}
+			<Button img='/vote_dn.svg' disabled title='Log in to vote' />
+		
+		{:else if user_type==='m' && post.is_public }
+			<!-- TODO: Show fancier stats, b/c its your post -->
+			<Button img='/vote_up.svg' disabled />
+			<span id='count'>
+				{#await votes}&nbsp;{:then votes}<span id='count'>{votes}</span>{/await}
+			</span>
+			<Button img='/vote_dn.svg' disabled />
+		{/if}
 	</div>
 
 	<!-- Action Bar -->
 	<!-- If User is original poster -->
 	{#if user_type === 'm'}
 		<div class='btngrp'>
-			<Button img='/add.svg' lbl={post.is_public?'Make private':'Share with community'} onclick={make_pub} />
-			<Button img='/share.svg' lbl='Link' onclick={copy_link} />
-			<Button img='/politics.svg' lbl='Tag' onclick={()=>{showTagModal=true}} />
+			<form method='POST' action='?/public' use:enhance style='display:flex'>
+				{#if post.is_public}
+					<Button img='/remove.svg' lbl='Remove post' type='submit' />
+				{:else}
+					<Button img='/add.svg' lbl='Make public' type='submit' />
+				{/if}
+				<Button img='/share.svg' lbl='Link' onclick={copy_link} />
+				<Button img='/politics.svg' lbl='Tag' onclick={()=>{showTagModal=true}} />
+			</form>
 		</div>
 
 	<!-- If User is ImgCat user -->
@@ -133,6 +133,7 @@
 				<Button img='/politics.svg' lbl='Tag' onclick={()=>{showTagModal=true}} />
 			</form>
 		</div>
+		<!-- Separated button group to visually indicate that Report actions are different -->
 		<Button img='/report.svg' lbl='Report' onclick={()=>{showReportModal=true}} />
 	
 	<!-- If User is random user from the interwebs -->
@@ -157,9 +158,9 @@
 		{#if showTagModal_types}
 		<br/>
 		<div id='tag_type' class='btngrp'>
-			<ToggleButton img='/content_x.svg' lbl='Sexual' name='is_sexual' />
-			<ToggleButton img='/vote_troll.svg' lbl='Gore/violence' name='is_gore' />
-			<ToggleButton img='/vote_heart.svg' lbl='Trauma' name='is_trauma' />
+			<ToggleButton img='/content_x.svg' lbl='Is sexual' name='is_sexual' />
+			<ToggleButton img='/vote_troll.svg' lbl='Is violence' name='is_gore' />
+			<ToggleButton img='/vote_heart.svg' lbl='Is trauma' name='is_trauma' />
 		</div>
 		{/if}
 
@@ -175,7 +176,8 @@
 
 		<h4>Suggest Tags</h4>
 		<div id='tag_tags' class='btngrp'>
-			<input type='text' name='tags' placeholder='ie. Cats, Orange-energy, Cat fail video' oninput={(e)=>{TAG_REGEX.test}}>
+			<!-- TODO: Use TAG_REGEX to do live validation & immediate feedback -->
+			<input type='text' name='tags' placeholder='ie. Cats, Orange-energy, Cat fail video'>
 			<Button lbl='Submit' type='submit' />
 		</div>
 		<br />
