@@ -63,7 +63,7 @@
 			</label>
 		</div>
 
-		<Button class='sbutton' lbl='Save changes' />
+		<Button class='sbutton' lbl='Save changes' type='submit' />
 	</form>
 </div>
 
@@ -171,7 +171,7 @@
 			</label>
 		</div>
 
-		<Button class='sbutton' lbl='Save changes' />
+		<Button class='sbutton' lbl='Save changes' type='submit' />
 	</form>
 </div>
 
@@ -214,7 +214,7 @@
 		</div>
 		-->
 
-		<Button class='sbutton' lbl='Save changes' />
+		<Button class='sbutton' lbl='Save changes' type='submit' />
 	</form>
 </div>
 
@@ -249,7 +249,7 @@
 			<input /><button>Add</button>
 		</div>
 
-		<Button class='sbutton' lbl='Save changes' />
+		<Button class='sbutton' lbl='Save changes' type='submit' />
 	</form>
 </div>
 
@@ -257,14 +257,16 @@
 <div id='tools' class='section'>
 	<h2>Actions</h2>
 	<form method="POST" action='?/logout'>
-		<Button lbl='Log out' />
+		<Button lbl='Log out' type='submit' />
 	</form>
 </div>
 
 <style>
 	div.section {
 		margin-top: 10px;
-		border: 1px solid var(--cb1);
+		width: 35em;
+		border: 1px solid var(--cb2);
+		background-color: var(--cb3);
 		padding: 10px;
 
 		label, input, select, textarea {
