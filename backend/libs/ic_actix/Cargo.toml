@@ -1,0 +1,27 @@
+[package]
+name = "ic_actix"
+description = "A set of helpers helping Actix services use ImgCat standards"
+version = "1.0.0"
+edition = "2024"
+
+[features]
+default = ['std_envvars']
+# Add various helper functions (*_with_defaults) that rely on ImgCat standard ENVVARs
+std_envvars = []
+
+# Enables Actix's AppData object, for various connections
+redis = ["dep:redis"]
+postgres = ["dep:deadpool-postgres"]
+mariadb = ["dep:mysql"]
+
+# Enables helper functions to create standard cookies from JWTs
+cookies = ["ic_jwt/encode", "ic_jwt/std_envvars", "actix-web/cookies"]
+refresh_jwt = ["ic_jwt/refresh"]
+signup_jwt = ["ic_jwt/signup"]
+
+[dependencies]
+actix-web = { version="4.13.0", default-features=false }
+ic_jwt = { version = "1.0.0", path="../ic_jwt" }
+redis = { version="1.2.2", optional=true, default-features=false }
+deadpool-postgres = { version="0.14.1", optional=true, features=["rt_tokio_1"] }
+mysql = { version="*", optional=true, features=[] }
