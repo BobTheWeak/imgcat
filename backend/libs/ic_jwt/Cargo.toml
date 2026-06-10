@@ -1,0 +1,20 @@
+[package]
+name = "ic_jwt"
+description = "The standard JWT wrapper for all ImgCat services"
+version = "1.0.0"
+edition = "2024"
+
+[features]
+default = ['std_envvars']
+std_envvars = [] # Adds helpers that rely on std ENV VARs
+
+# Include functions for creating JWTs (normal use is read-only)
+encode = []
+# Include the definitions for RefreshJwt
+refresh = []
+# Include the definitions for SignupJwt & AgeVerification
+signup = []
+
+[dependencies]
+jsonwebtoken = { version = "10.3.0", features = ["ed25519-dalek"] }
+serde = { version = "1.0.228", default-features = false, features = ["derive"] }
