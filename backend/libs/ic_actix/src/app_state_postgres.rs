@@ -1,7 +1,6 @@
 use std::str::FromStr;
 use std::sync::Mutex;
 use std::time::Duration;
-use actix_web::web::{Data};
 use deadpool_postgres::{Config, Pool, Client, Runtime};
 use deadpool_postgres::tokio_postgres::{NoTls};
 
@@ -9,14 +8,13 @@ use crate::ic_error::{ICError, ICResult};
 
 const CONN_TIMEOUT:Duration = Duration::from_secs(3);
 
-pub type AppStatePostgres = Data<ICPostgresWrapper>;
-
 // TODO: Check if a Mutex is necessary. It could be tokio/thread-safe already.
-pub struct ICPostgresWrapper {
+#[derive(Debug)]
+pub struct AppStatePostgres {
 	pool: Mutex<Pool>
 }
 
-impl ICPostgresWrapper {
+impl AppStatePostgres {
 	pub async fn new(host:&str, port:u16, db:&str, user:&str, pass:&str) -> ICResult<Self> {
 
 		let mut cfg = Config::new();
@@ -44,11 +42,14 @@ impl ICPostgresWrapper {
 	}
 
 	#[cfg(feature="std_envvars")]
-	pub async fn new_with_defaults(db:&str, user:&str, pass:&str) -> ICResult<Self> {
+	pub async fn new_with_defaults() -> ICResult<Self> {
 		let host:&str = &std::env::var("IC_UDB_HOST").expect("Could not parse envvar: IC_UDB_HOST");
 		let port:u16 = u16::from_str(
 			&std::env::var("IC_UDB_PORT").unwrap_or("8080".to_string())
 		).expect("Could not parse envvar: IC_UDB_PORT");
+		let db:&str = &std::env::var("IC_UDB_DB").expect("Could not parse envvar: IC_UDB_DB");
+		let user:&str = &std::env::var("IC_UDB_USER").expect("Could not parse envvar: IC_UDB_USER");
+		let pass:&str = &std::env::var("IC_UDB_PASS").expect("Could not parse envvar: IC_UDB_PASS");
 
 		return Self::new(host, port, db, user, pass).await;
 	}

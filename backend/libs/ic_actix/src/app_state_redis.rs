@@ -2,20 +2,18 @@ use std::str::FromStr;
 use std::sync::Mutex;
 use std::time::Duration;
 use redis::{Client, Connection};
-use actix_web::web::{Data};
 
 use crate::ic_error::{ICError, ICResult};
 
 const CONN_TIMEOUT:Duration = Duration::from_secs(3);
 
-pub type AppStateRedis = Data<ICRedisWrapper>;
-
 // TODO: Check if a Mutex is necessary. It could be tokio/thread-safe already.
-pub struct ICRedisWrapper {
+#[derive(Debug)]
+pub struct AppStateRedis {
 	pool: Mutex<Client>
 }
 
-impl ICRedisWrapper {
+impl AppStateRedis {
 	pub fn new(host:&str, port:u16, db:Option<&str>) -> ICResult<Self> {
 		let conn_str:String = format!("redis://{}:{}/{}", host, port, db.unwrap_or(""));
 		let Ok(result) = Client::open(conn_str) else {
@@ -23,10 +21,7 @@ impl ICRedisWrapper {
 		};
 
 		// TODO: Test the connection
-
-		return Ok(Self {
-			pool: Mutex::new(result)
-		});
+		Ok(Self {pool: Mutex::new(result)})
 	}
 
 	#[cfg(feature="std_envvars")]
