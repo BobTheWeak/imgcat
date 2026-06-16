@@ -16,5 +16,5 @@ refresh = []
 signup = []
 
 [dependencies]
-jsonwebtoken = { version = "10.3.0", features = ["ed25519-dalek"] }
+jsonwebtoken = { version = "10.3.0", features = ["rust_crypto", "ed25519-dalek"] }
 serde = { version = "1.0.228", default-features = false, features = ["derive"] }
