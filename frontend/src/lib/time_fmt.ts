@@ -1,14 +1,10 @@
 
 
 export function pretty_print_relative(timeUTC, locale) {
-	if(timeUTC !instanceof Date) {timeUTC=new Date(timeUTC)}
+	if(typeof timeUTC === 'number') {timeUTC=new Date(timeUTC)}
 	if(!locale){locale='en-US'} // Pass in: navigator.language
 
-	// NOTE: Positive time so we can write legible ifs, but reverse on display
-	// RANT: JS+time is goddamned awful. Can't wait for Temporal API.
-	// But sHoCkInGlY... Safari is the last browser to implement an API
-	// that EVERYONE ELSE already supports. Safari late? Shocked Face.
-	const mins=(new Date()-timeUTC)/60000 + timeUTC.getTimezoneOffset();
+	const mins=(new Date()-timeUTC)/60000;
 	const hrs=mins/60;
 
 	if(hrs<168) {
