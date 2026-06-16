@@ -67,6 +67,10 @@ export async function GetPost(post_link:string, content_level:number, user_id:nu
 			let result = r[0][0];
 			// Fold the second resultset into img=[]
 			result['img'] = r[1];
+			// Goddamned timezones + Javascript + MySQL + a shit-ass library doing silent
+			// conversions from UTC into local fuckery. ALWAYS USE UTC. LOCAL IS WRONG.
+			result['time'] = new Date(Number(result.time)*1000)
+
 			return result;
 		}
 	);
