@@ -106,7 +106,8 @@ export async function GetMyVote(post_id:number, user_id:number):number {
 export async function IsFavPost(post_id:number, user_id:number):bool {
 	return row(
 		"SELECT Actions.IsFavPost(?,?);",
-		[user_id, post_id] // WARNING: User_id first
+		[user_id, post_id], // WARNING: User_id first
+		(r)=>r===1
 	);
 }
 
