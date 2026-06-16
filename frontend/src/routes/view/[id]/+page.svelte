@@ -1,18 +1,16 @@
 <script lang="ts">
-	//import { hydratable } from 'svelte';
 	import { pretty_print_relative } from '$lib/time_fmt.ts';
-	//import Comment from '$lib/Comment.svelte';
-	//import VoteBox from '$lib/VoteBox.svelte';
-	//import ActionBox from '$lib/ActionBox.svelte';
 	import SingleActionBar from './SingleActionBar.svelte';
-	import CommentBox from '$lib/CommentBox.svelte';
-	import { liveViews } from './actions.remote.ts';
+	import CommentPanel from './CommentPanel.svelte';
+
+	//import { liveViews } from './actions.remote.ts';
 
 	const { data, form } = $props();
 	const post = $derived(data.post);
 
-	// Lazy-load various types of data
-	const views = $derived(await liveViews(post.id));
+	// The selected comment we're replying to.
+	// Null closes the modal, 0 replies to the post, and any number replies to that comment_id
+	let reply_to = $state(null);
 </script>
 
 {#if post}
@@ -21,8 +19,8 @@
 			<h1>{post.title}</h1>
 		{/if}
 		<p>{post.username} - {pretty_print_relative(post.time, navigator.language)}
-		{#await views then v}
-			- {v} {#if v > 1}views{:else}view{/if}
+		{#await data.views then v}
+		{#if v} - {v} {#if v > 1}views{:else}view{/if}{/if}
 		{/await}
 		</p>
 	</div>
@@ -44,10 +42,8 @@
 		</div>
 		{/each}
 	</div>
-	<SingleActionBar {post} {form} user_id={data.user_id} />
-	<!--
-	<CommentBox {post} user_id={data.user_id} />
-	-->
+	<SingleActionBar {data} bind:reply_to />
+	<CommentPanel {post} {form} user_id={data.user_id} comment_replies={data.comment_replies} bind:reply_to />
 {:else}
 	<p>There was an error loading this post</p>
 {/if}

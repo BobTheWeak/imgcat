@@ -4,7 +4,7 @@ import { fail, error } from '@sveltejs/kit';
 
 ////////////////////////////////////////////////////////
 //   THIS SHOULD BE DEPRECATED - USE A MICROSERVICE   //
-import { GetPost, GetMyVote } from '$lib/server/posts.ts';
+import { GetPost, GetMyVote, IsFavPost } from '$lib/server/posts.ts';
 import { GetPostIdByLink, SetVote, ToggleFavPost, SetPostPublic } from '$lib/server/posts.ts';
 import { CreateComment } from '$lib/server/create_comment.ts';
 ////////////////////////////////////////////////////////
@@ -14,8 +14,9 @@ const TAG_REGEX = /^[\w\s\-,]+$/
 const COMMENT_REGEX = /^[\w\s\-,./?;:'"!@#$%^&*\(\)_=+\\\|]*$/
 
 
-export const load:PageServerLoad = async({ params, locals }) => {
+export const load:PageServerLoad = async({ params, locals, cookies, fetch }) => {
 	const post = await GetPost(params['id'], locals.content_level, locals.user_id);
+	const auth_token = cookies.get('ic_auth')
 
 	// A bad link? Trying to scrape the site? Or hidden b/c of a content violation?
 	// Whatever the reason, this user cannot access this content
@@ -28,9 +29,40 @@ export const load:PageServerLoad = async({ params, locals }) => {
 		post.img[i].type = ['unknown', 'image', 'svg', 'image', 'video'][post.img[i].type]
 	}
 
-	return {
+	let url = '/api/posts/p/' + params['id'];
+	let h = {'Content-Length':'0'} // Causes problems if not set manually
+	if(auth_token){h['Authorization']='Bearer '+auth_token}
+
+	const result = {
 		post: post,
-	};
+
+		// Lazy-loaded data
+		views: fetch(url + '/views', {headers:h}).then(r=>r.json(),()=>{}),
+		votes: fetch(url + '/votes', {headers:h}).then(r=>r.json(),()=>{}),
+		comment_replies: fetch(url + '/comments', {headers:h}).then(r=>r.json(),()=>{})
+			.then(r=>{
+				// Two fixes:
+				// 1) JSON keys are strings, but we sent them as Numbers (i64)
+				// 2) JS dates use ms, but we send UNIX time in secs
+				const result = {comments:new Map(), replies:new Map()}
+
+				for(let item of Object.entries(r.comments)) {
+					item[1].ts = new Date(Number.parseInt(item[1].ts * 1000));
+					result.comments.set(Number.parseInt(item[0]), item[1])
+				}
+				for(let item of Object.entries(r.replies)) {
+					result.replies.set(Number.parseInt(item[0]), item[1])
+				}
+				return result;
+			},()=>{}),
+	}
+
+	if(locals.logged_in) {
+		result['my_vote'] = GetMyVote(post.id, locals.user_id);
+		result['is_fav'] = IsFavPost(post.id, locals.user_id);
+	}
+
+	return result;
 }
 
 // Most of the actions on this page are form submits (below), because
@@ -42,19 +74,37 @@ export const actions:Actions = {
 	// But nested replies are still using this.
 	// NOTE: The benefit of forms is they work w/o JS, which is nice, but they're
 	// not really compatible with Controls that need independent ajax stuff.
-	comment: async({params, locals, request}) => {
+	comment: async({params, locals, cookies, fetch, request}) => {
+		// Check permissions
 		if(!locals.logged_in) {return error(403)}
+		const auth_token = cookies.get('ic_auth');
+		if(!auth_token) {return error(403)}
 
-		let data = await request.formData();
+		// Fetch the post_id
+		const post_id = await GetPostIdByLink(params['id']);
+
+		// Get the form data
+		const data = await request.formData();
+		let reply_to = Number.parseInt(data.get('reply_to'));
+		if(Number.isNaN(reply_to)){reply_to=null}
+		const comment = data.get('comment');
+
+		// TODO: If comment looks like an ImgCat URL, then do a pic
+
+		// TODO: Use a microservice, not SQL
 		let comment_id = await CreateComment({
 			user_id: locals.user_id,
-			post_id: params['id'],
-			reply_to: data.get('reply_to'), //undefined is OK
-			link: undefined, // TODO: Add linking
-			comment: data.get('comment')
+			post_id: post_id,
+			reply_to: reply_to, //null is OK
+			link: null, // TODO: Add linking
+			comment: comment,
 		});
+
 		if(comment_id) {
-			return {success:true}
+			// TODO: At the moment, new comments will magically appear, but collapsed.
+			// We need to open the direct (reply_to) parent. Thankfully, we know
+			// that all others above it have already been opened.
+			return { success:true, comment_id:comment_id, reply_to:data.get('reply_to') }
 		} else {
 			return fail(400);
 		}

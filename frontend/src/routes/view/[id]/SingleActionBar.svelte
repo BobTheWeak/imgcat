@@ -7,24 +7,19 @@
 	import Modal from '$lib/Modal.svelte';
 	import { enhance } from '$app/forms';
 	import { refreshAll } from '$app/navigation';
-	import { liveVotes, getMyVote, isFavPost } from './actions.remote.ts';
 
 	let {
-		post,
-		form,
-		user_id,
+		data,
+		reply_to = $bindable(),
 	} = $props();
-	
-	// Lazy-load various types of data
-	// NOTE: Slight weirdness with Svelte & remote functions. It doesn't like
-	// multiple derived promises. And the suggestion in the link doesn't apply
-	// to remote functions b/c they (currently) break without await.
-	// https://svelte.dev/docs/svelte/runtime-warnings#Client-warnings-await_waterfall
-	const [votes, my_vote, is_fav] = $derived(await Promise.all([
-		liveVotes(post.id),
-		getMyVote([post.id, user_id]),
-		isFavPost([post.id, user_id])
-	]));
+
+	// 
+	let post = $derived(data.post);
+	let form = $derived(data.form);
+	let user_id = $derived(data.user_id);
+	let votes = $derived(data.votes);
+	let my_vote = $derived(data.my_vote);
+	let is_fav = $derived(data.is_fav);
 
 	// svelte-ignore non_reactive_update
 	let user_type; // (m)e, (u)ser, (a)nonymous
@@ -115,6 +110,7 @@
 		<div class='btngrp'>
 			<form method='POST' action='?/public' use:enhance style='display:flex'>
 				{#if post.is_public}
+					<Button img='/chat.svg' lbl='Comment' onclick={()=>{reply_to=0}} />
 					<Button img='/remove.svg' lbl='Remove post' type='submit' />
 				{:else}
 					<Button img='/add.svg' lbl='Make public' type='submit' />
@@ -128,7 +124,12 @@
 	{:else if user_type==='u'}
 		<div class='btngrp'>
 			<form method='POST' action='?/fav' use:enhance style='display:flex'>
+				<Button img='/chat.svg' lbl='Comment' onclick={()=>{reply_to=0}} />
+				{#await is_fav}
+				<Button img='/star_off.svg' lbl='Fav' type='submit' />
+				{:then is_fav}
 				<Button img='/star_{is_fav?'on':'off'}.svg' lbl='Fav' type='submit' class={is_fav?'tbtn sel':''} />
+				{/await}
 				<Button img='/share.svg' lbl='Link' onclick={copy_link} />
 				<Button img='/politics.svg' lbl='Tag' onclick={()=>{showTagModal=true}} />
 			</form>
