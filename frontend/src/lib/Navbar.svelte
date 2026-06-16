@@ -29,6 +29,7 @@
 
 <style>
 	nav {
+		z-index: 999;
 		position: sticky;
 		top: 0px;
 		background-color: var(--cb4);
