@@ -48,6 +48,10 @@ build_frontend:
 build_auth:
 	make -C ../backend/auth_service/ auth
 
+build_posts:
+	# This service (and any looking forward) MUST be built from the parent directory
+	make -C ../backend/ posts
+
 build_softmod:
 	make -C ../backend/softmod_actions/ softmod
 
@@ -98,6 +102,10 @@ deploy_frontend:
 
 deploy_auth:
 	make -C ../backend/auth_service/ deploy_auth
+
+deploy_posts:
+	# This service (and any looking forward) MUST be built from the parent directory
+	make -C ../backend/ deploy_posts
 
 deploy_softmod:
 	make -C ../backend/softmod_actions/ deploy_softmod
