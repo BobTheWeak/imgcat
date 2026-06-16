@@ -9,11 +9,10 @@ SQL SECURITY DEFINER
 BEGIN
 	SELECT
 		a.id,
-		-- b.username,
-		'TBD username' as username,
-		a.upload_time as 'time',
+		a.upload_time as 'ts',
 		a.reply_to,
-		a.link_v1 as 'link',
+		a.user_id,
+		a.link_v1 as 'img',
 		a.comment
 	FROM Comments.Comment a
 	-- INNER JOIN UserDB.Account b
