@@ -131,6 +131,13 @@ pub async fn callback(
 	let id_token = token_response.id_token().unwrap();
 	let id_token_verifier = client.id_token_verifier();
 	let Ok(claims) = id_token.claims(&id_token_verifier, &nonce) else {
+		// NOTE: This shouldn't fail...
+		// TODO: But it failed once when auth had been running for a few
+		// weeks w/o rebuilding. I suspect the provider rotated their certs.
+		// I rebuilt & redeployed, and that worked. But I suspect a redeploy
+		// would have been enough. And obviously... we need to refresh our
+		// cache every so often. This might be an indicator to tell the service
+		// to flush it. But the user trying to log in needs to redo & try again.
 		return HttpResponse::ServiceUnavailable() // 503
 			.insert_header(("IC-Error","Validation, claims")).finish();
 	};
