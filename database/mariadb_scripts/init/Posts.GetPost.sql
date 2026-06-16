@@ -34,7 +34,7 @@ BEGIN
 			a.user_id,
 			-- b.username,
 			'TBD username' as username,
-			a.upload_time as 'time',
+			UNIX_TIMESTAMP(a.upload_time) as 'time',
 			a.is_public,
 			a.link
 		FROM Posts.Post a
