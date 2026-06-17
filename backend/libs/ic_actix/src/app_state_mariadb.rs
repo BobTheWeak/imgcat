@@ -1,11 +1,11 @@
 use std::str::FromStr;
-use std::time::Duration;
+//use std::time::Duration;
 use mysql::{OptsBuilder, Pool, PoolOpts, PoolConstraints, PooledConn};
 use mysql::prelude::Queryable;
 
 use crate::ic_error::{ICError, ICResult};
 
-const CONN_TIMEOUT:Duration = Duration::from_secs(3);
+//const CONN_TIMEOUT:Duration = Duration::from_secs(3);
 
 #[derive(Debug)]
 pub struct AppStateMariaDB {
