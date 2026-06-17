@@ -8,7 +8,7 @@ actix-web = "4.13.0"
 deadpool-postgres = "0.14.1"
 env_logger = "0.11.10"
 ic_jwt = { version = "1.0.0", path = "../libs/ic_jwt" }
-ic_actix = { version = "1.0.0", path = "../libs/ic_actix", features=["redis", "postgres", "mariadb"] }
+ic_actix = { version = "1.0.0", path = "../libs/ic_actix", features=["redis", "mariadb"] }
 #postgres-types = { version = "0.2.13", features = ["derive"] }
 redis = { version = "1.2.0", features = [] }
 serde = { version = "1.0.228", default-features = false, features = ["derive"] }

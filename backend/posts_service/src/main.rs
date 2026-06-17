@@ -8,11 +8,7 @@ use actix_web::{App, HttpServer, middleware::Logger};
 use actix_web::web::{Data, get, scope};
 use env_logger::Env;
 
-use ic_actix::{AppStateRedis, AppStatePostgres, AppStateMariaDB};
-
-//use crate::ic_postgres::{AppStatePostgres};
-//use crate::libredis::{AppStateRedis};
-//use crate::app_state::{AppStateProviders, AppStateItem};
+use ic_actix::{AppStateRedis, AppStateMariaDB};
 
 
 #[actix_web::main]
@@ -32,11 +28,11 @@ async fn main() -> std::io::Result<()> {
 		"IC_DB_DB",
 		"IC_DB_USER",
 		"IC_DB_PASS",
-		"IC_UDB_HOST",
-		"IC_UDB_PORT",
-		"IC_UDB_DB",
-		"IC_UDB_USER",
-		"IC_UDB_PASS",
+		//"IC_UDB_HOST",
+		//"IC_UDB_PORT",
+		//"IC_UDB_DB",
+		//"IC_UDB_USER",
+		//"IC_UDB_PASS",
 	];
 	let optional_envvars = vec![
 		"IC_JWT_PUB_ROTATED", // Default: None
@@ -49,7 +45,7 @@ async fn main() -> std::io::Result<()> {
 
 	// Shared state objects across the entire service pool
 	let shared_redis = Data::new(AppStateRedis::new_with_defaults().expect("Could not connect to Redis"));
-	let shared_postgres = Data::new(AppStatePostgres::new_with_defaults().await.expect("Could not connect to Postgres"));
+	//let shared_postgres = Data::new(AppStatePostgres::new_with_defaults().await.expect("Could not connect to Postgres"));
 	let shared_mariadb = Data::new(AppStateMariaDB::new_with_defaults().expect("Could not connect to MariaDB"));
 
 	HttpServer::new(move || {
@@ -60,7 +56,7 @@ async fn main() -> std::io::Result<()> {
 		
 		// Shared data objects
 		.app_data(shared_redis.clone())
-		.app_data(shared_postgres.clone())
+		//.app_data(shared_postgres.clone())
 		.app_data(shared_mariadb.clone())
 
 		//.route("/fp", get().to(routes::get_fp))
