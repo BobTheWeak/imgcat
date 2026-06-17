@@ -1,4 +1,4 @@
-use chrono::{Utc, TimeZone};
+//use chrono::{Utc, TimeZone};
 use serde::{Serialize, Deserialize};
 
 use mysql::{Row as MariaRow, Value, FromRowError};
@@ -20,16 +20,18 @@ impl FromRow for Comment {
 		Ok(Comment{
 			comment_id: row.get("id").expect("Parsing Comment.comment_id"),
 			ts: match row.get("ts").expect("Parsing Comment.ts") {
-				Value::Date(yr,mo,dy,h,m,s,_) => {
-					Utc.with_ymd_and_hms(
-						yr as i32,
-						mo as u32,
-						dy as u32,
-						h as u32,
-						m as u32,
-						s as u32
-					).unwrap().timestamp()
-				},
+				// NOTE: Changed the DB Function to return a UNIX_TIMESTAMP
+				Value::Int(v) => v,
+				//Value::Date(yr,mo,dy,h,m,s,_) => {
+				//	Utc.with_ymd_and_hms(
+				//		yr as i32,
+				//		mo as u32,
+				//		dy as u32,
+				//		h as u32,
+				//		m as u32,
+				//		s as u32
+				//	).unwrap().timestamp()
+				//},
 				_ => 0
 			},
 			user_id:  row.get("user_id").expect("Parsing Comment.user_id"),

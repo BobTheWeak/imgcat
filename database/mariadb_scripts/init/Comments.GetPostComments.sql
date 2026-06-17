@@ -9,7 +9,7 @@ SQL SECURITY DEFINER
 BEGIN
 	SELECT
 		a.id,
-		a.upload_time as 'ts',
+		UNIX_TIMESTAMP(a.upload_time) as 'ts',
 		a.reply_to,
 		a.user_id,
 		a.link_v1 as 'img',
