@@ -51,7 +51,7 @@ pub async fn get_views(
 
 	// Posts are in MariaDB
 	let Ok(views) = m_conn.exec_first(
-		"SELECT Posts.GetViews(Posts.GetPostidByLink(?))",
+		"SELECT Posts.GetViews(Posts.GetPostIdByLink(?))",
 		(&path.post_link,)
 	) else {return Err(ICError::MARIADB_CONN)};
 

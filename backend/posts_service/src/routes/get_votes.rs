@@ -51,7 +51,7 @@ pub async fn get_votes(
 
 	// Posts are in MariaDB
 	let Ok(votes) = m_conn.exec_first(
-		"SELECT Posts.GetVotes(Posts.GetPostidByLink(?))",
+		"SELECT Posts.GetVotes(Posts.GetPostIdByLink(?))",
 		(&path.post_link,)
 	) else {return Err(ICError::MARIADB_CONN)};
 
