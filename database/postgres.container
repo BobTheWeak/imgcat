@@ -15,10 +15,15 @@ RUN echo "REVOKE CREATE ON SCHEMA public FROM PUBLIC;" >> /docker-entrypoint-ini
 RUN --mount=type=secret,required=true,id=IC_UDB_USER,env=IC_UDB_USER \
 	--mount=type=secret,required=true,id=IC_UDB_PASS,env=IC_UDB_PASS \
 	echo "CREATE USER ${IC_UDB_USER} WITH PASSWORD '${IC_UDB_PASS}';" >> /docker-entrypoint-initdb.d/000_init_users.sql
+RUN --mount=type=secret,required=true,id=IC_USERS_SVC_USER,env=IC_USERS_SVC_USER \
+	--mount=type=secret,required=true,id=IC_USERS_SVC_PASS,env=IC_USERS_SVC_PASS \
+	echo "CREATE USER ${IC_USERS_SVC_USER} WITH PASSWORD '${IC_USERS_SVC_PASS}';" >> /docker-entrypoint-initdb.d/000_init_users.sql
 
 # Update the perms file to swap the username
 RUN --mount=type=secret,required=true,id=IC_UDB_USER,env=IC_UDB_USER \
 	sed -i -e "s/IC_UDB_USER/${IC_UDB_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
+RUN --mount=type=secret,required=true,id=IC_USERS_SVC_USER,env=IC_USERS_SVC_USER \
+	sed -i -e "s/IC_USERS_SVC_USER/${IC_USERS_SVC_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
 
 # Create a random root password
 RUN dd if=/dev/random bs=18 count=1 | base64 > /home/root_pass.txt
