@@ -82,4 +82,10 @@ impl AppStateMariaDB {
 		};
 		return Ok(client);
 	}
+
+	pub fn health_check(&self) -> bool {
+		let Ok(pool) = self.pool.lock() else { return false };
+		// I don't know if this is a valid check
+		return self.pool.try_get_conn(Duration::from_secs(2)).is_some();
+	}
 }

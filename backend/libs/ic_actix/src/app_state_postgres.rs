@@ -65,4 +65,11 @@ impl AppStatePostgres {
 		};
 		return Ok(client);
 	}
+
+	pub fn health_check(&self) -> bool {
+		let Ok(pool) = self.pool.lock() else { return false };
+		let status = pool.status();
+		// I don't know if this is a valid check
+		return status.waiting <= 2 * status.max_size
+	}
 }
