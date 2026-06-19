@@ -70,20 +70,23 @@ async fn main() -> std::io::Result<()> {
 		//    /posts     GET  AuthJwt   Get your list of posts
 		//    /favs      GET  AuthJwt   Get your list of favorites
 		//    /comments  GET  AuthJwt   Get your list of comments
+		
 		// /u/{account_link}
 		//    /profile   GET  Public   Get a user's public profile
 		//    /posts     GET  Public   Get a user's public posts
 		//    /favs      GET  Public   Get a user's public favorites
 		//    /comments  GET  Public   Get a user's public comments
+		
 		// /ub           POST Public   Get list of user badges
 		//               Redis: Read/write "ub:"
 
 		.service(scope("/my")
-			//.route("/prevs", get().to(routes::get_my_prefs))
-			//.route("/prevs", post().to(routes::set_my_prefs))
+			//.route("/prefs", get().to(routes::get_my_prefs))
+			//.route("/prefs", post().to(routes::set_my_prefs))
 			//.route("/favs", get().to(routes::get_my_favs))
 			//.route("/comments", get().to(routes::get_my_comments))
 		)
+
 		// TODO: Need a guard on {post_link} to make sure it's len=12 and Base64Url-encoded
 		.service(scope("/u/{post_link}")
 			//.route("/profile", get().to(routes::get_user_profile))
@@ -91,6 +94,7 @@ async fn main() -> std::io::Result<()> {
 			//.route("/favs", get().to(routes::get_user_favs))
 			//.route("/comments", get().to(routes::get_user_comments))
 		)
+
 		.route("/ub", post().to(routes::get_user_badges))
 
 		
