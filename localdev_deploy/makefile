@@ -52,6 +52,10 @@ build_posts:
 	# This service (and any looking forward) MUST be built from the parent directory
 	make -C ../backend/ posts
 
+build_users:
+	# This service (and any looking forward) MUST be built from the parent directory
+	make -C ../backend/ users
+
 build_softmod:
 	make -C ../backend/softmod_actions/ softmod
 
@@ -106,6 +110,10 @@ deploy_auth:
 deploy_posts:
 	# This service (and any looking forward) MUST be built from the parent directory
 	make -C ../backend/ deploy_posts
+
+deploy_users:
+	# This service (and any looking forward) MUST be built from the parent directory
+	make -C ../backend/ deploy_users
 
 deploy_softmod:
 	make -C ../backend/softmod_actions/ deploy_softmod
