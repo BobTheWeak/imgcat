@@ -54,6 +54,17 @@ impl AppStatePostgres {
 		return Self::new(host, port, db, user, pass).await;
 	}
 
+	#[cfg(feature="std_envvars")]
+	pub async fn new_with_user(user:&str, pass:&str) -> ICResult<Self> {
+		let host:&str = &std::env::var("IC_UDB_HOST").expect("Could not parse envvar: IC_UDB_HOST");
+		let port:u16 = u16::from_str(
+			&std::env::var("IC_UDB_PORT").unwrap_or("8080".to_string())
+		).expect("Could not parse envvar: IC_UDB_PORT");
+		let db:&str = &std::env::var("IC_UDB_DB").expect("Could not parse envvar: IC_UDB_DB");
+
+		return Self::new(host, port, db, user, pass).await;
+	}
+
 	pub async fn get_conn(&self) -> ICResult<Client> {
 		let Ok(pool) = self.pool.lock() else {
 			// TODO: If the pool is poisoned, try to recover
