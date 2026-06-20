@@ -32,8 +32,6 @@ BEGIN
 			a.id,
 			a.title,
 			a.user_id,
-			-- b.username,
-			'TBD username' as username,
 			UNIX_TIMESTAMP(a.upload_time) as 'time',
 			a.is_public,
 			a.link
