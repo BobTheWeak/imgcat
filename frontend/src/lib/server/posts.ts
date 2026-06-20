@@ -65,6 +65,8 @@ export async function GetPost(post_link:string, content_level:number, user_id:nu
 		[post_link, content_level, user_id],
 		(r)=>{
 			let result = r[0][0];
+			// It comes back as BigInt
+			result['user_id'] = Number(result['user_id']);
 			// Fold the second resultset into img=[]
 			result['img'] = r[1];
 			// Goddamned timezones + Javascript + MySQL + a shit-ass library doing silent
