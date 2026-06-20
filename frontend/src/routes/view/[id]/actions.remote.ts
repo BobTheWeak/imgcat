@@ -1,4 +1,9 @@
-import { number as req_number, strictTuple as req_tuple, optional} from 'valibot';
+import {
+	number as req_number,
+	strictTuple as req_tuple,
+	array as req_array,
+	optional
+} from 'valibot';
 import { query, getRequestEvent } from '$app/server';
 import * as Internal from '$lib/server/posts.ts';
 
@@ -89,4 +94,29 @@ export const isFavPost = query(req_tuple([req_number(), optional(req_number())])
 	} else {
 		return false
 	}
+});
+
+export const get_badges = query(req_array(req_number()), async (ids):any => {
+	const { params, cookies, fetch } = getRequestEvent();
+	const auth_token = cookies.get('ic_auth');
+	
+	const body = JSON.stringify(ids);
+
+	const headers = {
+		'Content-Length':body.length,
+		'Content-Type':'application/json',
+	}
+	if(auth_token){headers['Authorization'] = 'Bearer ' + auth_token}
+
+	return fetch('/api/users/ub',{
+		method: 'POST',
+		headers:headers,
+		body: body
+	}).then(r=>r.json(),()=>{}).then(r=>{
+		const result = new Map();
+		for(let i of r) {
+			result.set(i.id, i);
+		}
+		return result;
+	},()=>{});
 });

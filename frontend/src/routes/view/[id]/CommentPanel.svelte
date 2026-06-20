@@ -5,6 +5,8 @@
 	import Modal from '$lib/Modal.svelte';
 	import { enhance } from '$app/forms';
 
+	import { get_badges } from './actions.remote.ts';
+
 	let {
 		post,
 		form,
@@ -14,6 +16,7 @@
 	} = $props();
 
 	const {comments, replies} = $derived(await comment_replies);
+	const badges = $derived(await get_badges(Array.from(comments.keys())));
 
 	let showCommentModal = $derived(Number.isInteger(reply_to));
 
@@ -42,7 +45,7 @@
 </div> -->
 {#each replies.get(0) as id}
 <div class='root-cmt'>
-<Comment {id} {comments} {replies} bind:reply_to />
+<Comment {id} {comments} {replies} {badges} bind:reply_to />
 </div>
 {/each}
 

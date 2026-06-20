@@ -3,8 +3,6 @@
 	import SingleActionBar from './SingleActionBar.svelte';
 	import CommentPanel from './CommentPanel.svelte';
 
-	//import { liveViews } from './actions.remote.ts';
-
 	const { data, form } = $props();
 	const post = $derived(data.post);
 
@@ -18,7 +16,14 @@
 		{#if post.title}
 			<h1>{post.title}</h1>
 		{/if}
-		<p>{post.username} - {pretty_print_relative(post.time, navigator.language)}
+		<p>
+		{#if post.user}
+		<a href='/u/{post.user.link}'>{post.user.username}</a>
+		{:else}
+		Unknown User
+		{/if}
+		 - {pretty_print_relative(post.time, navigator.language)}
+
 		{#await data.views then v}
 		{#if v} - {v} {#if v > 1}views{:else}view{/if}{/if}
 		{/await}

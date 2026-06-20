@@ -7,16 +7,18 @@
 		id,
 		comments,
 		replies,
+		badges,
 		reply_to = $bindable(),
 		level = 0,
 	} = $props();
 	const self = comments.get(id);
+	let user = $derived(badges?.get(self.user_id));
 	let open = $state( level<=0 ); // By deafult, open root comments & show the second layer
 </script>
 
 
 <div class='cmt'>
-	<label>TBD Username - {pretty_print_relative(self.ts, navigator.language)}</label>
+	<label>{#if user}<a href='/u/{user.link}'>{user.username}</a>{:else}Unknown User{/if} - {pretty_print_relative(self.ts, navigator.language)}</label>
 	<p>{self.text}</p>
 	
 	<div class='btngrp'>
@@ -33,7 +35,7 @@
 	</div>
 	{#if open}
 		{#each replies.get(id) as inner_id}
-			<Comment id={inner_id} {comments} {replies} bind:reply_to level={level+1} />
+			<Comment id={inner_id} {comments} {replies} {badges} bind:reply_to level={level+1} />
 		{/each}
 	{/if}
 </div>

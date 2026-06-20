@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { fail, error } from '@sveltejs/kit';
-
+import { get_badges } from './actions.remote.ts';
 
 ////////////////////////////////////////////////////////
 //   THIS SHOULD BE DEPRECATED - USE A MICROSERVICE   //
@@ -29,35 +29,47 @@ export const load:PageServerLoad = async({ params, locals, cookies, fetch }) => 
 		post.img[i].type = ['unknown', 'image', 'svg', 'image', 'video'][post.img[i].type]
 	}
 
+	// Users Service (grabbing usernames)
+	// NOTE: It gets slightly weird if we don't await here. It's worth it.
+	const badges = await get_badges([post.user_id]);
+	post.user = badges?.get(post.user_id);
+
+	// Posts Service
 	let url = '/api/posts/p/' + params['id'];
 	let h = {'Content-Length':'0'} // Causes problems if not set manually
 	if(auth_token){h['Authorization']='Bearer '+auth_token}
 
+	// A bunch of things to lazy-load
+	const views = fetch(url + '/views', {headers:h}).then(r=>r.json(),()=>{});
+	const votes = fetch(url + '/votes', {headers:h}).then(r=>r.json(),()=>{});
+	const comment_replies = fetch(url + '/comments', {headers:h}).then(r=>r.json(),()=>{})
+		.then(r=>{
+			// Two fixes:
+			// 1) JSON keys are strings, but we sent them as Numbers (i64)
+			// 2) JS dates use ms, but we send UNIX time in secs
+			const result = {comments:new Map(), replies:new Map()}
+
+			for(let item of Object.entries(r.comments)) {
+				item[1].ts = new Date(Number.parseInt(item[1].ts * 1000));
+				result.comments.set(Number.parseInt(item[0]), item[1])
+			}
+			for(let item of Object.entries(r.replies)) {
+				result.replies.set(Number.parseInt(item[0]), item[1])
+			}
+			return result;
+		},()=>{});
+
 	const result = {
 		post: post,
-
-		// Lazy-loaded data
-		views: fetch(url + '/views', {headers:h}).then(r=>r.json(),()=>{}),
-		votes: fetch(url + '/votes', {headers:h}).then(r=>r.json(),()=>{}),
-		comment_replies: fetch(url + '/comments', {headers:h}).then(r=>r.json(),()=>{})
-			.then(r=>{
-				// Two fixes:
-				// 1) JSON keys are strings, but we sent them as Numbers (i64)
-				// 2) JS dates use ms, but we send UNIX time in secs
-				const result = {comments:new Map(), replies:new Map()}
-
-				for(let item of Object.entries(r.comments)) {
-					item[1].ts = new Date(Number.parseInt(item[1].ts * 1000));
-					result.comments.set(Number.parseInt(item[0]), item[1])
-				}
-				for(let item of Object.entries(r.replies)) {
-					result.replies.set(Number.parseInt(item[0]), item[1])
-				}
-				return result;
-			},()=>{}),
+		// Lazy-loaded promises
+		views: views,
+		votes: votes,
+		comment_replies: comment_replies,
 	}
 
+	//
 	if(locals.logged_in) {
+		// TODO: Replace with promise APIs
 		result['my_vote'] = GetMyVote(post.id, locals.user_id);
 		result['is_fav'] = IsFavPost(post.id, locals.user_id);
 	}
