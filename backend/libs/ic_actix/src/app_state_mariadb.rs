@@ -1,5 +1,5 @@
 use std::str::FromStr;
-//use std::time::Duration;
+use std::time::Duration;
 use mysql::{OptsBuilder, Pool, PoolOpts, PoolConstraints, PooledConn};
 use mysql::prelude::Queryable;
 
@@ -84,8 +84,7 @@ impl AppStateMariaDB {
 	}
 
 	pub fn health_check(&self) -> bool {
-		let Ok(pool) = self.pool.lock() else { return false };
 		// I don't know if this is a valid check
-		return self.pool.try_get_conn(Duration::from_secs(2)).is_some();
+		return self.pool.try_get_conn(Duration::from_secs(2)).is_ok();
 	}
 }
