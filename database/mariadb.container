@@ -1,4 +1,4 @@
-FROM mariadb:12.1
+FROM mariadb:lts
 
 COPY ./mariadb.conf /etc/mysql/conf.d/mariadb.cnf
 COPY ./mariadb_scripts/init/* /docker-entrypoint-initdb.d/
