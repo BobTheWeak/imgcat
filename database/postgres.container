@@ -7,6 +7,8 @@ RUN echo "host all all all scram-sha-256" >> /etc/postgresql/pg_hba.conf
 
 # Copy all the init scripts
 COPY ./postgres_scripts/init/* /docker-entrypoint-initdb.d/
+# Copy all permission scripts
+COPY ./postgres_scripts/perms/* /docker-entrypoint-initdb.d/
 
 # Restrict all users from creating objects
 RUN echo "REVOKE CREATE ON SCHEMA public FROM PUBLIC;" >> /docker-entrypoint-initdb.d/000_init_users.sql
