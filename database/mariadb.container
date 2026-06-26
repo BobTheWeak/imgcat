@@ -2,10 +2,8 @@ FROM mariadb:lts
 
 COPY ./mariadb.conf /etc/mysql/conf.d/mariadb.cnf
 COPY ./mariadb_scripts/init/* /docker-entrypoint-initdb.d/
-
-# TEMP - We need to change how these are stored in the DB
-RUN rm /docker-entrypoint-initdb.d/000_init_users.sh
-RUN rm /docker-entrypoint-initdb.d/ZZY_init_users.sql
+# Copy all permission scripts
+COPY ./mariadb_scripts/perms/* /docker-entrypoint-initdb.d/
 
 # Create an application user using the passed in creds
 RUN --mount=type=secret,required=true,id=IC_DB_USER,env=IC_DB_USER \
