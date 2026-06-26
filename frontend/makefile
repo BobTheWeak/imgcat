@@ -1,4 +1,4 @@
-help:
+--help:
 	@echo "make [frontend, deploy_frontend]"
 
 frontend:
@@ -6,10 +6,7 @@ frontend:
 	-t icfe \
 	--secret type=env,id=IC_DB_USER \
 	--secret type=env,id=IC_DB_PASS \
-	--secret type=env,id=IC_USERDB_USER \
-	--secret type=env,id=IC_USERDB_PASS \
 	--secret id=IC_JWT_PUB,src="${IC_JWT_PUB}" \
-	--secret id=IC_JWT_PVT,src="${IC_JWT_PVT}" \
 	--file frontend.container \
 	.
 
@@ -29,6 +26,7 @@ frontend:
 #	icfe
 
 deploy_frontend:
+	docker stop icfe || true
 	docker rm icfe || true
 	docker run \
 	--detach \

@@ -9,7 +9,11 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			envPrefix: 'IC_'
+			// What. fucking. garbage. Whatever pulls envvars is opinionated and will not even
+			// run if it detects other envvars sharing that prefix. Because it's "dangerous".
+			// If you think this is a problem (and it's not) then log a warning. Panicking is
+			// utterly inappropreate. Go fuck yourself. Opinionated software is cancer.
+			envPrefix: 'IC_FRONTEND_'
 		}),
 		experimental: {
 			remoteFunctions: true

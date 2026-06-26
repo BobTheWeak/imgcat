@@ -27,10 +27,11 @@ COPY --from=build /app/build/ .
 COPY --from=build /app/cached_modules/ ./node_modules/
 
 # Set a few important, node-specific envvars
-ENV IC_PORT=8080
+ENV IC_FRONTEND_PORT=8080
+ENV IC_FRONTEND_ORIGIN=$IC_ORIGIN
 
 # Set the max upload size to 100MB
-ENV BODY_SIZE_LIMIT=100M
+ENV IC_FRONTEND_BODY_SIZE_LIMIT=100M
 
 USER node
 ENTRYPOINT ["node", "/app"]
