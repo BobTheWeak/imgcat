@@ -1,4 +1,4 @@
-FROM node:latest-slim AS build
+FROM node:current-slim AS build
 WORKDIR /app
 
 COPY package.json package-lock.json tsconfig.json svelte.config.js vite.config.ts .
@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=node_modules/ \
 	cp -r node_modules/ cached_modules/
 
 
-FROM node:latest-slim AS prod
+FROM node:current-slim AS prod
 WORKDIR /app
 
 # Copy the app
