@@ -1,0 +1,38 @@
+FROM node:latest-slim AS build
+WORKDIR /app
+
+COPY package.json package-lock.json tsconfig.json svelte.config.js vite.config.ts .
+COPY static/ static/
+COPY src/ src/
+
+# Grab all node dependencies
+RUN --mount=type=cache,target=node_modules/ \
+	npm ci --omit dev
+
+# Build the app
+RUN --mount=type=cache,target=node_modules/ \
+	npm run build
+
+# Copy /app/node_modules/ persistently, so we can copy them into the prod build
+RUN --mount=type=cache,target=node_modules/ \
+	cp -r node_modules/ cached_modules/
+
+
+FROM node:latest-slim AS prod
+WORKDIR /app
+
+# Copy the app
+COPY --from=build /app/package.json .
+COPY --from=build /app/build/ .
+COPY --from=build /app/cached_modules/ ./node_modules/
+
+# Set a few important, node-specific envvars
+ENV PORT=8080
+ENV ORIGIN=$IC_ORIGIN
+
+# Set the max upload size to 100MB
+ENV BODY_SIZE_LIMIT=100M
+
+USER node
+ENTRYPOINT ["node", "/app"]
+EXPOSE 8080/tcp
