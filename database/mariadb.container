@@ -1,6 +1,7 @@
 FROM mariadb:lts
 
 COPY ./mariadb.conf /etc/mysql/conf.d/mariadb.cnf
+# Copy all the init scripts
 COPY ./mariadb_scripts/init/* /docker-entrypoint-initdb.d/
 # Copy all permission scripts
 COPY ./mariadb_scripts/perms/* /docker-entrypoint-initdb.d/
@@ -15,8 +16,5 @@ RUN --mount=type=secret,required=true,id=IC_DB_USER,env=IC_DB_USER \
 # Update the perms file to swap the username
 RUN --mount=type=secret,required=true,id=IC_DB_USER,env=IC_DB_USER \
 	sed -i -e "s/imgcat_posts/${IC_DB_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
-	
-RUN --mount=type=secret,required=true,id=IC_USERDB_USER,env=IC_USERDB_USER \
-	sed -i -e "s/imgcat_jwt/${IC_USERDB_USER}/gi" /docker-entrypoint-initdb.d/ZZZ_init_perms.sql
 
 EXPOSE 8080/tcp

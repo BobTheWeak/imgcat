@@ -42,8 +42,3 @@ GRANT EXECUTE ON FUNCTION  Posts.GetLinkByPostId           TO imgcat_posts;
 GRANT EXECUTE ON PROCEDURE MemeMaker.GetTemplates          TO imgcat_posts;
 GRANT EXECUTE ON PROCEDURE MemeMaker.GetTemplateById       TO imgcat_posts;
 GRANT EXECUTE ON PROCEDURE MemeMaker.GetTemplateTags       TO imgcat_posts;
-
--- GRANT EXECUTE ON FUNCTION  UserDB.CreateAccount            TO imgcat_jwt;
--- GRANT EXECUTE ON PROCEDURE UserDB.GetLoginData             TO imgcat_jwt;
--- GRANT EXECUTE ON FUNCTION  UserDB.GetLoginId               TO imgcat_jwt;
--- GRANT EXECUTE ON FUNCTION  UserDB.IsUsernameFree           TO imgcat_jwt;
