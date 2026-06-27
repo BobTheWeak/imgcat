@@ -13,4 +13,5 @@ sqlx = {version = "0.8.6", features = ["runtime-tokio", "mysql", "postgres"]}
 tokio = {version = "1.47.1", features = ["rt-multi-thread"]}
 
 [features]
+default = ["use_mariadb"]
 use_mariadb = []
