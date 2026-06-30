@@ -24,7 +24,7 @@ export const load:PageServerLoad = async({ params, locals, cookies, fetch }) => 
 
 	// Internally, we're pulling from the 'link_v1' column
 	for(let i in post.img) {
-		post.img[i].link = '/api/img/' + post.img[i].link
+		post.img[i].link = process.env.IC_LOC_IMG + '/' + post.img[i].link
 		//HARDCODED: 0:Unknown, 1:raster image, 2:vector image, 3:animation, 4:video
 		post.img[i].type = ['unknown', 'image', 'svg', 'image', 'video'][post.img[i].type]
 	}
@@ -35,7 +35,7 @@ export const load:PageServerLoad = async({ params, locals, cookies, fetch }) => 
 	post.user = badges?.get(post.user_id);
 
 	// Posts Service
-	let url = '/api/posts/p/' + params['id'];
+	let url = process.env.IC_LOC_INT + '/posts/p/' + params['id'];
 	let h = {'Content-Length':'0'} // Causes problems if not set manually
 	if(auth_token){h['Authorization']='Bearer '+auth_token}
 
@@ -200,7 +200,7 @@ export const actions:Actions = {
 		// Make API call
 		let maturity_fetch = null;
 		if(fetch_params.size>0){
-			let url = `/api/smact/vote_mature/${post_id}?${fetch_params.toString()}`;
+			let url = `${process.env.IC_LOC_INT}/smact/vote_mature/${post_id}?${fetch_params.toString()}`;
 			maturity_fetch = fetch(url, {
 				method: 'POST',
 				headers: {
@@ -223,7 +223,7 @@ export const actions:Actions = {
 		// Make API call
 		let cat_fetch = null;
 		if(fetch_params.size>0){
-			let url = `/api/smact/vote_category/${post_id}?${fetch_params.toString()}`;
+			let url = `${process.env.IC_LOC_INT}/smact/vote_category/${post_id}?${fetch_params.toString()}`;
 			cat_fetch = fetch(url, {
 				method: 'POST',
 				headers: {
@@ -245,7 +245,7 @@ export const actions:Actions = {
 		// Make API call
 		let tag_fetch = null;
 		if(fetch_params.size>0){
-			let url = `/api/smact/vote_tag/${post_id}?${fetch_params.toString()}`;
+			let url = `${process.env.IC_LOC_INT}/smact/vote_tag/${post_id}?${fetch_params.toString()}`;
 			tag_fetch = fetch(url, {
 				method: 'POST',
 				headers: {
@@ -345,7 +345,7 @@ export const actions:Actions = {
 		comment = encodeURI(comment);
 		
 		// Make API call
-		let url = `/api/smact/vote_review/${post_id}?c=${comment}`;
+		let url = `${process.env.IC_LOC_INT}/smact/vote_review/${post_id}?c=${comment}`;
 		let report_fetch = await fetch(url, {
 			method: 'POST',
 			headers: {
@@ -382,7 +382,7 @@ export const actions:Actions = {
 		comment = encodeURI(comment);
 
 		// Make API call
-		let url = `/api/smact/anon_review/${post_id}?c=${comment}`;
+		let url = `${process.env.IC_LOC_INT}/smact/anon_review/${post_id}?c=${comment}`;
 		let report_fetch = await fetch(url, {
 			method: 'POST',
 			headers: {

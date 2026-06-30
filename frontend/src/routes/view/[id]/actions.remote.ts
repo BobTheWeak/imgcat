@@ -23,7 +23,7 @@ export const getViews = query('unchecked', async ():number => {
 	const headers = {'Content-Length':'0'} // Causes problems if not set manually
 	if(auth_token){headers['Authorization'] = 'Bearer ' + auth_token}
 
-	return fetch('/api/posts/p/'+params['id']+'/views',{headers:headers}).then(r=>r.json(),()=>{});
+	return fetch(process.env.IC_LOC_INT+'/posts/p/'+params['id']+'/views',{headers:headers}).then(r=>r.json(),()=>{});
 });
 
 export const getVotes = query('unchecked', async ():number => {
@@ -33,7 +33,7 @@ export const getVotes = query('unchecked', async ():number => {
 	const headers = {'Content-Length':'0'} // Causes problems if not set manually
 	if(auth_token){headers['Authorization'] = 'Bearer ' + auth_token}
 
-	return fetch('/api/posts/p/'+params['id']+'/votes',{headers:headers}).then(r=>r.json(),()=>{});
+	return fetch(process.env.IC_LOC_INT+'/posts/p/'+params['id']+'/votes',{headers:headers}).then(r=>r.json(),()=>{});
 });
 
 
@@ -47,7 +47,7 @@ export const liveViews = query.live('unchecked', async function* () {
 
 	while (true) {
 		const req = fetch(
-			'/api/posts/p/'+params['id']+'/views',
+			process.env.IC_LOC_INT+'/posts/p/'+params['id']+'/views',
 			{headers:headers}
 		).then((r)=>{return r.json()},()=>{return null});
 		if(req) {yield (req)}
@@ -68,7 +68,7 @@ export const liveVotes = query.live(req_number(), async function* (post_id) {
 
 	while (true) {
 		const req = fetch(
-			'/api/posts/p/'+params['id']+'/votes',
+			process.env.IC_LOC_INT+'/posts/p/'+params['id']+'/votes',
 			{headers:headers}
 		).then((r)=>{return r.json()},()=>{});
 		if(req) {yield (req)}
@@ -108,7 +108,7 @@ export const get_badges = query(req_array(req_number()), async (ids):any => {
 	}
 	if(auth_token){headers['Authorization'] = 'Bearer ' + auth_token}
 
-	return fetch('/api/users/ub',{
+	return fetch(process.env.IC_LOC_INT+'/users/ub',{
 		method: 'POST',
 		headers:headers,
 		body: body

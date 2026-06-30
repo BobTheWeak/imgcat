@@ -6,7 +6,7 @@
 <div class='post_thumb'>
 	<a href='/view/{post["link"]}'>
 	<!-- svelte-ignore a11y_missing_attribute (b/c it's a user-generated img) -->
-	<div><img src='/api/img/{post["first_img"]}' /></div>
+	<div><img src='{process.env.IC_LOC_IMG+'/'+post["first_img"]}' /></div>
 	{#if post["title"]}
 	<h4>{post["title"]}</h4>
 	{/if}

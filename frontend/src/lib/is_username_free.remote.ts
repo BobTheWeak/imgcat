@@ -26,7 +26,7 @@ export const IsUsernameFree = query(v.string(), async(username) => {
 	const { fetch, cookies } = getRequestEvent();
 	const sjwt = cookies.get('ic_signup');
 	if(sjwt){
-		const res = await fetch('/api/auth/namefree?u='+encodeURI(username), {
+		const res = await fetch(process.env.IC_LOC_INT+'/auth/namefree?u='+encodeURI(username), {
 			headers: {
 				'Authorization': "Bearer " + cookies.get('ic_signup')
 			}

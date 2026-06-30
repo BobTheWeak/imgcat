@@ -68,7 +68,7 @@ export const actions:Actions = {
 		post_data.append('sub', jwt.sub);
 		post_data.append('user', username);
 
-		const signup_response = await fetch('/api/auth/create', {
+		const signup_response = await fetch(process.env.IC_LOC_INT+'/auth/create', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',

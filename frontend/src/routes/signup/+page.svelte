@@ -46,7 +46,7 @@
 	<div id='agever'>
 		<label for='age'>Age Verification</label>
 		<input type='hidden' name='age' value={form?.age} />
-		<Button href="/api/auth/getage/google" lbl='Verify with Google' style='width:100%' />
+		<Button href={process.env.IC_LOC_EXT+'/auth/getage/google'} lbl='Verify with Google' style='width:100%' />
 	</div>
 	{/if}
 

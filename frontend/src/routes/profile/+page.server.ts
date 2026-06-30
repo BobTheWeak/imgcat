@@ -7,7 +7,7 @@ export const load: ServerPageLoad = async({ locals, cookies, fetch }) => {
 	const ajwt = cookies.get('ic_auth');
 	if(!ajwt){redirect(307, '/login')}
 
-	const res = await fetch('/api/auth/my/prefs', {
+	const res = await fetch(process.env.IC_LOC_INT+'/auth/my/prefs', {
 		headers: {
 			"Authorization": 'Bearer ' + ajwt
 		}
@@ -31,7 +31,7 @@ export const actions = {
 		const form_data = new URLSearchParams(await request.formData())
 		form_data.append('account_id', locals.user_id);
 
-		const res = await fetch('/api/auth/my/prefs', {
+		const res = await fetch(process.env.IC_LOC_INT+'/auth/my/prefs', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
