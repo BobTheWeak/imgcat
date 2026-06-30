@@ -119,10 +119,11 @@ export const handleFetch:HandleFetch = async({ request, fetch }) => {
 	if (url.pathname.startsWith('/api')) {
 
 		// It gets a little weird behind a proxy
-		url.hostname = new URL(process.env.IC_ORIGIN).hostname;
+		//url.hostname = new URL(process.env.IC_ORIGIN).hostname;
 
 		// Clone the original request so Svelte doesn't serve it internally
-		request = new Request(url, request);
+		//request = new Request(url, request);
+		return globalThis.fetch(request);
 	}
 
 	return fetch(request);
