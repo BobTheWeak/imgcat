@@ -52,7 +52,7 @@
 
 	<label>
 		<input type='checkbox' name='toc' />
-		I accept the <a href='http://localhost/about/terms' target="_blank">Terms of Use</a> and the <a href='http://localhost/about/privacy' target="_blank">Privacy Policy</a>
+		I accept the <a href='/about/terms' target="_blank">Terms of Use</a> and the <a href='/about/privacy' target="_blank">Privacy Policy</a>
 	</label>
 
 	<div id='cmds'>
