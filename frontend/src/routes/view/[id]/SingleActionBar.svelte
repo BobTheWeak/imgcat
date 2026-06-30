@@ -272,7 +272,7 @@
 	}
 	div.error {
 		color: red;
-		work-break: break-word;
+		word-break: break-word;
 	}
 	:global {
 		dialog button,input {
