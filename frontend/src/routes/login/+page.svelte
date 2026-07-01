@@ -60,7 +60,7 @@
 <p style='color:red'>Error: {data.error_msg}</p>
 {/if}
 <div id='providers'>
-	<Button href='/auth/google' lbl='Sign in with Google' />
+	<Button href='/auth/p/google' lbl='Sign in with Google' />
 </div>
 
 <br/>
