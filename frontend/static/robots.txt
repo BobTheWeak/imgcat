@@ -1,4 +1,2 @@
 User-agent: *
-Disallow: /api/
-Disallow: /profile
-Disallow: /profile/
+Disallow: /
