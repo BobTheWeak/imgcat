@@ -49,7 +49,7 @@ pub async fn provider(
 		Some(ClientSecret::new(data.client_secret.clone())),
 	)
 	.set_redirect_uri(RedirectUrl::new(
-		format!("{}/api/auth/{}/callback",
+		format!("{}/auth/cb/{}",
 			std::env::var("IC_ORIGIN")
 				.expect("Could not parse envvar: IC_ORIGIN"),
 			&provider
