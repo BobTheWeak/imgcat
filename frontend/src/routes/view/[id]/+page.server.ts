@@ -24,7 +24,7 @@ export const load:PageServerLoad = async({ params, locals, cookies, fetch }) => 
 
 	// Internally, we're pulling from the 'link_v1' column
 	for(let i in post.img) {
-		post.img[i].link = process.env.IC_LOC_IMG + '/' + post.img[i].link
+		post.img[i].link = process.env.PUBLIC_IC_LOC_IMG + '/' + post.img[i].link
 		//HARDCODED: 0:Unknown, 1:raster image, 2:vector image, 3:animation, 4:video
 		post.img[i].type = ['unknown', 'image', 'svg', 'image', 'video'][post.img[i].type]
 	}

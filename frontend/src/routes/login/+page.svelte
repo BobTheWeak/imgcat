@@ -2,6 +2,7 @@
 	import type { ActionData, PageProps } from './$types';
 	import { enhance } from '$app/forms';
 	import Button from '$lib/Button.svelte';
+	import { env } from '$env/dynamic/public';
 
 	let { data, form }: PageProps = $props();
 
@@ -59,7 +60,7 @@
 <p style='color:red'>Error: {data.error_msg}</p>
 {/if}
 <div id='providers'>
-	<Button href={process.env.IC_LOC_EXT+'/auth/google'} lbl='Sign in with Google' />
+	<Button href={env.PUBLIC_IC_LOC_EXT+'/auth/google'} lbl='Sign in with Google' />
 </div>
 
 <br/>

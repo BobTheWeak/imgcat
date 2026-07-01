@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import TemplateSelector from './TemplateSelector.svelte';
 	import { get_width, split_text } from './MemeMaker.ts';
+	import { env } from '$env/dynamic/public';
 
 	const PADDING=10;
 	const data = $props();
@@ -64,7 +65,7 @@
 		// linked within an <img src='blah.svg' /> element. But embedding it
 		// directly in the page leads to XSS concerns. So we need better validation
 		// before we can do (proper) linking. For now... DL & inline the bytes.
-		const d=await getFileAsBase64(process.env.IC_LOC_IMG+'/'+selected_meme.image);
+		const d=await getFileAsBase64(env.PUBLIC_IC_LOC_IMG+'/'+selected_meme.image);
 		const clone=document.getElementById('svg').cloneNode(true);
 		clone.getElementsByTagName('image')[0].setAttribute('href', 'data:'+d.t+';base64,'+d.d);
 
@@ -90,7 +91,7 @@
 	}
 
 	const save = async(e)=>{
-		const d=await getFileAsBase64(process.env.IC_LOC_IMG+'/'+selected_meme.image);
+		const d=await getFileAsBase64(env.PUBLIC_IC_LOC_IMG+'/'+selected_meme.image);
 		const clone=document.getElementById('svg').cloneNode(true);
 		clone.getElementsByTagName('image')[0].setAttribute('href', 'data:'+d.t+';base64,'+d.d);
 
@@ -135,7 +136,7 @@
 	<!-- <svg id='svg' viewbox='0 0 {selected_meme.width} {selected_meme.height}' width={Math.min(1000/selected_meme.width,2.0)*selected_meme.width} height={Math.min(1000/selected_meme.width,2.0)*selected_meme.height}> -->
 	<svg id='svg' width={selected_meme.width} height={selected_meme.height}>
 		<style>text{font-family:sans-serif;font-weight:bold;fill:#FFF;stroke:#000;stroke-width:0.1em;paint-order:stroke;stroke-linejoin:round;text-anchor:middle;dominant-baseline:middle}</style>
-		<image href='{process.env.IC_LOC_IMG}/{selected_meme.image}' width='100%' />
+		<image href='{env.PUBLIC_IC_LOC_IMG}/{selected_meme.image}' width='100%' />
 		{#each selected_meme.text as tb, i}
 		<text x={tb.x||'50%'} y={(tb.y||(tb.dir?PADDING:selected_meme.height-PADDING))+font_size*(tb.dir?-0.5:0.5)} style='font-size:{font_size}px'>
 			{#each text_split[i] as ts, j}

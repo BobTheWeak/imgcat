@@ -4,6 +4,7 @@
 	import { GetCountryCodes } from '$lib/country_codes.ts';
 	import { IsUsernameFree } from '$lib/is_username_free.remote.ts';
 	import Button from '$lib/Button.svelte';
+	import { env } from '$env/dynamic/public';
 
 	let { data, form } = $props();
 
@@ -46,7 +47,7 @@
 	<div id='agever'>
 		<label for='age'>Age Verification</label>
 		<input type='hidden' name='age' value={form?.age} />
-		<Button href={process.env.IC_LOC_EXT+'/auth/getage/google'} lbl='Verify with Google' style='width:100%' />
+		<Button href={env.PUBLIC_IC_LOC_EXT+'/auth/getage/google'} lbl='Verify with Google' style='width:100%' />
 	</div>
 	{/if}
 
