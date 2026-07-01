@@ -43,13 +43,23 @@
 	<label for='username'>Username</label>
 	<input type='text' name='username' required value={form?.username || ''} minlength='4' maxlength='40' autocomplete='off' onchange={unamefree}/>
 
+	<!-- TODO: Not supported, at the moment
+	At the moment, we're asking for expanded perms on initial login. If we
+	know we'll need it later, we might as well ask for everything, once.
+
+	But we should change the flow to ask for the absolute minimum data
+	first. Then check here, and see if we need an upgrade to perms. This
+	is better transparency, and allows us a chance to explain why & how
+	this is better than scanning gov ids or creeping on your selfies.
+
 	{#if data.ck_age}
 	<div id='agever'>
 		<label for='age'>Age Verification</label>
 		<input type='hidden' name='age' value={form?.age} />
-		<Button href={env.PUBLIC_IC_LOC_EXT+'/auth/getage/google'} lbl='Verify with Google' style='width:100%' />
+		<Button href='/auth/getage/google' lbl='Verify with Google' style='width:100%' />
 	</div>
 	{/if}
+	-->
 
 	<label>
 		<input type='checkbox' name='toc' />
