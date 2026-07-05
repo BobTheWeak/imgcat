@@ -1,6 +1,8 @@
 use jsonwebtoken::{DecodingKey, decode_header, crypto::verify};
 #[cfg(feature="encode")]
 use jsonwebtoken::{Algorithm};
+#[cfg(feature="std_envvars")]
+use crate::keys::{DECODE_KEY, DECODE_KEY_ROTATED};
 
 //pub(crate) fn get_iss_aud() -> (String, String) {
 //	return (
@@ -26,4 +28,9 @@ pub fn validate(jwt_string:&str, key:&DecodingKey, key_rot:Option<&DecodingKey>)
 			}
 		})
 		.unwrap_or(false);
+}
+
+#[cfg(feature="std_envvars")]
+pub fn validate_with_defaults(jwt_string:&str) -> bool {
+	validate(jwt_string, &DECODE_KEY, DECODE_KEY_ROTATED.as_ref())
 }

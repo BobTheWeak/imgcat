@@ -12,6 +12,7 @@ pub use decode_jwt::{DecodeJwt};
 // Helpers
 mod common;
 pub use common::{validate};
+#[cfg(feature="std_envvars")] pub use common::{validate_with_defaults};
 
 // Classes
 mod auth_jwt;
