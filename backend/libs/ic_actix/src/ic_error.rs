@@ -24,11 +24,17 @@ impl ICError {
 		Self {status:500, message}
 	}
 
+	/// /// /// /// /// /// /// /// /// /// /// ///
+	//   NOTE: DO NOT POLLUTE THIS WITH JUNK
+	//   If it only applies to a single location, do: ICError.panic("Bad thing")
+	/// /// /// /// /// /// /// /// /// /// /// ///
+
 	// Authentication errors (ie. the Bearer token is missing or expired)
 	pub const HEADER_MISSING:ICError = ICError::new(401, "Auth header");
 	pub const HEADER_VALIDATION:ICError = ICError::new(403, "Auth validation");
 
 	// User bans & guards
+	pub const BAN_TOR:ICError = ICError::new(403, "Tor traffic is not allowed");
 	pub const BAN_IP:ICError = ICError::new(418, "Temporary IP ban");
 	pub const BAN_TEMP:ICError = ICError::new(418, "Temporary user ban");
 	pub const BAN_PERM:ICError = ICError::new(418, "Permanent user ban");
