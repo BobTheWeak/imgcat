@@ -19,10 +19,18 @@ pub(crate) static AUDIENCE:LazyLock<String> = LazyLock::new(||{
 		.expect("Could not parse envvar: IC_JWT_AUD")
 });
 
+// TODO: LazyLock is NOT the right data structure. It can only be set once,
+// and then requires a service restart. Do a proper cache instead.
+
 #[cfg(all(feature="encode", feature="std_envvars"))]
 pub(crate) static ENCODE_KEY:LazyLock<EncodingKey> = LazyLock::new(||{
-	let filename:&str = &std::env::var("IC_JWT_PVT").expect("Could not parse envvar: IC_JWT_PVT");
-	let data:Vec<u8> = std::fs::read(filename).expect("Could not read file specified in: IC_JWT_PVT");
+
+	let key = &std::env::var("IC_JWT_PVT").expect("Could not parse envvar: IC_JWT_PVT");
+	let data = if std::path::Path::new(&key).exists() {
+		std::fs::read(&key).expect("IC_JWT_PVT looks like a file, but could not be read")
+	} else {
+		key.clone().into_bytes()
+	};
 
 	// TODO: Check the file to specify the algorithm
 	return match ALGO {
@@ -47,8 +55,13 @@ pub(crate) static ENCODE_KEY:LazyLock<EncodingKey> = LazyLock::new(||{
 
 #[cfg(feature="std_envvars")]
 pub(crate) static DECODE_KEY:LazyLock<DecodingKey> = LazyLock::new(||{
-	let filename:&str = &std::env::var("IC_JWT_PUB").expect("Could not parse envvar: IC_JWT_PUB");
-	let data:Vec<u8> = std::fs::read(filename).expect("Could not read file specified in: IC_JWT_PUB");
+	
+	let key = &std::env::var("IC_JWT_PUB").expect("Could not parse envvar: IC_JWT_PUB");
+	let data = if std::path::Path::new(&key).exists() {
+		std::fs::read(&key).expect("IC_JWT_PUB looks like a file, but could not be read")
+	} else {
+		key.clone().into_bytes()
+	};
 
 	// TODO: Check the file to specify the algorithm
 	return match ALGO {
@@ -71,14 +84,16 @@ pub(crate) static DECODE_KEY:LazyLock<DecodingKey> = LazyLock::new(||{
 	};
 });
 
-// If specified, check for an older public key. 
+// Optional: Specify the older, previous, public key, so pre-rotation clients can still refresh tokens
+// NOTE: While this is optional, in practice the server config guarantees we have a value
 #[cfg(feature="std_envvars")]
 pub(crate) static DECODE_KEY_ROTATED:LazyLock<Option<DecodingKey>> = LazyLock::new(||{
-	let Ok(filename) = &std::env::var("IC_JWT_PUB_ROTATED") else {
-		return None;
-	};
-	let Ok(data) = std::fs::read(filename) else {
-		return None;
+	
+	let Ok(key) = &std::env::var("IC_JWT_PUB_ROTATED") else { return None };
+	let data = if std::path::Path::new(&key).exists() {
+		std::fs::read(&key).expect("IC_JWT_PUB_ROTATED looks like a file, but could not be read")
+	} else {
+		key.clone().into_bytes()
 	};
 
 	// TODO: Check the file to specify the algorithm
