@@ -13,7 +13,7 @@ use ic_actix::{AppStateRedis, AppStatePostgres};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-	env_logger::init_from_env(Env::default().default_filter_or("warn"));
+	env_logger::init_from_env(Env::default().default_filter_or("debug"));
 
 	// Check for required ENVVARs
 	let mut check = true;
@@ -81,8 +81,8 @@ async fn main() -> std::io::Result<()> {
 		//               Redis: Read/write "ub:"
 
 		.service(scope("/my")
-			//.route("/prefs", get().to(routes::get_my_prefs))
-			//.route("/prefs", post().to(routes::set_my_prefs))
+			.route("/prefs", get().to(routes::get_my_prefs))
+			.route("/prefs", post().to(routes::set_my_prefs))
 			//.route("/favs", get().to(routes::get_my_favs))
 			//.route("/comments", get().to(routes::get_my_comments))
 		)

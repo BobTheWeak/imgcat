@@ -20,6 +20,11 @@
 mod get_user_badges;
 pub use get_user_badges::get_user_badges;
 
+mod get_my_prefs;
+pub use get_my_prefs::get_my_prefs;
+mod set_my_prefs;
+pub use set_my_prefs::set_my_prefs;
+
 mod health_check;
 pub use health_check::{livez_status, readyz_status};
 

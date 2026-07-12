@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION UserDB.GetAccountPreferences(
+CREATE OR REPLACE FUNCTION UsersSvc.GetAccountPreferences(
 	_id BIGINT
 )
 RETURNS TABLE (

@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION UserDB.SetAccountPreferences(
+CREATE OR REPLACE FUNCTION UsersSvc.SetAccountPreferences(
 	account_id BIGINT
 
 	-- Core Profile
