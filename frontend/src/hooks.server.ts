@@ -70,7 +70,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 		if(refresh_valid) {
 			// Still good, so grab a new one from the Auth service
-			const refresh_response = await event.fetch(process.env.IC_LOC_INT+'/auth/refresh', {
+			const refresh_response = await event.fetch(process.env.IC_LOC_INT+'/auth/r', {
 				method: 'GET',
 				headers: {'Authorization': 'Bearer ' + refresh_s}
 			});
