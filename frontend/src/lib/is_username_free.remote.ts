@@ -35,6 +35,10 @@ export const IsUsernameFree = query(v.string(), async(username) => {
 			// Body is either "1" or "0"
 			return await res.text() === "1";
 		}
+		if(res.status === 400) {
+			const err_msg = res.headers.get('IC-Error');
+			if(err_msg) {return err_msg}
+		}
 	}
 	// TODO: Error handling here
 	// To the user, I think ignoring this is fine. "Sorry, we can't check if
