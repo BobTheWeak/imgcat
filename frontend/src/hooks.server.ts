@@ -22,7 +22,11 @@ function cookie_to_svelte_opts(cookie_obj) {
 	const result = {};
 	for(const k in cookie_obj) {
 		if(translations[k]) {
-			result[translations[k]] = cookie_obj[k];
+			if(translations[k] === 'maxAge') {
+				result[translations[k]] = Number.parseInt(cookie_obj[k]);
+			} else {
+				result[translations[k]] = cookie_obj[k];
+			}
 		}
 	}
 	return result;
@@ -80,8 +84,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 					if(cookie_val){
 						// Extract the core data into locals
 						const ajwt = jwtDecode(cookie_val);
-						const cookie_opt = cookie_to_svelte_opts(cookie_obj);
 						if(ajwt) {
+							const cookie_opt = cookie_to_svelte_opts(cookie_obj);
 							// Set the cookie
 							event.cookies.set('ic_auth', cookie_val, cookie_opt);
 
