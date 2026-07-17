@@ -1,5 +1,6 @@
+import type { KeyObject } from 'crypto';
 import { readFileSync } from 'fs';
-import { KeyObject, createPublicKey, verify } from 'crypto';
+import { createPublicKey, verify } from 'crypto';
 
 let _file_pub:KeyObject = undefined;
 let _file_pub_rotated:KeyObject = undefined;
@@ -8,15 +9,28 @@ let _exp:number = 0;
 
 function getJwtPublicKey():KeyObject {
 	if(_exp < Date.now()) {
-		let buff:Buffer = readFileSync(process.env.IC_JWT_PUB, 'utf8');
-		if(buff) {
-			_file_pub = createPublicKey(buff);
+		
+		let buff:Buffer;
+		try {
+			// Assume the key is a filename
+			buff = readFileSync(process.env.IC_JWT_PUB, 'utf8');
+			if(buff) {
+				_file_pub = createPublicKey(buff);
+			}
+		} catch {
+			// If not, then assume it's a blob
+			// This can still fail due to file permissions, etc.
+			_file_pub = createPublicKey(process.env.IC_JWT_PUB);
 		}
 
 		if(process.env.IC_JWT_PUB_ROTATED) {
-			let buff:Buffer = readFileSync(process.env.IC_JWT_PUB_ROTATED, 'utf8');
-			if(buff) {
-				_file_pub_rotated = createPublicKey(buff);
+			try {
+				buff = readFileSync(process.env.IC_JWT_PUB_ROTATED, 'utf8');
+				if(buff) {
+					_file_pub_rotated = createPublicKey(buff);
+				}
+			} catch {
+				_file_pub_rotated = createPublicKey(process.env.IC_JWT_PUB_ROTATED);
 			}
 		}
 
