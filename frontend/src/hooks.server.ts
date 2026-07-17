@@ -1,36 +1,9 @@
 import type { Handle, HandleFetch } from '@sveltejs/kit';
 import { jwtDecode, jwtValidate } from '$lib/server/jwt2.ts';
+import { cookie_to_svelte_opts } from '$lib/server/cookie.ts';
 import { parseCookie } from 'cookie';
 
 import { building } from '$app/environment'
-
-// The cookie library decodes a cookie into different field names than
-// Svelte's cookie.set(name, val, opts) accepts, so we have to translate
-// NOTE: There's a similar version copied & pasted for /signup (server-side)
-function cookie_to_svelte_opts(cookie_obj) {
-	const translations = {
-		'Path': 'path',
-		'Max-Age': 'maxAge',
-		'SameSite': 'sameSite'
-		// TODO: These are unverified, but theoretically accurate
-		// 'Domain': 'domain',
-		// 'Expires': 'expires',
-		// 'Secure': 'secure',
-		// 'HttpOnly': 'httpOnly',
-		// 'Partitioned': 'partitioned'
-	}
-	const result = {};
-	for(const k in cookie_obj) {
-		if(translations[k]) {
-			if(translations[k] === 'maxAge') {
-				result[translations[k]] = Number.parseInt(cookie_obj[k]);
-			} else {
-				result[translations[k]] = cookie_obj[k];
-			}
-		}
-	}
-	return result;
-}
 
 
 export const handle: Handle = async ({ event, resolve }) => {

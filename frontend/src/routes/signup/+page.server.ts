@@ -2,19 +2,9 @@
 import type { PageServerLoad, Actions } from './$types';
 import { redirect, fail, json } from '@sveltejs/kit';
 import { jwtDecode, jwtVerify } from '$lib/server/jwt2';
+import { cookie_to_svelte_opts } from '$lib/server/cookie.ts';
 import { IsUsernameFree } from '$lib/is_username_free.remote.ts';
 import { parseCookie } from 'cookie';
-
-
-// Borrowed/simplified from hooks.server.ts
-// TODO: Shared library? (prolly not worth the effort)
-function cookie_to_svelte_opts(cookie_obj) {
-	const result = {};
-	if(cookie_obj['Path']) {result['path'] = cookie_obj['Path']}
-	if(cookie_obj['Max-Age']) {result['maxAge'] = cookie_obj['Max-Age']}
-	if(cookie_obj['SameSite']) {result['sameSite'] = cookie_obj['SameSite']}
-	return result;
-}
 
 
 export const load: PageServerLoad = async({ locals, cookies, request }) => {

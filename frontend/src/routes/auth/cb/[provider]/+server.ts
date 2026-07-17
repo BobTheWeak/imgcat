@@ -1,18 +1,11 @@
 import type { RequestHandler } from './$types';
 
 import { redirect, error } from '@sveltejs/kit';
+import { cookie_to_svelte_opts } from '$lib/server/cookie.ts';
 import { parseCookie } from 'cookie';
 
 const KNOWN_PROVIDERS = ['google', 'microsoft'];
 
-// Correcting a few translations between systems
-function cookie_to_svelte_opts(cookie_obj) {
-	const result = {};
-	if(cookie_obj['Path']) { result['path'] = cookie_obj['Path'] }
-	if(cookie_obj['Max-Age']) { result['maxAge'] = Number.parseInt(cookie_obj['Max-Age']) }
-	if(cookie_obj['SameSite']) { result['sameSite'] = cookie_obj['SameSite'] }
-	return result;
-}
 
 export const GET: RequestHandler = async ({ locals, params, url, request, cookies }) => {
 	if(locals.logged_in) {redirect(307, '/')}
