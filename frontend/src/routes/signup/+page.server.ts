@@ -82,8 +82,6 @@ export const actions:Actions = {
 			body: post_data.toString()
 		});
 
-		console.log(signup_response);
-
 		if(signup_response.status === 201) {
 
 			// Grab the cookies returned, and set them
@@ -92,8 +90,6 @@ export const actions:Actions = {
 				if(c_name?.startsWith("ic_")) {
 					const c_obj = parseCookie(c_str);
 					const c_val = c_obj[c_name];
-					console.log(c_name, c_val);
-					console.log(c_obj);
 					cookies.set(c_name, c_val, cookie_to_svelte_opts(c_obj));
 				}
 			}
