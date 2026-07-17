@@ -58,8 +58,13 @@ export const actions:Actions = {
 
 		// Check the username again
 		const namefree = await IsUsernameFree(username);
-		if(!namefree) {
-			return {success:false, message:"Username is not available", username: username};
+		if(typeof namefree === 'boolean') {
+			if(!namefree) {
+				return {success:false, message:'Username is not available', username: username};
+			};
+		}
+		if(typeof namefree === 'string') {
+			return {success:false, message:namefree, username: username};
 		}
 
 		// Creating a new FormData to keep it clean (in case shenanigans)
@@ -68,7 +73,7 @@ export const actions:Actions = {
 		post_data.append('sub', jwt.sub);
 		post_data.append('user', username);
 
-		const signup_response = await fetch(process.env.IC_LOC_INT+'/auth/create', {
+		const signup_response = await fetch(process.env.IC_LOC_INT+'/auth/new', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',

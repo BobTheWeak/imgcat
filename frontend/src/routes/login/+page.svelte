@@ -61,6 +61,7 @@
 {/if}
 <div id='providers'>
 	<Button href='/auth/p/google' lbl='Sign in with Google' />
+	<Button href='/auth/p/microsoft' lbl='Sign in with Microsoft' />
 </div>
 
 <br/>
