@@ -1,0 +1,23 @@
+[package]
+name = "auth_service2"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+actix-web = "4.13.0"
+deadpool-postgres = "0.14.1"
+env_logger = "0.11.10"
+jsonwebtoken = { version = "10.3.0", features = ["rust_crypto", "use_pem"] }
+oauth2 = "5.0.0"
+openidconnect = { version = "4.0.1", features = ["reqwest"] }
+ic_jwt = { version = "1.0.0", path = "../libs/ic_jwt", features=["refresh", "signup", "encode"] }
+ic_actix = { version = "1.0.0", path = "../libs/ic_actix", features=["redis", "postgres", "refresh_jwt", "signup_jwt", "cookies"] }
+#postgres-types = { version = "0.2.13", features = ["derive"] }
+redis = { version = "1.2.0", features = [] }
+serde = { version = "1.0.228", default-features = false, features = ["derive"] }
+serde_json = "1.0.150"
+serde_repr = "0.1.20"
+rand = "0.10.2"
+# NOTE: We're not adding unicode support (yet)
+regex = { version = "1.13.0", default-features = false, features = ["std", "perf"] }
+#tokio = { version = "1.52.1", features = ["rt-multi-thread"] }
