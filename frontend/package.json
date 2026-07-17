@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"localdev": "vite --host 0.0.0.0 --port 9720 dev",
+		"localdev": "IC_ORIGIN=http://localhost:8080 IC_LOC_INT=http://localhost:8081/api vite --host 0.0.0.0 --port 8080 dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
