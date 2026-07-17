@@ -70,21 +70,17 @@
 	<ul>
 		<li>
 			<p class="q" onclick={show_answer}>What is the vibe of this site?</p>
-			<p class="a hide">We're an image-board community, so every post requires an image. We have a meme-maker if you can't think of one. Our main page is shared among all users, and sorted by your votes. The goal is to build a more friendly version of social media, built by users, without any toxic engagement models.
-			</p>
+			<p class="a hide">We're an image-sharing community. To keep it light, every post requires an image or a meme. Our main page is shared and generated from the community's votes, not engagement algorithms. Our content controls are designed to slow or stop the spread of toxic or viral content. We're a non-profit, and we're trying to be different.</p>
 		</li><li>
 			<p class="q" onclick={show_answer}>How do I log in?</p>
-			<p class="a hide">We use a secure login system called OpenID. We don't store your email/password, the provider you choose handles the security, and we just handle the memes.</p>
+			<p class="a hide">We use a secure login system called OpenID Connect. The provider you choose handles the security, and sends us back an ID number. That's all we need to sign you in, providing better data security and privacy than an email/password.</p>
 		</li><li>
 			<p class="q" onclick={show_answer}>How do I create a new account?</p>
-			<p class="a hide">Choose a provider to sign in, and we'll create a new account for you.</p>
-		</li><li>
-			<p class="q" onclick={show_answer}>How does OpenID work?</p>
-			<p class="a hide">OpenID is a business technology allowing your login to work across multiple sites (ie. to access your HR or IT portal). We use it here too. The provider handles the security, then sends us a note: "I promise this user is ID# 987654". That's all we need to sign you in, providing better data security and privacy than an email and password. Click if you'd like to <a href='https://openid.net/developers/how-connect-works/'>learn more</a>.</p>
+			<p class="a hide">Choose any provider to sign in, and we'll create a new account for you.</p>
 		</li><li>
 			<p class="q" onclick={show_answer}>Do you perform age verification?</p>
 			<p class="a hide">
-				The law requires it in some countries. In those cases, we use OpenID to ask for both the user-id and age, because the account knows if it was set up with age-restrictions. This is more accurate, harder to defeat, and protects everyone's privacy better than scanning government IDs or selfies.
+				The law requires it in some countries. With your permission, we pull the birthday associated with your login. Adults probably filled it out. Kids probably have an age-restricted family account. Asking your login allows us to verify ages more accurately and privately than alternative methods. We don't believe scanning government IDs or analyzing selfies is safe, reasonable, or appropriate.
 			</p>
 		</li>
 	</ul>
