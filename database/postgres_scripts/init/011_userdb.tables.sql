@@ -34,7 +34,8 @@ CREATE INDEX IF NOT EXISTS provider_name_idx ON UserDB.Provider(name);
 INSERT INTO UserDB.Provider
 	(name)
 VALUES
-	('google');
+	('google'),
+	('microsoft');
 
 
 CREATE TABLE IF NOT EXISTS UserDB.ProviderAccountLink (
