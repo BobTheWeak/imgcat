@@ -21,7 +21,7 @@ export const GET: RequestHandler = async ({ locals, params, url, request }) => {
 		api_url.pathname += '/auth/p/' + params.provider
 
 		const res = await fetch(api_url);
-		console.log(res);
+		//console.log(res);
 
 		if(res.status === 200) {
 			redirect(307, res.url);
