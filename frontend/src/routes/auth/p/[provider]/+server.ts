@@ -4,7 +4,7 @@ import { redirect, error } from '@sveltejs/kit';
 
 const KNOWN_PROVIDERS = ['google', 'microsoft'];
 
-export const GET: RequestHandler = async ({ locals, params, url, request }) => {
+export const GET: RequestHandler = async ({ locals, params, url, request, cookies }) => {
 	if(locals.logged_in) {redirect(307, '/')}
 
 	if(process.env.IC_PVT_SVR) {
