@@ -7,6 +7,19 @@ const KNOWN_PROVIDERS = ['google', 'microsoft'];
 export const GET: RequestHandler = async ({ locals, params, url, request }) => {
 	if(locals.logged_in) {redirect(307, '/')}
 
+	if(process.env.IC_FRONTEND_PVT_SVR) {
+		// Check the cookie, and see if it contains this private server's code
+		const pvt_auth = cookies.get('ic_private');
+		if(pvt_auth) {
+			// Support a semicolon-separated list of values, to support multiple servers
+			if(!pvt_auth.value.split(";").includes(process.env.IC_FRONTEND_PVT_SVR)) {
+				error(403, 'Private server');
+			}
+		} else {
+			error(401, 'Private server');
+		}
+	}
+
 	if(KNOWN_PROVIDERS.includes(params.provider)) {
 		//console.log(params.provider);
 

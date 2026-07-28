@@ -60,8 +60,12 @@
 <p style='color:red'>Error: {data.error_msg}</p>
 {/if}
 <div id='providers'>
+{#if data.login_allowed}
 	<Button href='/auth/p/google' lbl='Sign in with Google' />
 	<Button href='/auth/p/microsoft' lbl='Sign in with Microsoft' />
+{:else}
+<p>This is a private server, and logins are disabled without the special key</p>
+{/if}
 </div>
 
 <br/>
@@ -76,7 +80,7 @@
 			<p class="a hide">We use a secure login system called OpenID Connect. The provider you choose handles the security, and sends us back an ID number. That's all we need to sign you in, providing better data security and privacy than an email/password.</p>
 		</li><li>
 			<p class="q" onclick={show_answer}>How do I create a new account?</p>
-			<p class="a hide">Choose any provider to sign in, and we'll create a new account for you.</p>
+			<p class="a hide">Choose any provider to sign in, we'll notice you're new, and create a new account for you.</p>
 		</li><li>
 			<p class="q" onclick={show_answer}>Do you perform age verification?</p>
 			<p class="a hide">
