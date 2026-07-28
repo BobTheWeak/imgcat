@@ -11,14 +11,14 @@ export const load: PageLoad = ({ url, cookies }) => {
 	}
 
 	// If this is a private/test server, check for the "ic_private" cookie
-	if(process.env.IC_FRONTEND_PVT_SVR) {
+	if(process.env.IC_PVT_SVR) {
 		result.login_allowed = false;
 
 		// Check the cookie, and see if it contains this private server's code
 		const pvt_auth = cookies.get('ic_private');
 		if(pvt_auth) {
 			// Support a semicolon-separated list of values, to support multiple servers
-			if(pvt_auth.value.split(";").includes(process.env.IC_FRONTEND_PVT_SVR)) {
+			if(pvt_auth.value.split(";").includes(process.env.IC_PVT_SVR)) {
 				result.login_allowed = true;
 			}
 		}
