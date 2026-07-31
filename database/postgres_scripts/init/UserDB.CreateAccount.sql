@@ -24,7 +24,7 @@ DECLARE
 	-- By default, yes. But it won't matter unless they set content_level higher
 	_default_see_sexuality BOOL := FALSE;
 	_default_see_gore BOOL := FALSE;
-	_default_see_trauma BOOL := TRUE;
+	_default_see_trauma BOOL := FALSE;
 	-- By default, make profiles public
 	_default_about_me_visibility UserDB.VISIBILITY_LEVEL := 'GLOBAL';
 	-- Activity & DMs can only be seen by other folks with an ImgCat account
