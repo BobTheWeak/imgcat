@@ -6,8 +6,13 @@ let _file_pub:KeyObject = undefined;
 let _file_pub_rotated:KeyObject = undefined;
 let _exp:number = 0;
 
-
+// TODO: This needs MUCH better error handling
 function getJwtPublicKey():KeyObject {
+	if(!process.env.IC_JWT_PUB){
+		console.error("Error: Missing envvar IC_JWT_PUB and/or IC_JWT_PUB_ROTATED");
+		return null;
+	}
+
 	if(_exp < Date.now()) {
 		
 		let buff:Buffer;
