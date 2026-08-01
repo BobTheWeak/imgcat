@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import type { ActionData, PageProps } from './$types';
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 	import Button from '$lib/Button.svelte';
 	import { env } from '$env/dynamic/public';
 
@@ -20,6 +21,25 @@
 		} else {
 			e2.classList.add("hide");
 		}
+	}
+
+	async function submit_private_key(e) {
+		const k = document.getElementById('private_server_key');
+		if(k?.value) {
+			let cval = await cookieStore.get('ic_private');
+			if(cval) {
+				cval = cval.value + '|' + k?.value;
+			} else {
+				cval = k?.value;
+			}
+			console.log(cval);
+			cookieStore.set({
+				name: 'ic_private',
+				value: cval,
+				maxAge: 31536000
+			});
+		}
+		invalidateAll();
 	}
 
 </script>
@@ -65,6 +85,8 @@
 	<Button href='/auth/p/microsoft' lbl='Sign in with Microsoft' />
 {:else}
 <p>This is a private server, and logins are disabled without the special key</p>
+<input id='private_server_key' />
+<Button lbl='Submit' onclick={submit_private_key} />
 {/if}
 </div>
 
@@ -89,7 +111,7 @@
 		</li>
 	</ul>
 </div>
-	
+
 <style>
 	form button {
 		padding: 10px 20px;
