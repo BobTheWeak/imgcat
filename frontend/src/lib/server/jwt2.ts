@@ -66,8 +66,8 @@ export function jwtValidate(jwt:string):bool {
 		const dt_sec:number = Date.now() / 1000;
 
 		// Do validations on each field
-		if(payload['iss'] !== process.env.IC_JWT_ISS) return false;
-		if(payload['aud'] !== process.env.IC_JWT_AUD) return false;
+		if(process.env.IC_JWT_ISS && payload['iss'] !== process.env.IC_JWT_ISS) return false;
+		if(process.env.IC_JWT_AUD && payload['aud'] !== process.env.IC_JWT_AUD) return false;
 		if(payload['exp'] < dt_sec) return false;
 
 		// It's passed!
