@@ -12,7 +12,7 @@ export const GET: RequestHandler = async ({ locals, params, url, request, cookie
 		const pvt_auth = cookies.get('ic_private');
 		if(pvt_auth) {
 			// Support a semicolon-separated list of values, to support multiple servers
-			if(!pvt_auth.split(";").includes(process.env.IC_PVT_SVR)) {
+			if(!pvt_auth.split("|").includes(process.env.IC_PVT_SVR)) {
 				error(403, 'Private server');
 			}
 		} else {
