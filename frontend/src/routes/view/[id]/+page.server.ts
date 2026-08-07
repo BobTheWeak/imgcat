@@ -186,11 +186,10 @@ export const actions:Actions = {
 		const post_id = await GetPostIdByLink(params['id']);
 		const data = await request.formData();
 
-
 		// Check Maturity
 		let fetch_params = new URLSearchParams();
 		const mature_num = {'kid':0,'std':1,'sfw':2,'nsfw':3,'ill':4}[data.get('maturity')];
-		if(mature_num) {
+		if(mature_num !== undefined) {
 			fetch_params.append('m', mature_num);
 			if(data.get('is_sexual')){fetch_params.append('s',1)}
 			if(data.get('is_gore')){fetch_params.append('g',1)}
