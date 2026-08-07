@@ -51,7 +51,7 @@
 		return async({result, update}) => {
 			await update();
 			// Do post-processing
-			if(form?.success) {
+			if(result?.type === "success") {
 				showTagModal=false;
 				showTagModal_types=false;
 				showReportModal=false;
