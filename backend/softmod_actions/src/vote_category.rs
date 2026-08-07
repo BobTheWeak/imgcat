@@ -5,7 +5,7 @@ use crate::DB;
 use crate::deserialize_helpers::bool_from_int;
 use crate::header_helpers::get_bearer_auth;
 use crate::conn_helpers::connect;
-use crate::libjwt::{AuthJwt, DecodeJwt};
+use ic_jwt::{AuthJwt, DecodeJwt};
 
 
 #[derive(Deserialize)]
@@ -36,7 +36,7 @@ pub async fn vote_category(path: web::Path<(u64,)>, params: web::Query<VoteCateg
 	};
 
 	// Decode the JWT & make sure it's ours
-	let Ok(ajwt) = AuthJwt::decode(jwt_string) else {
+	let Ok(ajwt) = AuthJwt::decode_with_defaults(jwt_string) else {
 		return HttpResponse::Forbidden() // 403
 			.insert_header(("IC-Error","Header validation")).finish();
 	};

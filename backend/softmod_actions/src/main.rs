@@ -14,7 +14,7 @@ type DB = sqlx::MySql;
 type DB = sqlx::Postgres;
 
 mod ic_error;
-mod libjwt;
+//mod libjwt;
 mod deserialize_helpers;
 mod header_helpers;
 mod conn_helpers;
