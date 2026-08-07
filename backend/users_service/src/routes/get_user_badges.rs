@@ -19,6 +19,9 @@ pub async fn get_user_badges(
 
 	// Unwrap the body into a list
 	let body = body.into_inner();
+	if body.len() == 0 {
+		return Err(ICError::error("Empty list"));
+	}
 
 	// The first connection needed is Redis
 	let mut r_conn = redis.get_conn()?;

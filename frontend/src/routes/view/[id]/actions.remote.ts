@@ -97,6 +97,9 @@ export const isFavPost = query(req_tuple([req_number(), optional(req_number())])
 });
 
 export const get_badges = query(req_array(req_number()), async (ids):any => {
+	// TODO: Figure out why this is getting called with: id=[] (empty-list)
+	if(ids?.length === 0) return new Map();
+
 	const { params, cookies, fetch } = getRequestEvent();
 	const auth_token = cookies.get('ic_auth');
 	
