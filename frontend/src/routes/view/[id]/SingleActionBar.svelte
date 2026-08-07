@@ -33,7 +33,7 @@
 	let showThanksModal = $state(false);
 
 	function copy_link(e) {
-		const p = navigator.clipboard.writeText('https://www.imgcat.io/view/'+post.link);
+		const p = navigator.clipboard.writeText(location.origin+'/view/'+post.link);
 		// TODO: Some kind of animation showing we copied it
 	}
 
