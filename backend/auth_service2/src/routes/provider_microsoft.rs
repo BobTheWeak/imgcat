@@ -45,6 +45,9 @@ pub async fn provider_microsoft(
 		.authorize_url(CsrfToken::new_random)
 		.add_scope(Scope::new("openid".to_string()))
 		.add_extra_param("nonce", &nonce)
+		// Force them to select an account each time, password may or may not be required
+		// See more: https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc#send-the-sign-in-request
+		.add_extra_param("prompt", "select_account")
 		.set_pkce_challenge(pkce_c);
 
 
