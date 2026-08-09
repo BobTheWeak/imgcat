@@ -117,10 +117,10 @@
 				{#if post.is_public}
 					<Button img='/chat.svg' lbl='Comment' onclick={()=>{reply_to=0}} />
 					<Button img='/remove.svg' lbl='Remove post' type='submit' />
+					<Button img='/share.svg' lbl='Link' onclick={copy_link} class='copy_btn' />
 				{:else}
 					<Button img='/add.svg' lbl='Make public' type='submit' />
 				{/if}
-				<Button img='/share.svg' lbl='Link' onclick={copy_link} class='copy_btn' />
 				<Button img='/politics.svg' lbl='Tag' onclick={()=>{showTagModal=true}} />
 			</form>
 		</div>
