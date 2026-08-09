@@ -33,8 +33,13 @@
 	let showThanksModal = $state(false);
 
 	function copy_link(e) {
-		const p = navigator.clipboard.writeText(location.origin+'/view/'+post.link);
-		// TODO: Some kind of animation showing we copied it
+		navigator.clipboard.writeText(location.origin+'/view/'+post.link);
+
+		// Do a clicking animation for 1/2s (:active doesn't work)
+		let el=e.target;
+		while(el?.nodeName!=="BUTTON"){el=el.parentNode}
+		el.classList.add("clicked");
+		new Promise(f=>setTimeout(f,500)).then(()=>{el.classList.remove("clicked");});
 	}
 
 	// Bind controls to Svelte objects
@@ -115,7 +120,7 @@
 				{:else}
 					<Button img='/add.svg' lbl='Make public' type='submit' />
 				{/if}
-				<Button img='/share.svg' lbl='Link' onclick={copy_link} />
+				<Button img='/share.svg' lbl='Link' onclick={copy_link} class='copy_btn' />
 				<Button img='/politics.svg' lbl='Tag' onclick={()=>{showTagModal=true}} />
 			</form>
 		</div>
@@ -130,7 +135,7 @@
 				{:then is_fav}
 				<Button img='/star_{is_fav?'on':'off'}.svg' lbl='Fav' type='submit' class={is_fav?'tbtn sel':''} />
 				{/await}
-				<Button img='/share.svg' lbl='Link' onclick={copy_link} />
+				<Button img='/share.svg' lbl='Link' onclick={copy_link} class='copy_btn'/>
 				<Button img='/politics.svg' lbl='Tag' onclick={()=>{showTagModal=true}} />
 			</form>
 		</div>
@@ -140,7 +145,7 @@
 	<!-- If User is random user from the interwebs -->
 	{:else}
 		<span id='actions'>
-			<Button img='/share.svg' lbl='Link' onclick={copy_link} />
+			<Button img='/share.svg' lbl='Link' onclick={copy_link} class='copy_btn'/>
 			<Button img='/report.svg' lbl='Report' onclick={()=>{showReportAnonModal=true}} />
 		</span>
 	{/if}
@@ -275,6 +280,13 @@
 		word-break: break-word;
 	}
 	:global {
+		.copy_btn {
+			transition: background-color 150ms ease-out;
+		}
+		.copy_btn.clicked {
+			background-color: var(--cawarm) !important;
+		}
+
 		dialog button,input {
 			height: 3em;
 		}
