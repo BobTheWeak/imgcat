@@ -14,6 +14,7 @@ RUN apk add lld clang
 WORKDIR /app
 COPY /libs/ic_jwt libs/ic_jwt
 COPY /libs/ic_actix libs/ic_actix
+COPY /libs/ic_datamodel libs/ic_datamodel
 
 # Build process
 WORKDIR ${PROJ_NAME}

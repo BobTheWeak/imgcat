@@ -1,0 +1,14 @@
+[package]
+name = "ic_datamodel"
+version = "1.0.0"
+edition = "2024"
+
+[features]
+default = []
+postgres = ["dep:postgres-types"]
+mariadb = ["dep:mysql_common"]
+
+[dependencies]
+serde = { version="*", default-features=false, features=["derive"] }
+postgres-types = { version="*", optional=true, features=["derive"] }
+mysql_common = { version="*", optional=true, features=["derive"] }
