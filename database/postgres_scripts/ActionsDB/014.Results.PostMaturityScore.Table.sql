@@ -14,14 +14,24 @@ CREATE TABLE Results.PostMaturityScore (
 		INT NOT NULL,
 	
 	-- Maturity subcategories
+	is_sexual_score
+		REAL NOT NULL,
+	is_gore_score
+		REAL NOT NULL,
+	is_trauma_score
+		REAL NOT NULL,
 	is_sexual
-		REAL NOT NULL,
+		BOOL NOT NULL,
 	is_gore
-		REAL NOT NULL,
+		BOOL NOT NULL,
 	is_trauma
-		REAL NOT NULL,
+		BOOL NOT NULL,
 	is_total_samples
 		INT NOT NULL,
 
 	PRIMARY KEY(post_id)
 );
+
+-- Used for batch management, to grab any changes since I last asked
+-- TODO: There is also a fancy way of doing this with xmin cols. But recovery & batches gets messier.
+CREATE INDEX ON Results.PostMaturityScore(last_updated DESC);

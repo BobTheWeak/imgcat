@@ -23,6 +23,9 @@ DECLARE
 	-- This smooths the curve out a bit, and has a slight bias towards higher-maturity
 	-- MATH NOTE: IDK what range of values "feel ok", but 0.3 is probably at the higher end of that range
 	COLUMN_BLEND_PERCENT REAL := 0.30; -- DEFAULT: 0.30
+
+	-- What proportion of is_xxxx votes should apply for us to mark it true?
+	IS_FLAG_THRESHOLD REAL := 0.40;
 BEGIN
 	-- If we didn't specify a list of post_ids in the params, then grab some off the queue
 	IF CalculateMaturityScore.ids IS NULL THEN
@@ -157,9 +160,9 @@ BEGIN
 			END AS discrete,
 			b.samples,
 			-- Maturity flags are just the weighted proportion of votes. Something later will turn that into a bool.
-			b.is_sexual / b.is_total AS is_sexual,
-			b.is_gore   / b.is_total AS is_gore,
-			b.is_trauma / b.is_total AS is_trauma,
+			b.is_sexual / b.is_total AS is_sexual_score,
+			b.is_gore   / b.is_total AS is_gore_score,
+			b.is_trauma / b.is_total AS is_trauma_score,
 			b.is_samples
 		FROM raw_maturity_score a
 		INNER JOIN blended_totals b
@@ -170,6 +173,9 @@ BEGIN
 		mat_category,
 		mat_score,
 		mat_samples,
+		is_sexual_score,
+		is_gore_score,
+		is_trauma_score,
 		is_sexual,
 		is_gore,
 		is_trauma,
@@ -180,9 +186,12 @@ BEGIN
 		discrete AS mat_category,
 		adjusted_score AS mat_score,
 		samples AS mat_samples,
-		is_sexual AS is_sexual,
-		is_gore AS is_gore,
-		is_trauma AS is_trauma,
+		is_sexual_score,
+		is_gore_score,
+		is_trauma_score,
+		is_sexual_score > IS_FLAG_THRESHOLD,
+		is_gore_score > IS_FLAG_THRESHOLD,
+		is_trauma_score > IS_FLAG_THRESHOLD,
 		is_samples AS is_total_samples
 	FROM clean_results
 	ON CONFLICT(post_id)
