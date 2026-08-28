@@ -26,7 +26,7 @@ CREATE TRIGGER TRG_LatestVotes_I
 	AFTER INSERT
 	ON SoftMod.MaturityVote
 	REFERENCING NEW TABLE AS newtab
-	EXECUTE FUNCTION Public.InsertLatestVotes(); -- Insert as priority
+	EXECUTE FUNCTION Public.InsertLatestVotes();
 CREATE TRIGGER TRG_LatestVotes_U
 	AFTER UPDATE
 	ON SoftMod.MaturityVote
