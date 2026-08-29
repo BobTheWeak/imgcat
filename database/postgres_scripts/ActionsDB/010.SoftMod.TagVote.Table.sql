@@ -11,10 +11,13 @@ CREATE TABLE SoftMod.TagVote (
 		BIGINT NOT NULL
 		REFERENCES Public.Tag(id),
 
-	PRIMARY KEY(post_id, user_id)
+	PRIMARY KEY(post_id, user_id, tag_id)
 );
 
+-- Index on typical use-case "What tags does this post have?"
 CREATE INDEX ON SoftMod.TagVote(post_id);
+-- NOTE: Not doing a covering index or post-by-user, b/c this server isn't intended
+-- for user API calls, just bulk server-to-server transfers.
 
 -- Triggers to insert the post_id we just updated into Public.LatestVotes
 CREATE TRIGGER TRG_LatestVotes_I
