@@ -13,10 +13,10 @@ type DB = sqlx::MySql;
 #[cfg(not(feature = "use_mariadb"))]
 type DB = sqlx::Postgres;
 
-mod ic_error;
+//mod ic_error;
 //mod libjwt;
 mod deserialize_helpers;
-mod header_helpers;
+//mod header_helpers;
 mod conn_helpers;
 mod health_check;
 

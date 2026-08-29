@@ -2,7 +2,7 @@ use serde::Deserialize;
 use actix_web::{post, web, HttpRequest, HttpResponse};
 
 use crate::DB;
-use crate::header_helpers::get_user_ip;
+use ic_actix::get_user_ip;
 use crate::conn_helpers::connect;
 
 
@@ -20,7 +20,7 @@ pub async fn anon_review(path: web::Path<(u64,)>, params: web::Query<VoteReviewP
 	// Grab needed data from path & query params
 	let post_id:u64 = path.0;
 	
-	let Some(user_ip_address) = get_user_ip(&request) else {
+	let Ok(Some(user_ip_address)) = get_user_ip(&request.headers()) else {
 		return HttpResponse::Forbidden().into(); // 403
 	};
 

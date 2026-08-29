@@ -3,7 +3,7 @@ use actix_web::{post, web, HttpRequest, HttpResponse};
 
 use crate::DB;
 use crate::deserialize_helpers::bool_from_int;
-use crate::header_helpers::get_bearer_auth;
+use ic_actix::get_bearer_jwt;
 use crate::conn_helpers::connect;
 use ic_jwt::{AuthJwt, DecodeJwt};
 
@@ -31,7 +31,7 @@ pub async fn vote_category(path: web::Path<(u64,)>, params: web::Query<VoteCateg
 	let post_id:u64 = path.0;
 	
 	// Grab the Bearer header & check it's encoding
-	let jwt_string = match get_bearer_auth(&request) {
+	let jwt_string = match get_bearer_jwt(&request) {
 		Ok(v) => v, Err(e) => return e.into()
 	};
 

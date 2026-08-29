@@ -7,7 +7,7 @@ edition = "2024"
 actix-web = "4.11.0"
 env_logger = "0.11.9"
 ic_jwt = { version = "1.0.0", path = "../libs/ic_jwt" }
-#ic_actix = { version = "1.0.0", path = "../libs/ic_actix", features=["redis", "mariadb"] }
+ic_actix = { version = "1.0.0", path = "../libs/ic_actix", features=["redis", "mariadb"] }
 #ic_datamodel = { version = "1.0.0", path = "../libs/ic_datamodel", features=["mariadb"] }
 #jsonwebtoken = { version = "10.3.0", features = ["rust_crypto", "use_pem"] }
 log = "0.4.29"
