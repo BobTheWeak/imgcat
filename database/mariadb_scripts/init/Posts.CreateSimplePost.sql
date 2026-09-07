@@ -24,8 +24,9 @@ BEGIN
 	-- INSERT INTO Posts.PostMetadata(id)
 	-- VALUES (v_post_id);
 
-	INSERT INTO Posts.PostRating(post_id)
-	VALUES (v_post_id);
+	-- NOTE: This table was changed to LEFT JOIN
+	-- INSERT INTO Posts.PostRating(post_id)
+	-- VALUES (v_post_id);
 
 	INSERT INTO Posts.Attachment(post_id, media_id)
 	VALUES (v_post_id, p_media_id);

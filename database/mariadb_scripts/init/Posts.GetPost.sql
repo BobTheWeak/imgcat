@@ -15,11 +15,11 @@ BEGIN
 	SELECT id
 	INTO v_post_id
 	FROM Posts.Post a
-	INNER JOIN Posts.PostRating b
+	LEFT JOIN Posts.PostRating b
 		ON a.id=b.post_id
 	WHERE a.link = p_post_link
 		AND (a.is_public = true OR a.user_id = p_user_id)
-		AND b.category <= p_user_content_level
+		AND COALESCE(b.maturity, 2) <= p_user_content_level
 	LIMIT 1;
 
 	-- Verify the user is allowed to see the post at all

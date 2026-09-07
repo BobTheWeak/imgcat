@@ -15,9 +15,9 @@ BEGIN
 	WITH p(id, title, link) AS (
 		SELECT a.id, a.title, a.link
 		FROM Posts.Post a
-		INNER JOIN Posts.PostRating b
+		LEFT JOIN Posts.PostRating b
 			ON a.id=b.post_id
-		WHERE b.category <= p_user_content_level
+		WHERE COALESCE(b.maturity, 2) <= p_user_content_level
 			AND a.is_public = true
 		OFFSET p_pg_start ROWS
 		FETCH NEXT p_pg_cnt ROWS ONLY

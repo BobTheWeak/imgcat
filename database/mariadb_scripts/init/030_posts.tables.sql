@@ -42,41 +42,19 @@ CREATE TABLE Posts.PostRating (
 	post_id
 		INT UNSIGNED NOT NULL
 		REFERENCES Posts.Post(id),
+	last_updated
+		TIMESTAMP NOT NULL
+		DEFAULT CURRENT_TIMESTAMP,
 
-	category
+	maturity
 		-- HARDCODED: 1:prude, 2:std, 3:lewd, 4:nude, 5:illegal
-		TINYINT
-		GENERATED ALWAYS AS
-		(
-			CASE
-				-- Two reports of illegal content auto-hides it permenantly
-				-- TODO: Make it 1 once moderating can override this
-				WHEN illegal >= 2 THEN 5
-				WHEN nude >= 5 THEN 4
-				WHEN lewd >= 5 THEN 3
-				-- Prude content (aka: kid safe) must have 5 OKs
-				-- and no other reports of anything inappropreate
-				WHEN prude >=5 AND (nude + lewd + illegal) = 0 THEN 1
-				-- If we don't know, mark it standard
-				ELSE 2
-			END
-		) PERSISTENT,
-
-	prude
-		INT UNSIGNED NOT NULL
-		DEFAULT 0,
-	std
-		INT UNSIGNED NOT NULL
-		DEFAULT 0,
-	lewd
-		INT UNSIGNED NOT NULL
-		DEFAULT 0,
-	nude
-		INT UNSIGNED NOT NULL
-		DEFAULT 0,
-	illegal
-		INT UNSIGNED NOT NULL
-		DEFAULT 0,
+		TINYINT UNSIGNED NOT NULL,
+	is_sexual
+		BOOL NOT NULL,
+	is_gore
+		BOOL NOT NULL,
+	is_trauma
+		BOOL NOT NULL,
 
 	PRIMARY KEY(post_id)
 );
@@ -138,50 +116,6 @@ CREATE TABLE Posts.MediaMetadata (
 -- 	ON Posts.MediaMetadata(user_id);
 -- CREATE INDEX IX_MediaMetadataByHash
 -- 	ON Posts.MediaMetadata(hash_sha256);
-
-
--- CREATE TABLE Posts.MediaRating (
--- 	media_id
--- 		INT UNSIGNED NOT NULL
--- 		REFERENCES Posts.Media(id),
--- 
--- 	category
--- 		-- HARDCODED: 1:prude, 2:std, 3:lewd, 4:nude, 5:illegal
--- 		TINYINT
--- 		GENERATED ALWAYS AS
--- 		(
--- 			CASE
--- 				-- Two reports of illegal content auto-hides it permenantly
--- 				-- TODO: Make it 1 once moderating can override this
--- 				WHEN illegal >= 2 THEN 5
--- 				WHEN nude >= 5 THEN 4
--- 				WHEN lewd >= 5 THEN 3
--- 				-- Prude content (aka: kid safe) must have 5 OKs
--- 				-- and no other reports of anything inappropreate
--- 				WHEN prude >=5 AND (nude + lewd + illegal) = 0 THEN 1
--- 				-- If we don't know, mark it standard
--- 				ELSE 2
--- 			END
--- 		) PERSISTENT,
--- 
--- 	prude
--- 		INT UNSIGNED NOT NULL
--- 		DEFAULT 0,
--- 	std
--- 		INT UNSIGNED NOT NULL
--- 		DEFAULT 0,
--- 	lewd
--- 		INT UNSIGNED NOT NULL
--- 		DEFAULT 0,
--- 	nude
--- 		INT UNSIGNED NOT NULL
--- 		DEFAULT 0,
--- 	illegal
--- 		INT UNSIGNED NOT NULL
--- 		DEFAULT 0,
--- 
--- 	PRIMARY KEY(id)
--- );
 
 
 CREATE TABLE Posts.Attachment (
