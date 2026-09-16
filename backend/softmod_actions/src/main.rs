@@ -4,13 +4,7 @@ type DB = sqlx::MySql;
 
 mod deserialize_helpers;
 mod conn_helpers;
-mod health_check;
-
-mod vote_tag;
-mod vote_mature;
-mod vote_category;
-mod vote_review;
-mod anon_review;
+mod routes;
 
 use std::str::FromStr;
 
@@ -58,15 +52,15 @@ async fn main() -> std::io::Result<()> {
 		// Shared data objects
 		.app_data(app_state_pg_wrapper.clone())
 
-		.service(vote_tag::vote_tag)
-		.service(vote_mature::vote_mature)
-		.service(vote_category::vote_category)
-		.service(vote_review::vote_review)
-		.service(anon_review::anon_review)
-		
+		.service(routes::vote_tag)
+		.service(routes::vote_mature)
+		.service(routes::vote_category)
+		.service(routes::vote_review)
+		.service(routes::anon_review)
+
 		// Healthcheck services
-		.service(health_check::livez_status)
-		.service(health_check::readyz_status)
+		.service(routes::livez_status)
+		.service(routes::readyz_status)
 	})
 	.bind(("0.0.0.0", 8080))?
 	.run()
