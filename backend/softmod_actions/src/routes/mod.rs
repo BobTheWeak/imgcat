@@ -3,8 +3,8 @@
 // service path via macros, which mangles things & requires a LOT more error handling.
 //mod old_vote_category;
 //pub use old_vote_category::vote_category as old_vote_category_svc;
-mod old_vote_mature;
-pub use old_vote_mature::vote_mature;
+//mod old_vote_mature;
+//pub use old_vote_mature::vote_mature as old_vote_mature_svc;
 mod old_vote_tag;
 pub use old_vote_tag::vote_tag;
 
@@ -17,8 +17,8 @@ pub use old_anon_review::anon_review;
 // and the service path is set in main(), not each individual file
 mod vote_category;
 pub use vote_category::vote_category as new_vote_category;
-//mod vote_mature;
-//pub use vote_mature::vote_mature;
+mod vote_mature;
+pub use vote_mature::vote_maturity as new_vote_maturity;
 //mod vote_tag;
 //pub use vote_tag::vote_tag;
 

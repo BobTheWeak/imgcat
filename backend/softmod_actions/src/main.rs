@@ -58,11 +58,13 @@ async fn main() -> std::io::Result<()> {
 		.app_data(app_state_redis_wrapper.clone())
 
 		.service(routes::vote_tag)
-		.service(routes::vote_mature)
+		//.service(routes::old_vote_mature_svc)
 		//.service(routes::old_vote_category_svc)
-		.route("/vote_category/{post_id}", post().to(routes::new_vote_category))
 		.service(routes::vote_review)
 		.service(routes::anon_review)
+
+		.route("/vote_category/{post_id}", post().to(routes::new_vote_category))
+		.route("/vote_maturity/{post_id}", post().to(routes::new_vote_maturity))
 
 		// Healthcheck services
 		.service(routes::livez_status)
