@@ -42,7 +42,7 @@ BEGIN
 		ON CONSTRAINT tagvote_pkey
 		DO UPDATE
 		SET
-			update_time = CURRENT_TIMESTAMP,
+			upload_time = CURRENT_TIMESTAMP,
 			post_id = SetTagVote.post_id,
 			user_id = SetTagVote.user_id,
 			tag_id = v_tag_id;
