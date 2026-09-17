@@ -1,8 +1,8 @@
 
 // NOTE: We just moved Actix Handlers into routes. But these return HttpRequest, sets the
 // service path via macros, which mangles things & requires a LOT more error handling.
-mod old_vote_category;
-pub use old_vote_category::vote_category;
+//mod old_vote_category;
+//pub use old_vote_category::vote_category as old_vote_category_svc;
 mod old_vote_mature;
 pub use old_vote_mature::vote_mature;
 mod old_vote_tag;
@@ -15,8 +15,8 @@ pub use old_anon_review::anon_review;
 
 // NOTE: The new, standards-compliant versions return ICResult,
 // and the service path is set in main(), not each individual file
-//mod vote_category;
-//pub use vote_category::vote_category;
+mod vote_category;
+pub use vote_category::vote_category as new_vote_category;
 //mod vote_mature;
 //pub use vote_mature::vote_mature;
 //mod vote_tag;

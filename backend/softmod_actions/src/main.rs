@@ -9,10 +9,10 @@ mod routes;
 use std::str::FromStr;
 
 use actix_web::{App, HttpServer, middleware::Logger};
-use actix_web::web::{Data};
+use actix_web::web::{Data, post};
 use env_logger::Env;
 
-use ic_actix::AppStatePostgres;
+use ic_actix::{AppStatePostgres, AppStateRedis};
 
 
 #[actix_web::main]
@@ -34,6 +34,7 @@ async fn main() -> std::io::Result<()> {
 		&std::env::var("IC_MATURITY_SVC_PASS").expect("Could not parse envvar: IC_SOFTMOD_SVC_PASS"),
 	).await.expect("Could not connect to Postgres");
 
+
 	// Test the connection
 	// TODO: It's probably smart to actually run a query too
 	let Ok(_) = app_state_pg.get_conn().await else {
@@ -43,6 +44,9 @@ async fn main() -> std::io::Result<()> {
 
 	let app_state_pg_wrapper = Data::new(app_state_pg);
 
+	// Redis for rate-limiting and bans
+	let app_state_redis_wrapper = Data::new(AppStateRedis::new_with_defaults());
+
 	HttpServer::new(move || {
 		App::new()
 		
@@ -51,10 +55,12 @@ async fn main() -> std::io::Result<()> {
 
 		// Shared data objects
 		.app_data(app_state_pg_wrapper.clone())
+		.app_data(app_state_redis_wrapper.clone())
 
 		.service(routes::vote_tag)
 		.service(routes::vote_mature)
-		.service(routes::vote_category)
+		//.service(routes::old_vote_category_svc)
+		.route("/vote_category/{post_id}", post().to(routes::new_vote_category))
 		.service(routes::vote_review)
 		.service(routes::anon_review)
 
