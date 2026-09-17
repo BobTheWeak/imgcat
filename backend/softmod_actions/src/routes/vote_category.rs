@@ -2,10 +2,7 @@ use serde::Deserialize;
 use actix_web::{HttpRequest};
 use actix_web::web::{Path, Query, Data};
 
-//use crate::DB;
-//use crate::deserialize_helpers::bool_from_int;
 use ic_actix::{ICResult, ICError, AppStatePostgres, AppStateRedis, get_bearer_jwt, check_temp_ban};
-//use crate::conn_helpers::connect;
 use ic_jwt::{AuthJwt, DecodeJwt};
 use ic_datamodel::bool_as_01;
 use postgres_types::Type;
