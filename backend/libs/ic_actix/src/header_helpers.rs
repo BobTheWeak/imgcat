@@ -42,3 +42,17 @@ pub fn get_country_code(headers:&HeaderMap) -> ICResult<Option<&str>> {
 		Ok(None)
 	}
 }
+
+
+pub fn get_user_ip(headers:&HeaderMap) -> ICResult<Option<&str>> {
+	if let Some(ip) = headers.get("CF-Connecting-IP") {
+		let Ok(ip) = ip.to_str() else {
+			// This parsing could fail if the header has invalid characters
+			return Err(ICError::HEADER_MISSING);
+		};
+
+		Ok(Some(ip))
+	} else {
+		Ok(None)
+	}
+}

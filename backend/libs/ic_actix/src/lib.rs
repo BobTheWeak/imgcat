@@ -6,7 +6,7 @@ mod error_actix;
 pub use ic_error::{ICError, ICResult};
 
 mod header_helpers;
-pub use header_helpers::{get_bearer_jwt, get_country_code};
+pub use header_helpers::{get_bearer_jwt, get_country_code, get_user_ip};
 
 #[cfg(all(feature="redis", feature="postgres"))]
 mod user_ban;
