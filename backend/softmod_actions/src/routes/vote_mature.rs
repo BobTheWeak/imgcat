@@ -2,7 +2,7 @@ use serde::Deserialize;
 use actix_web::{HttpRequest};
 use actix_web::web::{Path, Query, Data};
 
-use ic_actix::{ICResult, ICError, AppStatePostgres, AppStateRedis, get_bearer_jwt, check_temp_ban};
+use ic_actix::{ICResult, ICError, AppStatePostgres, AppStateRedis, get_bearer_jwt, check_temp_ban, get_user_ip};
 use ic_jwt::{AuthJwt, DecodeJwt};
 use ic_datamodel::bool_as_01;
 use postgres_types::Type;
@@ -30,7 +30,21 @@ pub async fn vote_maturity(
 		request: HttpRequest,
 	) -> ICResult<()> {
 
-	// TODO: Rate-limiting
+	let mut conn_r = redis.get_conn()?;
+
+	// Get user IP for rate-limiting
+	if let Some(user_ip) = get_user_ip(request.headers())? {
+		redis.check_rate_limit_conn(user_ip, &mut conn_r)?;
+	}
+
+	// Grab the Bearer header & decode it into an AuthJwt
+	let Ok(ajwt) = AuthJwt::decode_with_defaults(get_bearer_jwt(&request)?) else {
+		return Err(ICError::HEADER_VALIDATION);
+	};
+
+	// Check if the user is banned (via Redis)
+	check_temp_ban(ajwt.sub, &mut conn_r).await?;
+
 
 	// Grab needed data from path & query params
 	let post_id:i64 = path.0;
@@ -48,9 +62,6 @@ pub async fn vote_maturity(
 	let Ok(ajwt) = AuthJwt::decode_with_defaults(jwt_string) else {
 		return Err(ICError::HEADER_VALIDATION);
 	};
-
-	// Check if the user is banned (via Redis)
-	check_temp_ban(ajwt.sub, &mut redis.get_conn()?).await?;
 
 	// Get the DB connection
 	let conn = postgres.get_conn().await?;
