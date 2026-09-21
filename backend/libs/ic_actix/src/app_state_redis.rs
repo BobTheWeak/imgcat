@@ -47,22 +47,13 @@ impl AppStateRedis {
 		return Ok(conn);
 	}
 
-	pub fn check_rate_limit(&self, user_id_or_ip:&str) -> ICResult<()> {
-		let mut conn = self.get_conn()?;
-		let Ok((result, _ttl)):Result<(i64, i64), _> = redis::cmd("FCALL")
-			.arg("rlf") // Rate-limit fixed-window
-			.arg("1")
-			.arg(user_id_or_ip)
-			.arg(120) // 120 allowed actions
-			.arg(60) // in a window of 60 seconds
-			.query(&mut conn) else {
-				return Err(ICError::REDIS_CONN);
-		};
+	pub fn check_rate_limit(&self, user_id_or_ip:&str) -> ICResult<()>{
+		let mut conn_r = self.get_conn()?;
+		return self.check_rate_limit_conn(user_id_or_ip, &mut conn_r);
+	}
 
-		if result == 1 {
-			return Ok(());
-		} else {
-			return Err(ICError::RATE_LIMIT);
-		}
+	pub fn check_rate_limit_conn(&self, user_id_or_ip:&str, conn_r: &mut Connection) -> ICResult<()>{
+		crate::rate_limit::check_rate_limit(user_id_or_ip, conn_r)?;
+		return Ok(());
 	}
 }

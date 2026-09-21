@@ -13,6 +13,10 @@ mod user_ban;
 #[cfg(all(feature="redis", feature="postgres"))]
 pub use user_ban::{check_temp_ban, check_perm_ban};
 
+#[cfg(feature="redis")] mod rate_limit;
+// Not public, we just use it
+//#[cfg(feature="redis")] pub use rate_limit::check_rate_limit;
+
 #[cfg(feature="redis")] mod app_state_redis;
 #[cfg(feature="redis")] pub use app_state_redis::AppStateRedis;
 
