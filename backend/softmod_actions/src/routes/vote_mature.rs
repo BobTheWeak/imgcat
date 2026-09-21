@@ -56,13 +56,6 @@ pub async fn vote_maturity(
 		_ => return Err(ICError::HEADER_VALIDATION),
 	};
 
-	// Grab the Bearer header & check it's encoding
-	let jwt_string = get_bearer_jwt(&request)?;
-	// Decode the JWT & make sure it's ours
-	let Ok(ajwt) = AuthJwt::decode_with_defaults(jwt_string) else {
-		return Err(ICError::HEADER_VALIDATION);
-	};
-
 	// Get the DB connection
 	let conn = postgres.get_conn().await?;
 	// TODO - This doesn't work yet
