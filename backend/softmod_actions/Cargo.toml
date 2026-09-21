@@ -12,7 +12,7 @@ ic_datamodel = { version = "1.0.0", path = "../libs/ic_datamodel", features=["po
 #jsonwebtoken = { version = "10.3.0", features = ["rust_crypto", "use_pem"] }
 log = "0.4.29"
 serde = {version = "1.0.228", default-features = false, features = ["derive"]}
-sqlx = {version = "0.8.6", features = ["runtime-tokio", "mysql", "postgres"]}
+#sqlx = {version = "0.8.6", features = ["runtime-tokio", "mysql", "postgres"]}
 tokio = {version = "1.47.1", features = ["rt-multi-thread"]}
 postgres-types = { version = "0.2.13", features = [] }
 

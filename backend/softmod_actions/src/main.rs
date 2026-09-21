@@ -1,15 +1,9 @@
-// NOTE: sqlx has AnyConnection, etc. to make this easy, but there are things that
-// just don't automagic convert. "conn_helpers.rs" is particularly ugly.
-//type DB = sqlx::MySql;
-
-mod deserialize_helpers;
-mod conn_helpers;
 mod routes;
 
 use std::str::FromStr;
 
 use actix_web::{App, HttpServer, middleware::Logger};
-use actix_web::web::{Data, post};
+use actix_web::web::{Data, get, post};
 use env_logger::Env;
 
 use ic_actix::{AppStatePostgres, AppStateRedis};
@@ -71,8 +65,10 @@ async fn main() -> std::io::Result<()> {
 		.route("/anon_review/{post_id}", post().to(routes::new_vote_review_anon))
 
 		// Healthcheck services
-		.service(routes::livez_status)
-		.service(routes::readyz_status)
+		//.service(routes::livez_status)
+		//.service(routes::readyz_status)
+		.route("/livez", get().to(routes::livez_status))
+		.route("/readyz", get().to(routes::readyz_status))
 	})
 	.bind(("0.0.0.0", 8080))?
 	.run()
