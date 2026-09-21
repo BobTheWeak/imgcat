@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
 		.app_data(app_state_pg_wrapper.clone())
 		.app_data(app_state_redis_wrapper.clone())
 
-		.service(routes::vote_tag)
+		//.service(routes::old_vote_tag_svc)
 		//.service(routes::old_vote_mature_svc)
 		//.service(routes::old_vote_category_svc)
 		.service(routes::vote_review)
@@ -65,6 +65,7 @@ async fn main() -> std::io::Result<()> {
 
 		.route("/vote_category/{post_id}", post().to(routes::new_vote_category))
 		.route("/vote_maturity/{post_id}", post().to(routes::new_vote_maturity))
+		.route("/vote_tag/{post_id}", post().to(routes::new_vote_tag))
 
 		// Healthcheck services
 		.service(routes::livez_status)

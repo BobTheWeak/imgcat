@@ -5,8 +5,8 @@
 //pub use old_vote_category::vote_category as old_vote_category_svc;
 //mod old_vote_mature;
 //pub use old_vote_mature::vote_mature as old_vote_mature_svc;
-mod old_vote_tag;
-pub use old_vote_tag::vote_tag;
+//mod old_vote_tag;
+//pub use old_vote_tag::vote_tag as old_vote_tag_svc;
 
 mod old_vote_review;
 pub use old_vote_review::vote_review;
@@ -19,8 +19,8 @@ mod vote_category;
 pub use vote_category::vote_category as new_vote_category;
 mod vote_mature;
 pub use vote_mature::vote_maturity as new_vote_maturity;
-//mod vote_tag;
-//pub use vote_tag::vote_tag;
+mod vote_tag;
+pub use vote_tag::vote_tag as new_vote_tag;
 
 //mod vote_review;
 //pub use vote_review::vote_review;
