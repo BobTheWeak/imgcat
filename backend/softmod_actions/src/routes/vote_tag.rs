@@ -64,7 +64,7 @@ pub async fn vote_tag(
 			if result {
 				return Ok(());
 			} else {
-				println!("SoftMod.SetCategoryVote returned FALSE. This should never happen.");
+				println!("SoftMod.SetTagVote returned FALSE. This should never happen.");
 				return Err(ICError::error(""));
 			}
 		},

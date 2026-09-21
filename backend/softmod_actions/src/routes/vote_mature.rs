@@ -79,7 +79,7 @@ pub async fn vote_maturity(
 			if result {
 				return Ok(());
 			} else {
-				println!("SoftMod.SetCategoryVote returned FALSE. This should never happen.");
+				println!("SoftMod.SetMaturityVote returned FALSE. This should never happen.");
 				return Err(ICError::error(""));
 			}			
 		},
