@@ -1,6 +1,6 @@
 // NOTE: sqlx has AnyConnection, etc. to make this easy, but there are things that
 // just don't automagic convert. "conn_helpers.rs" is particularly ugly.
-type DB = sqlx::MySql;
+//type DB = sqlx::MySql;
 
 mod deserialize_helpers;
 mod conn_helpers;
@@ -60,12 +60,15 @@ async fn main() -> std::io::Result<()> {
 		//.service(routes::old_vote_tag_svc)
 		//.service(routes::old_vote_mature_svc)
 		//.service(routes::old_vote_category_svc)
-		.service(routes::vote_review)
-		.service(routes::anon_review)
+		//.service(routes::old_vote_review)
+		//.service(routes::old_anon_review)
 
 		.route("/vote_category/{post_id}", post().to(routes::new_vote_category))
 		.route("/vote_maturity/{post_id}", post().to(routes::new_vote_maturity))
 		.route("/vote_tag/{post_id}", post().to(routes::new_vote_tag))
+
+		.route("/vote_review/{post_id}", post().to(routes::new_vote_review))
+		.route("/anon_review/{post_id}", post().to(routes::new_vote_review_anon))
 
 		// Healthcheck services
 		.service(routes::livez_status)

@@ -8,10 +8,10 @@
 //mod old_vote_tag;
 //pub use old_vote_tag::vote_tag as old_vote_tag_svc;
 
-mod old_vote_review;
-pub use old_vote_review::vote_review;
-mod old_anon_review;
-pub use old_anon_review::anon_review;
+//mod old_vote_review;
+//pub use old_vote_review::vote_review;
+//mod old_anon_review;
+//pub use old_anon_review::anon_review;
 
 // NOTE: The new, standards-compliant versions return ICResult,
 // and the service path is set in main(), not each individual file
@@ -21,6 +21,11 @@ mod vote_mature;
 pub use vote_mature::vote_maturity as new_vote_maturity;
 mod vote_tag;
 pub use vote_tag::vote_tag as new_vote_tag;
+
+mod vote_review;
+pub use vote_review::vote_review as new_vote_review;
+mod vote_review_anon;
+pub use vote_review_anon::vote_review_anon as new_vote_review_anon;
 
 //mod vote_review;
 //pub use vote_review::vote_review;
