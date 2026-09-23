@@ -13,7 +13,7 @@ BEGIN ATOMIC
 		SELECT
 			a.a,
 			b.id
-		FROM unnest(Test.tags) a
+		FROM unnest(SetTagVote.tags) a
 		LEFT JOIN Public.Tag b
 			ON a.a = b.name
 	),
@@ -43,8 +43,8 @@ BEGIN ATOMIC
 	-- TODO: This should be a MERGE
 	delete_old_entries AS (
 		DELETE FROM SoftMod.TagVote
-		WHERE post_id = Test.post_id
-			AND user_id = Test.user_id
+		WHERE post_id = SetTagVote.post_id
+			AND user_id = SetTagVote.user_id
 			AND tag_id NOT IN (
 				SELECT tag_id
 				FROM tag_map
@@ -58,8 +58,8 @@ BEGIN ATOMIC
 		tag_id
 	)
 	SELECT
-		Test.post_id,
-		Test.user_id,
+		SetTagVote.post_id,
+		SetTagVote.user_id,
 		a.tag_id
 	FROM all_tags a
 	ON CONFLICT
