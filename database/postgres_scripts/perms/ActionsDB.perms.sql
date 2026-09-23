@@ -11,13 +11,17 @@
 -- it's a database daemon service, grabbing the list of new votes, and rerunning the
 -- calculation. It's not an interactive, data-driven REST service like everything else.
 
-CREATE USER ${IC_POSTS_SVC_USER} WITH PASSWORD '${IC_POSTS_SVC_PASS}';
 CREATE USER ${IC_ACTIONS_SVC_USER} WITH PASSWORD '${IC_ACTIONS_SVC_PASS}';
 CREATE USER ${IC_MATURITY_SVC_USER} WITH PASSWORD '${IC_MATURITY_SVC_PASS}';
 
 -- Actions Microservice
--- TBD - Right now this is MariaDB & needs to get migrated
--- These are all the writer functions, handling inserts into the right tables
+GRANT USAGE ON SCHEMA SoftMod TO ${IC_ACTIONS_SVC_USER};
+GRANT EXECUTE ON FUNCTION SoftMod.SetMaturityVote TO ${IC_ACTIONS_SVC_USER};
+GRANT EXECUTE ON FUNCTION SoftMod.SetCategoryVote TO ${IC_ACTIONS_SVC_USER};
+GRANT EXECUTE ON FUNCTION SoftMod.SetTagVote TO ${IC_ACTIONS_SVC_USER};
+GRANT EXECUTE ON FUNCTION SoftMod.SetReviewVote TO ${IC_ACTIONS_SVC_USER};
+GRANT EXECUTE ON FUNCTION SoftMod.SetReviewVoteAnon TO ${IC_ACTIONS_SVC_USER};
+-- TODO: Will need HardMod schema + functions too.
 
 -- Maturity Microservice
 GRANT USAGE ON SCHEMA Results TO ${IC_MATURITY_SVC_USER};
