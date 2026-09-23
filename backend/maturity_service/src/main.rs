@@ -3,9 +3,10 @@
 mod routes;
 
 use std::str::FromStr;
+use std::io::{Write};
 
 use actix_web::{App, HttpServer, middleware::Logger};
-use actix_web::web::{Data, get};
+use actix_web::web::{Data, get, post};
 use env_logger::Env;
 
 use ic_actix::{AppStateRedis, AppStatePostgres};
@@ -71,6 +72,8 @@ async fn main() -> std::io::Result<()> {
 	tokio::spawn(async move {
 		// Start the timer at 0.5s sleep, but it'll move around
 		let mut sleep_duration_ms:u64 = 500;
+		let mut sleeping_for:u32 = 0;
+
 		while *keep_looping_thread.read().await {
 
 			//let Ok(conn) = app_state.get_conn().await else {
@@ -92,11 +95,24 @@ async fn main() -> std::io::Result<()> {
 			if posts_updated > 0 {
 				// If we did work, reset the sleep timer to its lowest value & get right back to work
 				sleep_duration_ms = 500;
+
+				// If we just woke up, start a new log line
+				if sleeping_for > 0 {println!()}
+				sleeping_for = 0;
+
 				println!("Calculated {} posts", posts_updated);
 			} else {
-				// increase sleep timer by 20%, up to 30s max, then sleep
-				sleep_duration_ms =  ((sleep_duration_ms as f32 * 1.2) as u64).min(30_000);
-				println!("No work found, sleeping for {}ms", sleep_duration_ms);
+				// increase sleep timer by 10% each cycle, up to 30s max
+				sleep_duration_ms =  ((sleep_duration_ms as f32 * 1.1) as u64).min(30_000);
+				sleeping_for = sleeping_for.saturating_add(1);
+
+				// TODO: This is a terrible way of doing a heartbeat... Return stats in a REST API call
+				print!(".");
+				// Hmm... not sure why flushing isn't working. It should.
+				std::io::stdout().flush().unwrap();
+				// Only print a newline every 50 sleeps
+				if sleeping_for % 50 == 0 {println!()}
+
 				tokio::time::sleep(tokio::time::Duration::from_millis(sleep_duration_ms)).await;
 			}
 
@@ -117,11 +133,16 @@ async fn main() -> std::io::Result<()> {
 		//.app_data(shared_mariadb.clone())
 
 
+		// Pass a timestamp (sec from epoch): /time?t=1234567890, and this will return all posts/scores that have changed since that time
+		// It is up to the client to keep track of the last ts they requested & be kind to the service
+		.route("time", get().to(routes::scores_by_time))
+
+		// Pass a list of ids in the body (i64[] as json), and this will return those posts/scores
+		.route("ids", post().to(routes::scores_by_ids))
+
 		// TODO: I don't know what we need here...
-		// * Start/stop
+		// * Start/stop worker thread, parallelize it, IDK
 		// * Check queue depth
-		// TODO: This probably only needs a single REST worker
-		// HttpServer.workers(1)
 
 		
 		// Healthcheck routes
