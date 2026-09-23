@@ -17,7 +17,7 @@
 </div>
 
 <footer>
-	<a href='https://ImgCatFoundation.org'>&copy;2025 ImgCat Foundation</a> • <a href='/about'>About</a> • <a href='/about/terms'>Terms</a> • <a href='/about/privacy'>Privacy</a> • <a href='/about/cookies'>Cookies</a>
+	<a href='https://ImgCatFoundation.org'>&copy;2025-2026 ImgCat Foundation</a> • <a href='/about'>About</a> • <a href='/about/terms'>Terms</a> • <a href='/about/privacy'>Privacy</a> • <a href='/about/cookies'>Cookies</a>
 	{#if navigator.globalPrivacyControl}
 	 • <a href='https://globalprivacycontrol.org'>GPC detected</a>
 	{/if}
