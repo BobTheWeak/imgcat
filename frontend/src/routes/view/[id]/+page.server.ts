@@ -188,7 +188,7 @@ export const actions:Actions = {
 
 		// Check Maturity
 		let fetch_params = new URLSearchParams();
-		const mature_num = {'kid':0,'std':1,'sfw':2,'nsfw':3,'ill':4}[data.get('maturity')];
+		const mature_num = {'kid':1,'std':2,'sfw':3,'nsfw':4,'ill':5}[data.get('maturity')];
 		if(mature_num !== undefined) {
 			fetch_params.append('m', mature_num);
 			if(data.get('is_sexual')){fetch_params.append('s',1)}
