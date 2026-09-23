@@ -5,10 +5,17 @@ edition = "2024"
 
 [features]
 default = []
+# DB derive types
 postgres = ["dep:postgres-types"]
 mariadb = ["dep:mysql_common"]
+# IC-specific classes of objects
+posts = []
+maturity = []
 
 [dependencies]
-serde = { version="*", default-features=false, features=["derive"] }
-postgres-types = { version="*", optional=true, features=["derive"] }
-mysql_common = { version="*", optional=true, features=["derive"] }
+serde = { version = "1.0.229", features=["derive"] }
+postgres-types = { version = "0.2.14", optional=true, features=["derive"] }
+mysql_common = { version = "0.38.2", optional=true, features=["derive"] }
+postgres-protocol = "0.6.12"
+serde_repr = "0.1.21"
+tokio-postgres = { version = "0.7.18", default-features = false }
