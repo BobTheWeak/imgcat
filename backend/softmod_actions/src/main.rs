@@ -24,8 +24,8 @@ async fn main() -> std::io::Result<()> {
 			&std::env::var("IC_ACTIONS_PORT").unwrap_or("8080".to_string())
 		).expect("Could not parse envvar: IC_ACTIONS_PORT"),
 		&std::env::var("IC_ACTIONS_DB").expect("Could not parse envvar: IC_ACTIONS_DB"),
-		&std::env::var("IC_MATURITY_SVC_USER").expect("Could not parse envvar: IC_SOFTMOD_SVC_USER"),
-		&std::env::var("IC_MATURITY_SVC_PASS").expect("Could not parse envvar: IC_SOFTMOD_SVC_PASS"),
+		&std::env::var("IC_SOFTMOD_SVC_USER").expect("Could not parse envvar: IC_SOFTMOD_SVC_USER"),
+		&std::env::var("IC_SOFTMOD_SVC_PASS").expect("Could not parse envvar: IC_SOFTMOD_SVC_PASS"),
 	).await.expect("Could not connect to Postgres");
 
 
@@ -39,7 +39,7 @@ async fn main() -> std::io::Result<()> {
 	let app_state_pg_wrapper = Data::new(app_state_pg);
 
 	// Redis for rate-limiting and bans
-	let app_state_redis_wrapper = Data::new(AppStateRedis::new_with_defaults());
+	let app_state_redis_wrapper = Data::new(AppStateRedis::new_with_defaults().expect("Could not connect to Redis"));
 
 	HttpServer::new(move || {
 		App::new()
@@ -58,7 +58,7 @@ async fn main() -> std::io::Result<()> {
 		//.service(routes::old_anon_review)
 
 		.route("/vote_category/{post_id}", post().to(routes::new_vote_category))
-		.route("/vote_maturity/{post_id}", post().to(routes::new_vote_maturity))
+		.route("/vote_mature/{post_id}", post().to(routes::new_vote_maturity))
 		.route("/vote_tag/{post_id}", post().to(routes::new_vote_tag))
 
 		.route("/vote_review/{post_id}", post().to(routes::new_vote_review))
