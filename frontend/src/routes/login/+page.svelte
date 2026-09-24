@@ -81,7 +81,7 @@
 {/if}
 <div id='providers'>
 {#if data.login_allowed}
-	<Button href='/auth/p/google' lbl='Sign in with Google' />
+	<!-- <Button href='/auth/p/google' lbl='Sign in with Google' /> -->
 	<Button href='/auth/p/microsoft' lbl='Sign in with Microsoft' />
 {:else}
 <p>This is a private server, and logins are disabled without the special key</p>
