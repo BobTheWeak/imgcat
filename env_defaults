@@ -1,0 +1,33 @@
+# These aren't secrets, but basic "where can I find this thing" defaults
+#IC_ORIGIN=https://ns1010634.ip-40-160-52.us
+IC_ORIGIN=http://localhost:8080
+IC_JWT_AUD=imgcat.io
+IC_JWT_ISS=imgcat.io
+
+IC_REDIS_HOST=ic-redis
+IC_REDIS_PORT=6379
+IC_REDIS_DB=0
+
+IC_DB_HOST=ic-mariadb
+IC_DB_PORT=3306
+IC_DB_DB=Posts
+
+IC_UDB_HOST=ic-postgres
+IC_UDB_PORT=5432
+IC_UDB_DB=UserDB
+
+IC_ACTIONS_HOST=ic-actions-db
+IC_ACTIONS_PORT=5432
+IC_ACTIONS_DB=ActionsDB
+
+##### BEGIN BLOCK #####
+# Svelte can be stupidly opinionated, so these break from standards, on purpose
+IC_FRONTEND_ORIGIN=http://localhost:8080
+IC_FRONTEND_PORT=8080
+IC_FRONTEND_BODY_SIZE_LIMIT=100M
+
+# This is the S3 DNS location from Cloudflare
+PUBLIC_IC_LOC_IMG=https://i.imgcat.io
+# Most API calls go through the internal reverse proxy
+IC_LOC_INT=http://ic-proxy:80/api
+##### END BLOCK #####

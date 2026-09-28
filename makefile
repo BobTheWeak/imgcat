@@ -47,15 +47,15 @@ init_secrets:
 	printf "#" | podman secret create s3_url -
 	# DB Root Accounts
 	printf $(openssl rand -base64 24) | podman secret create db_mariadb_root_pass -
-	printf "#" | podman secret create db_postgres_root_user -
+	printf "LOCALDEV_postgres_root" | podman secret create db_postgres_root_user -
 	printf $(openssl rand -base64 24) | podman secret create db_postgres_root_pass -
 	# DB Service Accounts
-	printf "#" | podman secret create db_mariadb_user -
-	printf "#" | podman secret create db_auth_svc_user -
-	printf "#" | podman secret create db_posts_svc_user -
-	printf "#" | podman secret create db_users_svc_user -
-	printf "#" | podman secret create db_softmod_svc_user -
-	printf "#" | podman secret create db_maturity_svc_user -
+	printf "LOCALDEV_frontend_svc" | podman secret create db_mariadb_user -
+	printf "LOCALDEV_auth_svc" | podman secret create db_auth_svc_user -
+	printf "LOCALDEV_posts_svc" | podman secret create db_posts_svc_user -
+	printf "LOCALDEV_users_svc" | podman secret create db_users_svc_user -
+	printf "LOCALDEV_softmod_svc" | podman secret create db_softmod_svc_user -
+	printf "LOCALDEV_maturity_svc" | podman secret create db_maturity_svc_user -
 	# DB Passwords
 	printf $(openssl rand -base64 24) | podman secret create db_mariadb_pass -
 	printf $(openssl rand -base64 24) | podman secret create db_auth_svc_pass -
