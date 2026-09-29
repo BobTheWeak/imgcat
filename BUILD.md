@@ -50,12 +50,12 @@ The typical development process is: (for example) `make build_posts deploy_posts
   - Run and copy the results of: `sed -e "s/IC_UDB_USER/$(podman secret inspect --showsecret --format {{.SecretData}} db_auth_svc_user)/gi" -e "s/IC_USERS_SVC_USER/$(podman secret inspect --showsecret --format {{.SecretData}} db_users_svc_user)/gi" ./database/postgres_scripts/perms/ZZZ_init_perms.sql` for a later step
   - Connect with `podman exec -it ic-postgres psql --user <USER> --db UserDB`, using the `db_postgres_root_user` user
   - Run `CREATE USER LOCALDEV_auth_svc WITH PASSWORD '<PASSWORD>';`, replacing db_auth_svc_pass
-  - Run `CREATE USER LOCALDEV_posts_svc WITH PASSWORD '<PASSWORD>';`, replacing db_posts_svc_pass
+  - Run `CREATE USER LOCALDEV_users_svc WITH PASSWORD '<PASSWORD>';`, replacing db_users_svc_pass
   - Run the commands you generated from the `sed` command above
   - Done
 9. Setup PostgreSQL (ActionsDB)
   - Run `make actions_db`
-  - Run and copy the results of: `sed -e "s/\$\{IC_SOFTMOD_SVC_USER\}/$(podman secret inspect --showsecret --format {{.SecretData}} db_softmod_svc_user)/gi" -e "s/\$\{IC_SOFTMOD_SVC_PASS\}/$(podman secret inspect --showsecret --format {{.SecretData}} db_softmod_svc_pass)/gi" -e "s/\$\{IC_MATURITY_SVC_USER\}/$(podman secret inspect --showsecret --format {{.SecretData}} db_maturity_svc_user)/gi" -e "s/\$\{IC_MATURITY_SVC_PASS\}/$(podman secret inspect --showsecret --format {{.SecretData}} db_maturity_svc_pass)/gi" ./database/postgres_scripts/perms/ActionsDB.perms.sql` for a later step
+  - Run and copy the results of: `sed -e "s/IC_SOFTMOD_SVC_USER/$(podman secret inspect --showsecret --format {{.SecretData}} db_softmod_svc_user)/gi" -e "s/IC_SOFTMOD_SVC_PASS/$(podman secret inspect --showsecret --format {{.SecretData}} db_softmod_svc_pass)/gi" -e "s/IC_MATURITY_SVC_USER/$(podman secret inspect --showsecret --format {{.SecretData}} db_maturity_svc_user)/gi" -e "s/IC_MATURITY_SVC_PASS/$(podman secret inspect --showsecret --format {{.SecretData}} db_maturity_svc_pass)/gi" ./database/postgres_scripts/perms/ActionsDB.perms.sql` for a later step
   - Connect with `podman exec -it ic-actions-db psql --user <USER> --db ActionsDB`, using the `db_postgres_root_user` user
   - Run the commands you generated from the `sed` command above
   - Done
